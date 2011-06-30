@@ -324,7 +324,7 @@ sub get_orgname
         #   Example of our $result at this point (hopefully):
         #   Google Inc. GOOGLE (NET-74-125-0-0-1) 74.125.0.0 - 74.125.255.255
 
-        if ( $result =~ /(.*?)(\s*[\w-.]*\s*)?\(/ ) {
+        if ( $result =~ /(.*?)(\s*[\w\d\._\-]*\s*)?\(/ ) {
             $org = $1;
             last;
         }
