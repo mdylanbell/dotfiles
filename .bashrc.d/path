@@ -1,4 +1,5 @@
 PATH=$HOME/bin:$PATH
+PATH=/opt/local/bin:$PATH
 PATH=$HOME/bin/excluded:$PATH
 PATH=$HOME/bin/remotecopy:$PATH
 PATH=$HOME/bin/git-subtree:$PATH
