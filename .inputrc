@@ -15,4 +15,6 @@ set keymap vi-insert
 "\C-l":clear-screen
 "\C-p":yank-last-arg
 "\C-w":backward-kill-word
+"\C-a":beginning-of-line
+"\C-e":end-of-line
 $endif
