@@ -88,6 +88,7 @@ filetype plugin on
 filetype indent on
 
 map <F2> :map<CR>
+nnoremap <F5> :GundoToggle<CR>
 map <F7> :call ToggleSyntax()<CR>
 map <F8> :set paste!<CR>
 map <F10> :diffu<CR>
