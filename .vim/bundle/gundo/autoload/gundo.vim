@@ -378,7 +378,7 @@ function! s:GundoRenderGraph()"{{{
 endfunction"}}}
 
 function! s:GundoRenderPreview()"{{{
-    if s:has_supported_python == 3
+    if s:has_supported_python == 2
 	python3 GundoRenderPreview()
     else
 	python GundoRenderPreview()
