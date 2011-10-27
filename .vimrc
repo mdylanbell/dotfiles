@@ -195,3 +195,11 @@ endif
 "nnoremap / /\v
 "vnoremap / /\v
 "noremap :s :s/\v
+
+" MBE
+" let g:miniBufExplSplitBelow=0              " MBE on top (or left if vert.)
+" let g:miniBufExplorerMoreThanOne=1         " Always show MBE
+" let g:miniBufExplMapWindowNavVim = 1       " control+hjkl to cycle through windows
+" let g:miniBufExplMapCTabSwitchBufs = 1     " control+(shift?)+tab cycle through buffers
+" let g:miniBufExplForceSyntaxEnable = 1    "Fix vim bug where buffers don't
+" syntax
