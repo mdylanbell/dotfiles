@@ -4,7 +4,7 @@ set ai to shell=/bin/bash terse nowarn sm ruler redraw sw=4 ts=4
 set hls
 set bs=2
 set history=100
-set bg=dark
+"set bg=dark
 set showmode
 set incsearch
 "set background=dark
