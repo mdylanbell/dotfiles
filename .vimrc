@@ -13,7 +13,7 @@ syntax enable
 set smartcase
 set expandtab smarttab
 
-colorscheme ir_black
+"colorscheme ir_black
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
@@ -252,3 +252,9 @@ nnoremap <leader><Space> :nohls<CR>
 " easy tab navigation
 nnoremap <silent> <C-N> :tabnext<CR>
 nnoremap <silent> <C-P> :tabprev<CR>
+
+set background=light
+"let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+"let g:solarized_visibility="high"
+colorscheme solarized
