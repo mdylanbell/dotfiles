@@ -39,6 +39,12 @@ set-option -g status-bg black
 set-option -g status-fg white
 set-option -g status-left-length 40
 
+# 256 colors
+set-option -g default-terminal "screen-256color"
+
+# Mouse
+setw -g mode-mouse on
+
 setw -g window-status-bg black
 setw -g window-status-current-fg green
 setw -g window-status-alert-attr default
