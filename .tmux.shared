@@ -29,6 +29,12 @@ bind-key C-p previous-window
 unbind '"'
 bind-key '"' choose-window
 
+# 256 colors
+set-option -g default-terminal "screen-256color"
+
+# Mouse
+setw -g mode-mouse on
+
 ## setting up status bar
 ## mostly horked from http://www.linuxized.com/2010/05/switching-from-gnu-screen-to-tmux/
 
@@ -38,12 +44,6 @@ set-option -g status-justify left
 set-option -g status-bg black
 set-option -g status-fg white
 set-option -g status-left-length 40
-
-# 256 colors
-set-option -g default-terminal "screen-256color"
-
-# Mouse
-setw -g mode-mouse on
 
 setw -g window-status-bg black
 setw -g window-status-current-fg green
