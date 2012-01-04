@@ -54,7 +54,7 @@ case $TERM in
     xterm*)
         PROMPT_COMMAND='LAST_EXIT=$?;echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"; reconnect_ssh_agent;'
         ;;
-    screen)
+    screen*)
         PROMPT_COMMAND='LAST_EXIT=$?;echo -ne "\033k${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\033\\"; reconnect_ssh_agent;'
         ;;
 esac
