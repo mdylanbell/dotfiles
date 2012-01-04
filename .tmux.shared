@@ -21,6 +21,13 @@ bind E setw synchronize-panes off
 unbind '"'
 bind-key '"' choose-window
 
+# Mouse
+set-window-option -g mode-mouse on
+set-window-option -g utf8 on
+
+# 256 colors
+set-option -g default-terminal "screen-256color"
+
 ## setting up status bar
 ## mostly horked from http://www.linuxized.com/2010/05/switching-from-gnu-screen-to-tmux/
 
