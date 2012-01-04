@@ -1,8 +1,5 @@
 # shared amongst all tmux
 
-# use the canonical ssh auth sock location setup by shell
-setenv SSH_AUTH_SOCK "/tmp/ssh-agent-$USER-screen"
-
 # VI keybindings please
 setw -g mode-keys vi
 
@@ -19,11 +16,6 @@ bind l select-pane -R
 # easily toggle synchronization (mnemonic: e is for echo)
 bind e setw synchronize-panes on
 bind E setw synchronize-panes off
-
-# make it so that I can hold down control for these
-bind-key C-d detach
-bind-key C-n next-window
-bind-key C-p previous-window
 
 # switch " over to selecting windows
 unbind '"'

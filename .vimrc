@@ -22,6 +22,10 @@ let perl_fold = 1
 let g:syntastic_enable_signs = 1
 let g:syntastic_auto_loc_list = 1
 
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
 " from http://github.com/adamhjk/adam-vim
 " nicer status line
 "set laststatus=2
@@ -78,6 +82,9 @@ noremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+
+" use the octopress syntax for markdown files
+au BufNewFile,BufRead *.markdown setfiletype octopress
 
 " enable pathogen
 filetype off 
