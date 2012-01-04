@@ -300,7 +300,11 @@ sub configure_bash_loader {
     my $bashrc_contents = _read_bashrc_contents();
 
     # check if the loader is in
-    if ( $bashrc_contents !~ /\.bashrc\.load/ ) {
+    if ( $bashrc_contents =~ /\.bashrc\.nate/ ) {
+        INFO("Correcting loader in $profile_filename");
+        $bashrc_contents =~ s/\.bashrc\.nate/\.bashrc\.load/;
+    }
+    elsif ( $bashrc_contents !~ /\.bashrc\.load/ ) {
         INFO("Appending loader to $profile_filename");
         $bashrc_contents .= "\n. \$HOME/.bashrc.load\n";
     }

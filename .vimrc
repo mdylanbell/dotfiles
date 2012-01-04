@@ -18,6 +18,14 @@ colorscheme ir_black
 " for some reason this has to go in .vimrc
 let perl_fold = 1
 
+" configure syntastic
+let g:syntastic_enable_signs = 1
+let g:syntastic_auto_loc_list = 1
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
 " from http://github.com/adamhjk/adam-vim
 " nicer status line
 "set laststatus=2
@@ -41,19 +49,17 @@ let g:surround_108 = "{{\r}}"
 " 'n' for noformat
 let g:surround_110 = "{noformat}\r{noformat}"
 
-" use command-[jk$0^] to move thorough wrapped lines
-" http://vimcasts.org/episodes/soft-wrapping-text/
-" vmap for visual, nmap for normal mode
-vmap <D-j> gj
-vmap <D-k> gk
-vmap <D-4> g$
-vmap <D-6> g^
-vmap <D-0> g^
-nmap <D-j> gj
-nmap <D-k> gk
-nmap <D-4> g$
-nmap <D-6> g^
-nmap <D-0> g^
+" Navigate wrapped lines
+nnoremap j gj
+nnoremap k gk
+nnoremap $ g$
+nnoremap ^ g^
+nnoremap 0 g0
+vnoremap j gj
+vnoremap k gk
+vnoremap $ g$
+vnoremap ^ g^
+vnoremap 0 g0
 
 " always show 5 lines of context
 set scrolloff=5
@@ -77,10 +83,13 @@ noremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
+" use the octopress syntax for markdown files
+au BufNewFile,BufRead *.markdown setfiletype octopress
+
 " enable pathogen
 filetype off 
-call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 
 " turn filetype goodness back on
 filetype on
@@ -112,7 +121,6 @@ endfunction
 runtime macros/matchit.vim
 
 set foldmethod=marker
-highlight Folded ctermbg=black ctermfg=blue
 
 " printing options
 set popt=paper:letter
@@ -133,15 +141,17 @@ map ,cp :%w ! pbcopy<CR>
 
 " older versions of this file contain helpers for HTML, JSP and Java
 
-" fuzzy finder textmate
-let g:FuzzyFinderOptions = { 'Base':{}, 'Buffer':{}, 'File':{}, 'Dir':{},
-      \                      'MruFile':{}, 'MruCmd':{}, 'Bookmark':{},
-      \                      'Tag':{}, 'TaggedFile':{},
-      \                      'GivenFile':{}, 'GivenDir':{},
-      \                      'CallbackFile':{}, 'CallbackItem':{}, }
-let g:FuzzyFinderOptions.Base.max_menu_width = 150
-noremap <leader>ff :FuzzyFinderTextMate<CR>
-noremap <leader>fr :FuzzyFinderMruFile<CR>
+" fuzzy finder
+let g:fuf_modesDisable = [ 'mrucmd', ]
+let g:fuf_coveragefile_exclude = '\v\~$|blib|\.(o|exe|dll|bak|orig|swp)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
+let g:fuf_mrufile_exclude = '\v\~$|\.(o|exe|dll|bak|orig|sw[po])$|^(\/\/|\\\\|\/mnt\/|\/media\/)|svn-base$'
+let g:fuf_maxMenuWidth = 150
+"let g:fuf_previewHeight = 20
+noremap <leader>ff :FufCoverageFile<CR>
+noremap <leader>fr :FufMruFile<CR>
+noremap <leader>fl :FufMruFileInCwd<CR>
+noremap <leader>ft :FufTag<CR>
+noremap <leader>fb :FufBuffer<CR>
 
 " sessionman.vim mappings
 noremap <leader>sa :SessionSaveAs<CR>
@@ -156,6 +166,7 @@ let vimrplugin_underscore = 0
 " use system clipboard for everything
 if has("gui_running")
     set cb=unnamed
+    set guioptions-=T
 endif
 
 " Always do vimdiff in vertical splits
@@ -164,9 +175,15 @@ set diffopt+=vertical
 " look for tags
 set tags=./tags;
 
+" configure taglist.vim
+let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_Close_On_Select = 1
+noremap <leader>tl :TlistToggle<CR>
+
 " use brew's ctags instead of the system one
 if filereadable('/usr/local/bin/ctags')
     let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+    let g:autotagCtagsCmd = '/usr/local/bin/ctags'
 endif
 
 " tabular mappings (http://vimcasts.org/episodes/aligning-text-with-tabular-vim/)
@@ -203,3 +220,43 @@ endif
 " let g:miniBufExplMapCTabSwitchBufs = 1     " control+(shift?)+tab cycle through buffers
 " let g:miniBufExplForceSyntaxEnable = 1    "Fix vim bug where buffers don't
 " syntax
+
+if filereadable(expand("~/.vimrc.local"))
+    source ~/.vimrc.local
+endif
+
+" http://stackoverflow.com/questions/7400743/create-a-mapping-for-vims-command-line-that-escapes-the-contents-of-a-register-b
+cnoremap <c-x> <c-r>=<SID>PasteEscaped()<cr>
+function! s:PasteEscaped()
+  echo "\\".getcmdline()."\""
+  let char = getchar()
+  if char == "\<esc>"
+    return ''
+  else
+    let register_content = getreg(nr2char(char))
+    let escaped_register = escape(register_content, '\'.getcmdtype())
+    return substitute(escaped_register, '\n', '\\n', 'g')
+  endif
+endfunction
+
+" use space bar to open/close folds
+nnoremap <space> za
+
+" http://vim.wikia.com/wiki/Search_for_visually_selected_text
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" clear highlight quick
+nnoremap <leader><Space> :nohls<CR>
+
+" easy tab navigation
+nnoremap <silent> <C-N> :tabnext<CR>
+nnoremap <silent> <C-P> :tabprev<CR>
