@@ -27,6 +27,8 @@ set-option -g default-terminal "screen-256color"
 # Mouse
 setw -g mode-mouse on
 
+set-window-option -g utf8 on
+
 ## setting up status bar
 ## mostly horked from http://www.linuxized.com/2010/05/switching-from-gnu-screen-to-tmux/
 
