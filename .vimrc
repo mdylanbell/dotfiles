@@ -4,16 +4,12 @@ set ai to shell=/bin/bash terse nowarn sm ruler redraw sw=4 ts=4
 set hls
 set bs=2
 set history=100
-"set bg=dark
 set showmode
 set incsearch
-"set background=dark
 syntax enable
 "set ignorecase
 set smartcase
 set expandtab smarttab
-
-"colorscheme ir_black
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
