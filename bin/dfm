@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use English qw( -no_match_vars );    # Avoids regex performance penalty
 use Data::Dumper;
-use FindBin qw($Bin);
+use FindBin qw($RealBin);
 use Getopt::Long;
-use Cwd qw(realpath);
+use Cwd qw(realpath getcwd);
 use File::Spec;
 
 our $VERSION = '0.5';
@@ -26,7 +26,7 @@ if ( !$command ) {
 
 my $home = realpath( $ENV{HOME} );
 
-my $repo_dir = $Bin;
+my $repo_dir = $RealBin;
 $repo_dir =~ s/$home\///;
 $repo_dir =~ s/\/bin//;
 
@@ -59,13 +59,15 @@ if ( $command eq 'install' ) {
     INFO(
         "Installing dotfiles..." . ( $opts{'dry-run'} ? ' (dry run)' : '' ) );
 
-    DEBUG("Running in [$Bin] and installing in [$home]");
+    DEBUG("Running in [$RealBin] and installing in [$home]");
 
     # install files
     install_files( $home . '/' . $repo_dir, $home );
 
     # link in the bash loader
-    configure_bash_loader();
+    if ( -e "$home/$repo_dir/.bashrc.load" ) {
+        configure_bash_loader();
+    }
 }
 elsif ( $command eq 'updates' ) {
     GetOptions( \%opts, 'no-fetch' );
@@ -87,7 +89,7 @@ elsif ( $command eq 'un' || $command eq 'uninstall' ) {
     INFO( "Uninstalling dotfiles..."
             . ( $opts{'dry-run'} ? ' (dry run)' : '' ) );
 
-    DEBUG("Running in [$Bin] and installing in [$home]");
+    DEBUG("Running in [$RealBin] and installing in [$home]");
 
     # uninstall files
     uninstall_files( $home . '/' . $repo_dir, $home );
@@ -123,7 +125,24 @@ sub get_current_branch {
     return $current_branch;
 }
 
+sub check_remote_branch {
+    my $branch        = shift;
+    my $branch_remote = `git config branch.$branch.remote`;
+    chomp $branch_remote;
+
+    DEBUG("remote for branch $branch: $branch_remote");
+
+    if ( $branch_remote eq "" ) {
+        WARN("no remote found for branch $branch");
+        exit(-1);
+    }
+}
+
 # a few log4perl-alikes
+sub ERROR {
+    printf "ERROR: %s\n", shift;
+}
+
 sub WARN {
     printf "WARN: %s\n", shift;
 }
@@ -147,8 +166,9 @@ sub fetch_updates {
     }
 
     my $current_branch = get_current_branch();
+    check_remote_branch($current_branch);
 
-    print get_changes("$current_branch..origin/$current_branch"), "\n";
+    print get_changes("$current_branch..$current_branch\@{u}"), "\n";
 }
 
 sub merge_and_install {
@@ -157,14 +177,15 @@ sub merge_and_install {
     chdir( $home . '/' . $repo_dir );
 
     my $current_branch = get_current_branch();
+    check_remote_branch($current_branch);
 
     my $sync_command = $opts->{'rebase'} ? 'rebase' : 'merge';
 
-    if ( get_changes("$current_branch..origin/$current_branch") ) {
+    if ( get_changes("$current_branch..$current_branch\@{u}") ) {
 
         # check for local commits
         if ( my $local_changes
-            = get_changes("origin/$current_branch..$current_branch") )
+            = get_changes("$current_branch\@{u}..$current_branch") )
         {
 
             # if a decision wasn't made about how to deal with local commits
@@ -178,11 +199,11 @@ sub merge_and_install {
         }
 
         INFO("using $sync_command to bring in changes");
-        system("git $sync_command origin/$current_branch")
+        system("git $sync_command $current_branch\@{u}")
             if !$opts->{'dry-run'};
 
         INFO("re-installing dotfiles");
-        system("HOME=$home $self_dfm install") if !$opts->{'dry-run'};
+        system("HOME='$home' '$self_dfm' install") if !$opts->{'dry-run'};
     }
     else {
         INFO("no changes to merge");
@@ -213,20 +234,53 @@ sub install_files {
     my $backup_dir = $target_dir . '/.backup';
     DEBUG("Backup dir: $backup_dir");
 
+    my $cwd_before_install = getcwd();
     chdir($target_dir);
 
     # build up skip list
-    my $skip_files = { map { $_ => 1 } @$initial_skips };
+    my $skip_files    = { map { $_ => 1 } @$initial_skips };
     my $recurse_files = [];
+    my $execute_files = [];
+    my $chmod_files   = {};
+
     if ( -e "$source_dir/.dfminstall" ) {
         open( my $skip_fh, '<', "$source_dir/.dfminstall" );
         foreach my $line (<$skip_fh>) {
             chomp($line);
             if ( length($line) ) {
-                my ( $filename, $option ) = split( q{ }, $line );
-                $skip_files->{$filename} = 1;
-                if ( !defined $option || $option ne 'skip' ) {
+                my ( $filename, @options ) = split( q{ }, $line );
+                DEBUG(".dfminstall file $filename has @options");
+                if ( !defined $options[0] ) {
+                    WARN(
+                        "using implied recursion in .dfminstall is deprecated, change '$filename' to '$filename recurse' in $source_dir/.dfminstall."
+                    );
                     push( @$recurse_files, $filename );
+                    $skip_files->{$filename} = 1;
+                }
+                elsif ( $options[0] eq 'skip' ) {
+                    $skip_files->{$filename} = 1;
+                }
+                elsif ( $options[0] eq 'recurse' ) {
+                    push( @$recurse_files, $filename );
+                    $skip_files->{$filename} = 1;
+                }
+                elsif ( $options[0] eq 'exec' ) {
+                    push( @$execute_files, $filename );
+                }
+                elsif ( $options[0] eq 'chmod' ) {
+                    if ( !$options[1] ) {
+                        ERROR(
+                            "chmod option requires a mode (e.g. 0600) in $source_dir/.dfminstall"
+                        );
+                        exit 1;
+                    }
+                    if ( $options[1] !~ /^[0-7]{4}$/ ) {
+                        ERROR(
+                            "bad mode '$options[1]' (should be 4 digit octal, like 0600) in $source_dir/.dfminstall"
+                        );
+                        exit 1;
+                    }
+                    $chmod_files->{$filename} = $options[1];
                 }
             }
         }
@@ -268,7 +322,7 @@ sub install_files {
         if ( !-l $direntry ) {
             if ( -e $direntry ) {
                 INFO("  Backing up $direntry.");
-                system("mv $direntry $backup_dir/$direntry")
+                system("mv '$direntry' '$backup_dir/$direntry'")
                     if !$opts{'dry-run'};
             }
             INFO("  Symlinking $direntry ($symlink_base/$direntry).");
@@ -277,21 +331,53 @@ sub install_files {
         }
     }
 
-    cleanup_dangling_symlinks( $source_dir, $target_dir );
+    cleanup_dangling_symlinks( $source_dir, $target_dir, $skip_files );
 
     foreach my $recurse (@$recurse_files) {
         if ( -d "$source_dir/$recurse" ) {
-            DEBUG("recursing into $recurse");
-            if ( !-d $recurse ) {
-                DEBUG("making directory $recurse");
-                mkdir($recurse);
+            DEBUG("recursing into $source_dir/$recurse");
+            if ( -l "$target_dir/$recurse" ) {
+                DEBUG("removing symlink $target_dir/$recurse");
+                unlink("$target_dir/$recurse");
+            }
+            if ( !-d "$target_dir/$recurse" ) {
+                DEBUG("making directory $target_dir/$recurse");
+                mkdir("$target_dir/$recurse");
             }
             install_files( "$source_dir/$recurse", "$target_dir/$recurse" );
         }
         else {
-            WARN("couldn't recurse into $recurse, not a directory");
+            WARN(
+                "couldn't recurse into $source_dir/$recurse, not a directory"
+            );
         }
     }
+
+    foreach my $execute (@$execute_files) {
+        my $cwd = getcwd();
+
+        if ( -x "$source_dir/$execute" ) {
+            DEBUG("Executing $source_dir/$execute in $cwd");
+            system("'$source_dir/$execute'");
+        }
+        elsif ( -o "$source_dir/$execute" ) {
+            system("chmod +x '$source_dir/$execute'");
+
+            DEBUG("Executing $source_dir/$execute in $cwd");
+            system("'$source_dir/$execute'");
+        }
+    }
+
+    foreach my $chmod_file ( keys %$chmod_files ) {
+        my $new_perms = $chmod_files->{$chmod_file};
+
+        # TODO maybe skip if perms are already ok
+        DEBUG("Setting permissions on $chmod_file to $new_perms");
+        chmod oct($new_perms), $chmod_file;
+    }
+
+    # restore previous working directory
+    chdir($cwd_before_install);
 }
 
 sub configure_bash_loader {
@@ -369,17 +455,20 @@ sub uninstall_files {
 
     foreach my $recurse (@$recurse_files) {
         if ( -d "$target_dir/$recurse" ) {
-            DEBUG("recursing into $recurse");
+            DEBUG("recursing into $target_dir/$recurse");
             uninstall_files( "$source_dir/$recurse", "$target_dir/$recurse" );
         }
         else {
-            WARN("couldn't recurse into $recurse, not a directory");
+            WARN(
+                "couldn't recurse into $target_dir/$recurse, not a directory"
+            );
         }
     }
 }
 
 sub cleanup_dangling_symlinks {
-    my ( $source_dir, $target_dir ) = @_;
+    my ( $source_dir, $target_dir, $skip_files ) = @_;
+    $skip_files ||= {};
 
     DEBUG(" Cleaning up dangling symlinks in $target_dir");
 
@@ -388,7 +477,9 @@ sub cleanup_dangling_symlinks {
     foreach my $direntry ( readdir($dirh) ) {
 
         DEBUG(" Working on $direntry");
-        if ( -l $direntry && !-e $direntry ) {
+
+        # if symlink is dangling or is now skipped
+        if ( -l $direntry && ( !-e $direntry || $skip_files->{$direntry} ) ) {
             my $link_target = readlink($direntry);
             DEBUG("$direntry points at $link_target");
             my ( $volume, @elements ) = File::Spec->splitpath($link_target);
@@ -530,7 +621,7 @@ this in .dfminstall:
 
 =item dfm updates [--no-fetch]
 
-This fetches any changes from the origin remote and then shows a shortlog of
+This fetches any changes from the upstream remote and then shows a shortlog of
 what updates would come in if merged into the current branch.  Use '--no-fetch'
 to skip the fetch and just show what's new.
 

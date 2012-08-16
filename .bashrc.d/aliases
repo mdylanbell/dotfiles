@@ -14,7 +14,7 @@ alias l='ls -CF'
 # clears a key out of the known_hosts file
 function clearkey() {
     ssh-keygen -R $1
-    ssh-keygen -R `host $1 | awk '{ print $4 }'`
+    ssh-keygen -R `host $1 | awk '{ print $4 }' | head -n 1`
 }
 
 # let's not grep the svn dir
@@ -27,6 +27,9 @@ then
 else
     alias vi=vim
 fi
+
+# fixup ssh-agent so tmux in tmux works
+alias fixagent='[[ ! -e "$HOME/.ssh_auth_sock" ]] && rm -f $HOME/.ssh_auth_sock && ln -s $SSH_AUTH_SOCK $HOME/.ssh_auth_sock && export SSH_AUTH_SOCK=$HOME/.ssh_auth_sock'
 
 # add PPID to ps
 alias psa='ps axwwfo user,pid,ppid,pcpu,pmem,vsz,rssize,tname,stat,start_time,bsdtime,command'
@@ -76,3 +79,6 @@ function resty() {
     . $HOME/.bashrc.d/resty/resty
     resty $*
 }
+
+# Short form for remotecopy
+alias rc="remotecopy -c"

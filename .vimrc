@@ -22,6 +22,17 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
+" detect if we're on redhat/centos < 6 and skip ultisnips
+" older versions don't have a new enough version of python
+if filereadable("/etc/redhat-release")
+    let line = readfile("/etc/redhat-release")[0]
+    let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
+    if s:majorver < 6
+        let did_UltiSnips_vim=1
+        let did_UltiSnips_vim_after=1
+    endif
+endif
+
 " from http://github.com/adamhjk/adam-vim
 " nicer status line
 "set laststatus=2
@@ -48,14 +59,8 @@ let g:surround_110 = "{noformat}\r{noformat}"
 " Navigate wrapped lines
 nnoremap j gj
 nnoremap k gk
-nnoremap $ g$
-nnoremap ^ g^
-nnoremap 0 g0
 vnoremap j gj
 vnoremap k gk
-vnoremap $ g$
-vnoremap ^ g^
-vnoremap 0 g0
 
 " always show 5 lines of context
 set scrolloff=5
@@ -148,6 +153,7 @@ noremap <leader>fr :FufMruFile<CR>
 noremap <leader>fl :FufMruFileInCwd<CR>
 noremap <leader>ft :FufTag<CR>
 noremap <leader>fb :FufBuffer<CR>
+noremap <leader>fc :FufRenewCache<CR>
 
 " sessionman.vim mappings
 noremap <leader>sa :SessionSaveAs<CR>
@@ -216,6 +222,13 @@ endif
 " let g:miniBufExplMapCTabSwitchBufs = 1     " control+(shift?)+tab cycle through buffers
 " let g:miniBufExplForceSyntaxEnable = 1     " Fix vim bug where buffers don't syntax
 
+if &diff
+    " silence syntastic
+    let g:loaded_syntastic_plugin = 1
+else
+    " nothing yet
+endif
+
 if filereadable(expand("~/.vimrc.local"))
     source ~/.vimrc.local
 endif
@@ -262,3 +275,9 @@ let g:solarized_termcolors=256
 "let g:solarized_visibility="high"
 colorscheme solarized
 
+" vimux config
+noremap <Leader>tp :PromptVimTmuxCommand<CR>
+noremap <Leader>tr :RunLastVimTmuxCommand<CR>
+noremap <Leader>ti :InspectVimTmuxRunner<CR>
+noremap <Leader>tx :CloseVimTmuxPanes<CR>
+noremap <Leader>tc :InterruptVimTmuxRunner<CR> 
