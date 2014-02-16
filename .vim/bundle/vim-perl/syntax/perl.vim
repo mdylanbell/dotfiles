@@ -1,8 +1,8 @@
 " Vim syntax file
 " Language:      Perl 5
 " Maintainer:    Andy Lester <andy@petdance.com>
-" Homepage:      http://github.com/petdance/vim-perl/tree/master
-" Bugs/requests: http://github.com/petdance/vim-perl/issues
+" Homepage:      http://github.com/vim-perl/vim-perl/tree/master
+" Bugs/requests: http://github.com/vim-perl/vim-perl/issues
 " Last Change:   2010-08-10
 " Contributors:  Andy Lester <andy@petdance.com>
 "                Hinrik Örn Sigurðsson <hinrik.sig@gmail.com>
@@ -28,6 +28,7 @@
 " unlet perl_fold_blocks
 " let perl_nofold_packages = 1
 " let perl_nofold_subs = 1
+" unlet perl_fold_anonymous_subs
 
 if exists("b:current_syntax")
   finish
@@ -94,7 +95,7 @@ syn match perlStatementTime		"\<\%(gmtime\|localtime\|time\)\>"
 
 syn match perlStatementMisc		"\<\%(warn\|formline\|reset\|scalar\|prototype\|lock\|tied\=\|untie\)\>"
 
-syn keyword perlTodo			TODO TBD FIXME XXX NOTE contained
+syn keyword perlTodo			TODO TODO: TBD TBD: FIXME FIXME: XXX XXX: NOTE NOTE: contained
 
 syn region perlStatementIndirObjWrap   matchgroup=perlStatementIndirObj start="\<\%(map\|grep\|sort\|printf\=\|say\|system\|exec\)\>\s*{" end="}" contains=@perlTop,perlGenericBlock
 
@@ -400,8 +401,13 @@ if exists("perl_fold")
     syn region perlPackageFold start="^package \S\+;\s*\%(#.*\)\=$" end="^1;\=\s*\%(#.*\)\=$" end="\n\+package"me=s-1 transparent fold keepend
   endif
   if !exists("perl_nofold_subs")
-    syn region perlSubFold     start="^\z(\s*\)\(\w\+.*=>\s\+\)\?\<sub\>.*[^};]$" end="^\z1};\?\s*\%(#.*\)\=$" transparent fold keepend
-    syn region perlSubFold start="^\z(\s*\)\<\%(BEGIN\|END\|CHECK\|INIT\|UNITCHECK\)\>.*[^};]$" end="^\z1}\s*$" transparent fold keepend
+    if exists("perl_fold_anonymous_subs") && perl_fold_anonymous_subs
+      syn region perlSubFold     start="^\z(\s*\).*\<sub\>.*[^};]$" end="^\z1}" transparent fold keepend
+      syn region perlSubFold start="^\z(\s*\)\<\(BEGIN\|END\|CHECK\|INIT\)\>.*[^};]$" end="^\z1}" transparent fold keepend
+    else
+      syn region perlSubFold     start="^\z(\s*\)\<sub\>.*[^};]$" end="^\z1}\s*\%(#.*\)\=$" transparent fold keepend
+      syn region perlSubFold start="^\z(\s*\)\<\%(BEGIN\|END\|CHECK\|INIT\|UNITCHECK\)\>.*[^};]$" end="^\z1}\s*$" transparent fold keepend
+    endif
   endif
 
   if exists("perl_fold_blocks")

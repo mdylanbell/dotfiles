@@ -6,17 +6,27 @@ set bs=2
 set history=100
 set showmode
 set incsearch
-syntax enable
 "set ignorecase
 set smartcase
 set expandtab smarttab
 
+" the famous leader character
+let mapleader = ','
+let maplocalleader = ","
+
 " for some reason this has to go in .vimrc
 let perl_fold = 1
+let perl_fold_anonymous_subs = 1
+
+set laststatus=2
+let g:airline_powerline_fonts = 1
 
 " configure syntastic
 let g:syntastic_enable_signs = 1
 let g:syntastic_auto_loc_list = 1
+let g:syntastic_mode_map = { 'mode': 'active',
+            \ 'passive_filetypes': ['puppet'] }
+nmap <leader>st :SyntasticToggleMode<CR>
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -32,6 +42,15 @@ if filereadable("/etc/redhat-release")
         let did_UltiSnips_vim_after=1
     endif
 endif
+
+" Easy searching within a range:
+" step 1: Visual highlight the lines to search
+" step 2: Type ,/
+" step 3: Type the pattern you wish to find and hit enter
+" bonus: Visual highlight a new area and just hit 'n' to search again
+vmap <leader>/ <Esc>/\%V
+" TODO: this one conflicts with mark.vim
+"map <leader>/ /\%V
 
 " from http://github.com/adamhjk/adam-vim
 " nicer status line
@@ -65,9 +84,6 @@ vnoremap k gk
 " always show 5 lines of context
 set scrolloff=5
 
-" the famous leader character
-let mapleader = ','
-
 set wildmenu
 
 " scroll up and down the page a little faster
@@ -87,15 +103,46 @@ noremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " use the octopress syntax for markdown files
 au BufNewFile,BufRead *.markdown setfiletype octopress
 
+" no default input
+let g:ctrlp_default_input = 0
+" set working dir starting at vim's working dir
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_mruf_relative = 1
+let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
+let g:ctrlp_prompt_mappings = { 
+  \ 'ToggleMRURelative()': ['<c-w>'],
+  \ 'PrtDeleteWord()':     ['<F2>']
+  \ }
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/](local|blib)$'
+  \ }
+let g:ctrlp_map = '<leader>ff'
+noremap <leader>fg :CtrlPRoot<CR>
+noremap <leader>fr :CtrlPMRU<CR>
+noremap <leader>fl :CtrlPMRU<CR>
+noremap <leader>ft :CtrlPTag<CR>
+noremap <leader>fb :CtrlPBuffer<CR>
+noremap <leader>fc :CtrlPClearCache<CR>
+
 " enable pathogen
 filetype off 
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
+set bg=dark
+"let g:solarized_termtrans = 1
+"let g:solarized_termcolors = &t_Co
+"colorscheme solarized
+colorscheme ir_black
+syntax enable
+
 " turn filetype goodness back on
 filetype on
 filetype plugin on
 filetype indent on
+
+" fold go files with syntax
+au FileType go setlocal foldmethod=syntax
 
 map <F2> :map<CR>
 nnoremap <F5> :GundoToggle<CR>
@@ -142,19 +189,6 @@ map ,cp :%w ! pbcopy<CR>
 
 " older versions of this file contain helpers for HTML, JSP and Java
 
-" fuzzy finder
-let g:fuf_modesDisable = [ 'mrucmd', ]
-let g:fuf_coveragefile_exclude = '\v\~$|blib|\.(o|exe|dll|bak|orig|swp)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
-let g:fuf_mrufile_exclude = '\v\~$|\.(o|exe|dll|bak|orig|sw[po])$|^(\/\/|\\\\|\/mnt\/|\/media\/)|svn-base$'
-let g:fuf_maxMenuWidth = 150
-"let g:fuf_previewHeight = 20
-noremap <leader>ff :FufCoverageFile<CR>
-noremap <leader>fr :FufMruFile<CR>
-noremap <leader>fl :FufMruFileInCwd<CR>
-noremap <leader>ft :FufTag<CR>
-noremap <leader>fb :FufBuffer<CR>
-noremap <leader>fc :FufRenewCache<CR>
-
 " sessionman.vim mappings
 noremap <leader>sa :SessionSaveAs<CR>
 noremap <leader>ss :SessionSave<CR>
@@ -173,6 +207,8 @@ endif
 
 " Always do vimdiff in vertical splits
 set diffopt+=vertical
+" and ignore whitespace
+"set diffopt+=iwhite
 
 " look for tags
 set tags=./tags;
@@ -229,6 +265,9 @@ else
     " nothing yet
 endif
 
+" allow writing files as root
+command! W silent w !sudo tee % > /dev/null
+
 if filereadable(expand("~/.vimrc.local"))
     source ~/.vimrc.local
 endif
@@ -276,8 +315,39 @@ let g:solarized_termcolors=256
 colorscheme solarized
 
 " vimux config
-noremap <Leader>tp :PromptVimTmuxCommand<CR>
-noremap <Leader>tr :RunLastVimTmuxCommand<CR>
-noremap <Leader>ti :InspectVimTmuxRunner<CR>
-noremap <Leader>tx :CloseVimTmuxPanes<CR>
-noremap <Leader>tc :InterruptVimTmuxRunner<CR> 
+if strlen($TMUX)
+    let tmuxver = system("tmux -V")
+    if matchstr(tmuxver, '1.8')
+        function! InterruptRunnerAndRunLastCommand()
+            :VimuxInterruptRunner
+            :VimuxRunLastCommand
+        endfunction
+
+        "let g:VimuxRunnerType = 'window'
+        "let g:VimuxUseNearest = 0
+
+        noremap <Leader>tp :VimuxPromptCommand<CR>
+        noremap <Leader>tr :VimuxRunLastCommand<CR>
+        noremap <Leader>tt :call InterruptRunnerAndRunLastCommand()<CR>
+        noremap <Leader>ti :VimuxInspectRunner<CR>
+        noremap <Leader>tx :VimuxCloseRunner<CR>
+        noremap <Leader>tc :VimuxInterruptRunner<CR>
+        noremap <Leader>tz :VimuxZoomRunner<CR>
+    else
+        noremap <Leader>tp :echo "Upgrade tmux to 1.8"<CR>
+    endif
+endif
+
+" sideways.vim
+nnoremap <c-h> :SidewaysLeft<cr>
+nnoremap <c-l> :SidewaysRight<cr>
+
+" pandoc
+nmap <leader>vv :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
+nmap <leader>vp :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
+
+" clojure rainbow parens
+au BufEnter *.clj RainbowParenthesesActivate
+au Syntax clojure RainbowParenthesesLoadRound
+au Syntax clojure RainbowParenthesesLoadSquare
+au Syntax clojure RainbowParenthesesLoadBraces

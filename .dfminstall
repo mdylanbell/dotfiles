@@ -1,6 +1,5 @@
-.ssh recurse
 README.md skip
-CHANGELOG.md skip
-t skip
+.ssh recurse
 .gittrees skip
 .nd skip
+css skip

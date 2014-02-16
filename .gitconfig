@@ -27,6 +27,9 @@
 	lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
     x = "!gitx"
 	wl = walklog
+	isunclean = "![ -n \"`git ls-files --modified --deleted --others --exclude-standard`\" ]"
+	serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
+	pr = "!f() { git fetch origin refs/pull/$1/head:pr/$1; } ; f"
 [merge]
 	tool = vimdiff
 [diff]
@@ -39,3 +42,5 @@
 	excludesfile = ~/.gitignore.global
 [github]
 	user = mdylanbell
+[include]
+	path = ~/.gitconfig.local

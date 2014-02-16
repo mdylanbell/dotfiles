@@ -10,10 +10,6 @@
 	url = https://github.com/micha/resty.git
 	path = .bashrc.d/resty
 	branch = master
-[subtree ".bashrc.d/z"]
-	url = https://github.com/rupa/z.git
-	path = .bashrc.d/z
-	branch = master
 [subtree ".vim/bundle/AutoTag"]
 	url = https://github.com/vim-scripts/AutoTag.git
 	path = .vim/bundle/AutoTag
@@ -78,10 +74,6 @@
 	url = https://github.com/tpope/vim-fugitive.git
 	path = .vim/bundle/vim-fugitive
 	branch = master
-[subtree ".vim/bundle/vim-markdown-preview"]
-	url = https://github.com/robgleeson/hammer.vim.git
-	path = .vim/bundle/vim-markdown-preview
-	branch = master
 [subtree ".vim/bundle/vim-octopress"]
 	url = https://github.com/tangledhelix/vim-octopress.git
 	path = .vim/bundle/vim-octopress
@@ -106,15 +98,75 @@
 	url = git://git.kitenet.net/moreutils
 	path = bin/moreutils
 	branch = master
+[subtree ".vim/bundle/vim-scala"]
+	url = https://github.com/derekwyatt/vim-scala.git
+	path = .vim/bundle/vim-scala
+	branch = master
+[subtree ".vim/bundle/sideways.vim"]
+	url = https://github.com/AndrewRadev/sideways.vim.git
+	path = .vim/bundle/sideways.vim
+	branch = master
+[subtree ".vim/bundle/linediff.vim"]
+	url = https://github.com/AndrewRadev/linediff.vim.git
+	path = .vim/bundle/linediff.vim
+	branch = master
+[subtree ".vim/bundle/vdebug"]
+	url = https://github.com/joonty/vdebug.git
+	path = .vim/bundle/vdebug
+	branch = master
+[subtree ".vim/bundle/vim-perl"]
+	url = https://github.com/vim-perl/vim-perl.git
+	path = .vim/bundle/vim-perl
+	branch = master
+[subtree "bin/outputdiff"]
+	url = git@github.com:justone/outputdiff.git
+	path = bin/outputdiff
+	branch = master
+[subtree ".vim/bundle/vim-pandoc"]
+	url = https://github.com/vim-pandoc/vim-pandoc.git
+	path = .vim/bundle/vim-pandoc
+	branch = master
+[subtree ".vim/bundle/ctrlp.vim"]
+	url = https://github.com/kien/ctrlp.vim.git
+	path = .vim/bundle/ctrlp.vim
+	branch = master
+[subtree ".vim/bundle/vim-airline"]
+	url = https://github.com/bling/vim-airline.git
+	path = .vim/bundle/vim-airline
+	branch = master
+[subtree ".vim/bundle/vim-clojure-static"]
+	url = https://github.com/guns/vim-clojure-static.git
+	path = .vim/bundle/vim-clojure-static
+	branch = master
+[subtree ".vim/bundle/vim-fireplace"]
+	url = https://github.com/tpope/vim-fireplace.git
+	path = .vim/bundle/vim-fireplace
+	branch = master
+[subtree ".vim/bundle/vim-golang"]
+	url = https://github.com/jnwhiteh/vim-golang.git
+	path = .vim/bundle/vim-golang
+	branch = master
+[subtree ".vim/bundle/vim-unstack"]
+	url = https://github.com/mattboehm/vim-unstack.git
+	path = .vim/bundle/vim-unstack
+	branch = master
+[subtree ".vim/bundle/vim-accordion"]
+	url = https://github.com/mattboehm/vim-accordion.git
+	path = .vim/bundle/vim-accordion
+	branch = master
 [subtree ".vim/bundle/vimux"]
 	url = https://github.com/benmills/vimux.git
 	path = .vim/bundle/vimux
 	branch = master
-[subtree ".vim/bundle/vim-perl"]
-	url = git@github.com:justone/vim-perl.git
-	path = .vim/bundle/vim-perl
-	branch = fold_sub_sugar
-[subtree ".vim/bundle/vim-scala"]
-	url = https://github.com/derekwyatt/vim-scala.git
-	path = .vim/bundle/vim-scala
+[subtree ".vim/bundle/rainbow_parentheses.vim"]
+	url = https://github.com/kien/rainbow_parentheses.vim.git
+	path = .vim/bundle/rainbow_parentheses.vim
+	branch = master
+[subtree ".vim/bundle/vim-sexp"]
+	url = https://github.com/guns/vim-sexp.git
+	path = .vim/bundle/vim-sexp
+	branch = master
+[subtree ".vim/bundle/vim-sexp-mappings-for-regular-people"]
+	url = https://github.com/tpope/vim-sexp-mappings-for-regular-people.git
+	path = .vim/bundle/vim-sexp-mappings-for-regular-people
 	branch = master

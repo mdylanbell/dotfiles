@@ -1,0 +1,56 @@
+#!/bin/bash
+
+function printhelp {
+    echo "usage: $0 [-i|--ip] [-v|--vim]"
+    echo "    -i, --ip              use IP address instead of hostname"
+    echo "    -v, --vim             output in VIM compatible format"
+    echo "    -h, --help            output this help message"
+    exit 1 
+}
+
+PARSEDARGS=$(getopt --long ip,vim,help -o ivh -n $0 -- "$@")
+
+if [ $? != 0 ]; then 
+    printhelp
+fi
+
+eval set -- "$PARSEDARGS"
+
+TARGETTYPE=host
+OUTPUTTYPE=scp
+while true ; do
+    case "$1" in
+        -i|--ip) TARGETTYPE=ip; shift ;;
+        -v|--vim) OUTPUTTYPE=vim; shift ;;
+        -h|--help) printhelp; shift ;;
+        --) shift ; break ;;
+    esac
+done
+
+if [[ $TARGETTYPE = 'host' ]]; then
+    TARGET=$(hostname -f)
+else
+    command -v getip &>/dev/null || {
+        echo "Unable to find the 'getip' script.  Can't figure out IP.";
+        exit 1;
+    }
+    TARGET=$(getip)
+fi
+
+if [[ $# == 1 ]]; then
+    ARG=$1
+    if [ "${ARG:0:1}" == "/" ]; then
+        SUBPATH=$*
+    else
+        SUBPATH=$PWD/$*
+    fi
+else
+    SUBPATH=$PWD
+fi
+
+if [[ $OUTPUTTYPE = 'scp' ]]; then
+    echo $TARGET:$SUBPATH
+else
+    echo scp://$TARGET/$SUBPATH
+fi
+
