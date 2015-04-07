@@ -14,10 +14,6 @@
 	url = https://github.com/vim-scripts/AutoTag.git
 	path = .vim/bundle/AutoTag
 	branch = master
-[subtree ".vim/bundle/FuzzyFinder"]
-	url = https://github.com/vim-scripts/FuzzyFinder.git
-	path = .vim/bundle/FuzzyFinder
-	branch = master
 [subtree ".vim/bundle/L9"]
 	url = https://github.com/vim-scripts/L9.git
 	path = .vim/bundle/L9
@@ -33,10 +29,6 @@
 [subtree ".vim/bundle/bufkill"]
 	url = https://github.com/vim-scripts/bufkill.vim.git
 	path = .vim/bundle/bufkill
-	branch = master
-[subtree ".vim/bundle/conque-shell"]
-	url = https://github.com/vim-scripts/Conque-Shell.git
-	path = .vim/bundle/conque-shell
 	branch = master
 [subtree ".vim/bundle/gundo"]
 	url = https://github.com/sjl/gundo.vim.git
@@ -62,10 +54,6 @@
 	url = https://github.com/SirVer/ultisnips.git
 	path = .vim/bundle/ultisnips
 	branch = master
-[subtree ".vim/bundle/vcscommand"]
-	url = git://repo.or.cz/vcscommand.git
-	path = .vim/bundle/vcscommand
-	branch = master
 [subtree ".vim/bundle/vim-colors-solarized"]
 	url = https://github.com/altercation/vim-colors-solarized.git
 	path = .vim/bundle/vim-colors-solarized
@@ -89,10 +77,6 @@
 [subtree ".vim/bundle/vim-unimpaired"]
 	url = https://github.com/tpope/vim-unimpaired.git
 	path = .vim/bundle/vim-unimpaired
-	branch = master
-[subtree ".vim/bundle/YAIFA"]
-	url = https://github.com/Raimondi/YAIFA.git
-	path = .vim/bundle/YAIFA
 	branch = master
 [subtree "bin/moreutils"]
 	url = git://git.kitenet.net/moreutils
@@ -169,4 +153,48 @@
 [subtree ".vim/bundle/vim-sexp-mappings-for-regular-people"]
 	url = https://github.com/tpope/vim-sexp-mappings-for-regular-people.git
 	path = .vim/bundle/vim-sexp-mappings-for-regular-people
+	branch = master
+[subtree ".vim/bundle/vim-surround"]
+	url = https://github.com/tpope/vim-surround.git
+	path = .vim/bundle/vim-surround
+	branch = master
+[subtree ".vim/bundle/vim-extradite"]
+	url = https://github.com/int3/vim-extradite.git
+	path = .vim/bundle/vim-extradite
+	branch = master
+[subtree ".vim/bundle/vim-sleuth"]
+	url = https://github.com/tpope/vim-sleuth.git
+	path = .vim/bundle/vim-sleuth
+	branch = master
+[subtree ".vim/bundle/vim-dispatch"]
+	url = https://github.com/tpope/vim-dispatch.git
+	path = .vim/bundle/vim-dispatch
+	branch = master
+[subtree ".vim/bundle/vim-projectionist"]
+	url = https://github.com/tpope/vim-projectionist.git
+	path = .vim/bundle/vim-projectionist
+	branch = master
+[subtree ".vim/bundle/vim-leiningen"]
+	url = https://github.com/tpope/vim-leiningen.git
+	path = .vim/bundle/vim-leiningen
+	branch = master
+[subtree ".vim/bundle/vim-abolish"]
+	url = https://github.com/tpope/vim-abolish.git
+	path = .vim/bundle/vim-abolish
+	branch = master
+[subtree ".vim/bundle/vim-commentary"]
+	url = https://github.com/tpope/vim-commentary.git
+	path = .vim/bundle/vim-commentary
+	branch = master
+[subtree ".vim/bundle/vim-eunuch"]
+	url = https://github.com/tpope/vim-eunuch.git
+	path = .vim/bundle/vim-eunuch
+	branch = master
+[subtree ".vim/bundle/vim-pipe"]
+	url = https://github.com/krisajenkins/vim-pipe.git
+	path = .vim/bundle/vim-pipe
+	branch = master
+[subtree ".vim/bundle/cljsfold.vim"]
+	url = https://github.com/gberenfield/cljfold.vim.git
+	path = .vim/bundle/cljsfold.vim
 	branch = master

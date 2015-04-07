@@ -13,6 +13,8 @@ set expandtab smarttab
 " the famous leader character
 let mapleader = ','
 let maplocalleader = ","
+" map backslash to comma so reversing line search is fast
+nnoremap \ ,
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
@@ -141,8 +143,13 @@ filetype on
 filetype plugin on
 filetype indent on
 
+" settings for go
 " fold go files with syntax
 au FileType go setlocal foldmethod=syntax
+au FileType go autocmd BufWritePre <buffer> Fmt
+if executable("goimports")
+    let g:gofmt_command = 'goimports'
+endif
 
 map <F2> :map<CR>
 nnoremap <F5> :GundoToggle<CR>
@@ -317,14 +324,28 @@ colorscheme solarized
 " vimux config
 if strlen($TMUX)
     let tmuxver = system("tmux -V")
-    if matchstr(tmuxver, '1.8')
+    if matchstr(tmuxver, '1.8') || matchstr(tmuxver, '1.9')
         function! InterruptRunnerAndRunLastCommand()
             :VimuxInterruptRunner
             :VimuxRunLastCommand
         endfunction
 
-        "let g:VimuxRunnerType = 'window'
-        "let g:VimuxUseNearest = 0
+        let g:VimuxRunnerType = 'pane'
+        let g:VimuxUseNearest = 1
+
+        function! ToggleVimuxType()
+            if g:VimuxRunnerType == 'window'
+                let g:VimuxRunnerType = 'pane'
+                let g:VimuxUseNearest = 1
+                echo "VimuxType -> pane"
+            else
+                call VimuxCloseRunner()
+                let g:VimuxRunnerType = 'window'
+                let g:VimuxUseNearest = 0
+                echo "VimuxType -> window"
+            end
+        endfunction
+        command! ToggleVimuxType call ToggleVimuxType()
 
         noremap <Leader>tp :VimuxPromptCommand<CR>
         noremap <Leader>tr :VimuxRunLastCommand<CR>
@@ -339,8 +360,8 @@ if strlen($TMUX)
 endif
 
 " sideways.vim
-nnoremap <c-h> :SidewaysLeft<cr>
-nnoremap <c-l> :SidewaysRight<cr>
+nnoremap <leader>h :SidewaysLeft<cr>
+nnoremap <leader>l :SidewaysRight<cr>
 
 " pandoc
 nmap <leader>vv :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
@@ -348,6 +369,17 @@ nmap <leader>vp :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalon
 
 " clojure rainbow parens
 au BufEnter *.clj RainbowParenthesesActivate
+au BufEnter *.cljs RainbowParenthesesActivate
 au Syntax clojure RainbowParenthesesLoadRound
 au Syntax clojure RainbowParenthesesLoadSquare
 au Syntax clojure RainbowParenthesesLoadBraces
+
+" support mapping from old version of vim-surround
+xmap s <Plug>VSurround
+
+" configure vim-pipe
+let g:vimpipe_invoke_map="<leader>w"
+let g:vimpipe_close_map="<leader>W"
+
+" configure clojure folding
+let g:clojure_foldwords = "defn,defmacro,defmethod"
