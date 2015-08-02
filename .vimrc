@@ -97,10 +97,10 @@ map <leader>d :qa<CR>
 
 " for editing files next to the open one
 " http://vimcasts.org/episodes/the-edit-command/
-noremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
-noremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
-noremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
-noremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+noremap <leader>ew :e <C-R>=expand("%:.:h") . "/" <CR>
+noremap <leader>es :sp <C-R>=expand("%:.:h") . "/" <CR>
+noremap <leader>ev :vsp <C-R>=expand("%:.:h") . "/" <CR>
+noremap <leader>et :tabe <C-R>=expand("%:.:h") . "/" <CR>
 
 " use the octopress syntax for markdown files
 au BufNewFile,BufRead *.markdown setfiletype octopress
@@ -111,7 +111,7 @@ let g:ctrlp_default_input = 0
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_mruf_relative = 1
 let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
-let g:ctrlp_prompt_mappings = { 
+let g:ctrlp_prompt_mappings = {
   \ 'ToggleMRURelative()': ['<c-w>'],
   \ 'PrtDeleteWord()':     ['<F2>']
   \ }
@@ -127,7 +127,7 @@ noremap <leader>fb :CtrlPBuffer<CR>
 noremap <leader>fc :CtrlPClearCache<CR>
 
 " enable pathogen
-filetype off 
+filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
@@ -199,7 +199,7 @@ map ,cp :%w ! pbcopy<CR>
 " sessionman.vim mappings
 noremap <leader>sa :SessionSaveAs<CR>
 noremap <leader>ss :SessionSave<CR>
-noremap <leader>so :SessionOpen 
+noremap <leader>so :SessionOpen
 noremap <leader>sl :SessionList<CR>
 noremap <leader>sc :SessionClose<CR>
 
@@ -383,3 +383,23 @@ let g:vimpipe_close_map="<leader>W"
 
 " configure clojure folding
 let g:clojure_foldwords = "defn,defmacro,defmethod"
+
+let g:pymode_options = 0
+let g:pymode_lint_options_mccabe = { 'complexity': 20 }
+
+let g:vim_json_syntax_conceal = 0
+au FileType json setlocal foldmethod=syntax
+
+function! OpenURL(url)
+  if has("unix")
+    let s:uname = system("uname")
+    if s:uname == "Darwin\n"
+      call system("open ".a:url)
+    else
+      call pmb#openurl(a:url)
+    endif
+  endif
+endfunction
+
+" open web browser, mostly for vim-fugitive
+command! -nargs=1 Browse call OpenURL(<f-args>)
