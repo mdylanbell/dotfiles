@@ -202,3 +202,11 @@
 	url = git@github.com:justone/vim-pmb.git
 	path = .vim/bundle/vim-pmb
 	branch = master
+[subtree ".vim/bundle/vim-obsession"]
+	url = https://github.com/tpope/vim-obsession.git
+	path = .vim/bundle/vim-obsession
+	branch = master
+[subtree ".vim/bundle/vim-ansible-yaml"]
+	url = https://github.com/chase/vim-ansible-yaml.git
+	path = .vim/bundle/vim-ansible-yaml
+	branch = master
