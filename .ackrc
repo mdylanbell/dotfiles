@@ -1,4 +1,6 @@
 --type-set
-puppet=.pp,.erb
+puppet:ext:pp,erb
 --type-set
-erb=.erb
+erb:ext:erb
+--type-set
+ember:ext:em

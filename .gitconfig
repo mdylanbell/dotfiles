@@ -49,6 +49,6 @@
 [include]
 	path = ~/.gitconfig.local
 [credential "https://github.com"]
-	username = justone
+	username = mdylanbell
 [credential]
 	helper = cache --timeout=3600
