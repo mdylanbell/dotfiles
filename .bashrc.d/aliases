@@ -27,17 +27,13 @@ alias grep='grep --exclude="*.svn*" '
 if [ "$OS" == "Darwin" ]
 then
     alias vi='mvim -v'
-else
-    alias vi=vim
 fi
-
-# shortcut to finding files in vim
-alias viff='vim -c ":CtrlP"'
-alias vifl='vim -c ":CtrlPMRU"'
-alias vifr='vim -c ":CtrlPMRU"'
 
 # fixup ssh-agent so tmux in tmux works
 alias fixagent='[[ ! -e "$HOME/.ssh_auth_sock" ]] && rm -f $HOME/.ssh_auth_sock && ln -s $SSH_AUTH_SOCK $HOME/.ssh_auth_sock && export SSH_AUTH_SOCK=$HOME/.ssh_auth_sock'
+
+# tmux helper aliases
+alias tmux-pane="tmux list-panes | grep $TMUX_PANE | cut -d: -f1"
 
 # add PPID to ps
 alias psa='ps axwwfo user,pid,ppid,pcpu,pmem,vsz,rssize,tname,stat,start_time,bsdtime,command'
@@ -97,6 +93,9 @@ else
     alias rcl="fc -l -n -1 -1 | sed -r 's/^\s+//' | rc"
 fi
 
+# setting PMB_KEY in tmux env
+alias ptk='tmux set-environment PMB_KEY $(PMB_KEY= pmb get-key)'
+
 # strip ansi color codes
 alias nocolor="perl -pe 's/\e\[?.*?[\@-~]//g'"
 
@@ -104,6 +103,7 @@ alias nocolor="perl -pe 's/\e\[?.*?[\@-~]//g'"
 alias odn="outputdiff --new"
 alias odc="outputdiff --compare"
 alias odv="outputdiff --compare --no-diff && outputdiff --last --vimdiff"
+alias odu="outputdiff --undo"
 
 # deactivate local::lib
 alias deactivate_ll='eval $(perl -Mlocal::lib=--deactivate)'

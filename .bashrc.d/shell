@@ -11,14 +11,19 @@ shopt -s checkwinsize
 # don't blindly execute history expansions, but edit instead
 shopt -s histverify
 
+# append to history file when exit
+shopt -s histappend
+
 # when tab completing, don't show dotfiles
 if [ -n "$PS1" ]; then
     bind 'set match-hidden-files off'
 fi
 
+export HISTCONTROL=ignoredups:erasedups
+
 # capture more history
-export HISTSIZE=5000
-export HISTFILESIZE=5000
+export HISTSIZE=25000
+export HISTFILESIZE=25000
 
 export EDITOR=vim
 
@@ -30,11 +35,22 @@ then
     export EDITOR='mvim -v'
 fi
 
-function reconnect_ssh_agent() {   
+function reconnect_ssh_agent() {
     if [[ -n $TMUX ]]; then
         NEW_SSH_AUTH_SOCK=`tmux showenv|grep ^SSH_AUTH_SOCK|cut -d = -f 2`
-        if [[ -n $NEW_SSH_AUTH_SOCK ]] && [[ -S $NEW_SSH_AUTH_SOCK ]]; then 
-            SSH_AUTH_SOCK=$NEW_SSH_AUTH_SOCK  
+        if [[ -n $NEW_SSH_AUTH_SOCK ]] && [[ -S $NEW_SSH_AUTH_SOCK ]]; then
+            SSH_AUTH_SOCK=$NEW_SSH_AUTH_SOCK
+        fi
+    fi
+}
+
+function sync_pmb_key() {
+    if [[ -n $TMUX ]]; then
+        NEW_PMB_KEY=`tmux showenv|grep ^PMB_KEY|cut -d = -f 2`
+        if [[ -n $NEW_SSH_AUTH_SOCK ]]; then
+            PMB_KEY=$NEW_PMB_KEY
+        else
+            PMB_KEY=$NEW_PMB_KEY
         fi
     fi
 }

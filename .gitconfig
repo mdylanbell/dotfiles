@@ -34,6 +34,7 @@
 	isunclean = "![ -n \"`git ls-files --modified --deleted --others --exclude-standard`\" ]"
 	serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
 	pr = "!f() { git fetch origin pull/$1/head:pr-$1 && git checkout pr-$1; }; f"
+	db = delete-branch
 [merge]
 	tool = vimdiff
 [diff]
@@ -41,7 +42,7 @@
 [difftool]
 	prompt = false
 [push]
-	default = matching
+	default = simple
 [core]
 	excludesfile = ~/.gitignore.global
 [github]
@@ -52,3 +53,5 @@
 	username = mdylanbell
 [credential]
 	helper = cache --timeout=3600
+[log]
+	date = iso8601

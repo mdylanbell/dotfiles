@@ -1,5 +1,8 @@
 set nocp
-set ai to shell=/bin/bash terse nowarn sm ruler redraw sw=4 ts=4
+set ai to shell=/bin/bash terse nowarn sm ruler sw=4 ts=4
+if !has('nvim')
+  set redraw
+endif
 "set noremap
 set hls
 set bs=2
@@ -26,8 +29,9 @@ let g:airline_powerline_fonts = 1
 " configure syntastic
 let g:syntastic_enable_signs = 1
 let g:syntastic_auto_loc_list = 1
+let g:syntastic_rst_checkers = ['sphinx']
 let g:syntastic_mode_map = { 'mode': 'active',
-            \ 'passive_filetypes': ['puppet'] }
+            \ 'passive_filetypes': ['puppet', 'rst'] }
 nmap <leader>st :SyntasticToggleMode<CR>
 
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -128,7 +132,7 @@ noremap <leader>fc :CtrlPClearCache<CR>
 
 let g:pymode_options = 0
 let g:pymode_run = 0
-let g:pymode_lint_checkers = ['pyflakes', 'pep8']
+let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'pylint']
 let g:pymode_rope_complete_on_dot = 0
 
 " enable pathogen
@@ -371,6 +375,10 @@ nnoremap <leader>l :SidewaysRight<cr>
 " pandoc
 nmap <leader>vv :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
 nmap <leader>vp :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
+
+" vim-pandoc and vim-pandoc-syntax
+let g:pandoc#folding#fdc=0
+let g:pandoc#syntax#conceal#urls=1
 
 " clojure rainbow parens
 au BufEnter *.clj RainbowParenthesesActivate
