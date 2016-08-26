@@ -143,6 +143,7 @@ call pathogen#helptags()
 set bg=dark
 let g:solarized_termtrans = 1
 "let g:solarized_termcolors = &t_Co
+let g:solarized_termcolors = 256
 colorscheme solarized
 syntax enable
 
@@ -322,12 +323,6 @@ nnoremap <leader><Space> :nohls<CR>
 " easy tab navigation
 nnoremap <silent> <C-N> :tabnext<CR>
 nnoremap <silent> <C-P> :tabprev<CR>
-
-set background=light
-let g:solarized_termcolors=256
-"let g:solarized_termtrans=1
-"let g:solarized_visibility="high"
-colorscheme solarized
 
 " vimux config
 if strlen($TMUX)
