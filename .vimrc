@@ -141,10 +141,9 @@ call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
 set bg=dark
-"let g:solarized_termtrans = 1
+let g:solarized_termtrans = 1
 "let g:solarized_termcolors = &t_Co
-"colorscheme solarized
-colorscheme ir_black
+colorscheme solarized
 syntax enable
 
 " turn filetype goodness back on
