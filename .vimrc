@@ -2,6 +2,8 @@ set nocp
 set ai to shell=/bin/bash terse nowarn sm ruler sw=4 ts=4
 if !has('nvim')
   set redraw
+else
+  set inccommand=nosplit
 endif
 "set noremap
 set hls
@@ -19,6 +21,10 @@ let maplocalleader = ","
 " map backslash to comma so reversing line search is fast
 nnoremap \ ,
 
+if filereadable(expand("~/.vimrc.local"))
+    source ~/.vimrc.local
+endif
+
 " for some reason this has to go in .vimrc
 let perl_fold = 1
 let perl_fold_anonymous_subs = 1
@@ -26,12 +32,40 @@ let perl_fold_anonymous_subs = 1
 set laststatus=2
 let g:airline_powerline_fonts = 1
 
+" for gitgutter
+set updatetime=100
+
+" Enable global session caching (for Taboo)
+set sessionoptions+=globals
+" add tab number to tabs
+let g:taboo_renamed_tab_format = " %N [%l]%m "
+let g:taboo_tab_format = " %N %f%m "
+
+" show current function/module/etc in airline
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#tagbar#flags = 'f'
+let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
+let g:airline_symbols = {}
+let g:airline_symbols.branch = ''
+
 " configure syntastic
 let g:syntastic_enable_signs = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_rst_checkers = ['sphinx']
 let g:syntastic_mode_map = { 'mode': 'active',
-            \ 'passive_filetypes': ['puppet', 'rst'] }
+            \ 'passive_filetypes': ['python', 'puppet', 'rst'] }
 nmap <leader>st :SyntasticToggleMode<CR>
 
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -48,6 +82,14 @@ if filereadable("/etc/redhat-release")
         let did_UltiSnips_vim_after=1
     endif
 endif
+
+" settings for mark.vim
+let g:mwDefaultHighlightingPalette = 'maximum'
+
+" settings for gist-vim
+let g:gist_browser_command = 'pmb openurl %URL%'
+let g:gist_clip_command = 'pmb openurl'
+let g:gist_open_browser_after_post = 0
 
 " Easy searching within a range:
 " step 1: Visual highlight the lines to search
@@ -120,7 +162,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtDeleteWord()':     ['<F2>']
   \ }
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](local|blib)$'
+  \ 'dir':  '\v[\/](local|blib|target|node_modules)$'
   \ }
 let g:ctrlp_map = '<leader>ff'
 noremap <leader>fg :CtrlPRoot<CR>
@@ -135,9 +177,17 @@ let g:pymode_run = 0
 let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'pylint']
 let g:pymode_rope_complete_on_dot = 0
 
+" configure vim-table-mode
+let g:table_mode_realign_map = '<Leader>tR'
+au FileType rst let g:table_mode_header_fillchar='='
+au FileType rst let g:table_mode_corner_corner='+'
+au FileType markdown let g:table_mode_corner='|'
+au FileType pandoc let g:table_mode_corner='|'
+
 " enable pathogen
 filetype off
-call pathogen#runtime_append_all_bundles()
+" let g:pathogen_blacklist = ['tagbar']
+call pathogen#infect()
 call pathogen#helptags()
 
 set bg=dark
@@ -152,13 +202,17 @@ filetype on
 filetype plugin on
 filetype indent on
 
+" settings for javascript/jsx
+au FileType javascript setlocal foldmethod=syntax
+au FileType javascript setlocal foldnestmax=1
+
 " settings for go
 " fold go files with syntax
 au FileType go setlocal foldmethod=syntax
-au FileType go autocmd BufWritePre <buffer> Fmt
-if executable("goimports")
-    let g:gofmt_command = 'goimports'
-endif
+au FileType go setlocal foldnestmax=1
+" use goimports for formatting
+let g:go_fmt_command = "goimports"
+let g:go_fmt_experimental=1
 
 map <F2> :map<CR>
 nnoremap <F5> :GundoToggle<CR>
@@ -167,6 +221,15 @@ map <F8> :set paste!<CR>
 map <F10> :diffu<CR>
 map <F11> :echo 'Current change: ' . changenr()<CR>
 map <F12> :noh<CR>
+
+" a few extra mappings for fireplace
+" evaluate top level form
+au BufEnter *.clj nnoremap <buffer> cpt :Eval<CR>
+" show last evaluation in temp file
+au BufEnter *.clj nnoremap <buffer> cpl :Last<CR>
+
+" remove trailing whitespace when writing
+autocmd BufWritePre * :%s/\s\+$//e
 
 map <leader>nt :NERDTreeToggle<CR>
 map <leader>nf :NERDTreeFind<CR>
@@ -284,10 +347,6 @@ endif
 " allow writing files as root
 command! W silent w !sudo tee % > /dev/null
 
-if filereadable(expand("~/.vimrc.local"))
-    source ~/.vimrc.local
-endif
-
 " http://stackoverflow.com/questions/7400743/create-a-mapping-for-vims-command-line-that-escapes-the-contents-of-a-register-b
 cnoremap <c-x> <c-r>=<SID>PasteEscaped()<cr>
 function! s:PasteEscaped()
@@ -326,8 +385,8 @@ nnoremap <silent> <C-P> :tabprev<CR>
 
 " vimux config
 if strlen($TMUX)
-    let tmuxver = system("tmux -V")
-    if matchstr(tmuxver, '1.8') || matchstr(tmuxver, '1.9')
+    let tmuxver = str2float(matchstr(system("tmux -V"), '\d\d*\.\d\d*'))
+    if tmuxver >= 1.8
         function! InterruptRunnerAndRunLastCommand()
             :VimuxInterruptRunner
             :VimuxRunLastCommand
@@ -352,34 +411,53 @@ if strlen($TMUX)
 
         noremap <Leader>tp :VimuxPromptCommand<CR>
         noremap <Leader>tr :VimuxRunLastCommand<CR>
-        noremap <Leader>tt :call InterruptRunnerAndRunLastCommand()<CR>
+        noremap <Leader>ty :call InterruptRunnerAndRunLastCommand()<CR>
         noremap <Leader>ti :VimuxInspectRunner<CR>
         noremap <Leader>tx :VimuxCloseRunner<CR>
         noremap <Leader>tc :VimuxInterruptRunner<CR>
         noremap <Leader>tz :VimuxZoomRunner<CR>
     else
-        noremap <Leader>tp :echo "Upgrade tmux to 1.8"<CR>
+        noremap <Leader>tp :echo "Upgrade tmux to at least 1.8"<CR>
     endif
 endif
+
+" vim-test config
+if strlen($TMUX)
+  let test#strategy = "vimux"
+elseif has('nvim')
+  let test#strategy = "neovim"
+endif
+let g:test#python#pytest#options = '--verbose'
+noremap <leader>tn :TestNearest<CR>
+noremap <leader>tf :TestFile<CR>
+noremap <leader>ta :TestSuite<CR>
+noremap <leader>tl :TestLast<CR>
 
 " sideways.vim
 nnoremap <leader>h :SidewaysLeft<cr>
 nnoremap <leader>l :SidewaysRight<cr>
 
 " pandoc
-nmap <leader>vv :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
-nmap <leader>vp :!pandoc -t html -T 'Pandoc Generated - "%"' --smart --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
+nmap <leader>vv :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
+nmap <leader>vtv :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --toc --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
+nmap <leader>vp :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
+nmap <leader>vtp :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --toc --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
 
 " vim-pandoc and vim-pandoc-syntax
 let g:pandoc#folding#fdc=0
-let g:pandoc#syntax#conceal#urls=1
+" let g:pandoc#syntax#conceal#urls=1
 
 " clojure rainbow parens
-au BufEnter *.clj RainbowParenthesesActivate
-au BufEnter *.cljs RainbowParenthesesActivate
-au Syntax clojure RainbowParenthesesLoadRound
-au Syntax clojure RainbowParenthesesLoadSquare
-au Syntax clojure RainbowParenthesesLoadBraces
+let g:rainbow_active = 1
+let g:rainbow_conf = {
+      \  'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+      \  'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+      \  'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+      \  'separately': {
+      \      '*': 0,
+      \      'clojure': {},
+      \  }
+      \}
 
 " support mapping from old version of vim-surround
 xmap s <Plug>VSurround
@@ -389,7 +467,7 @@ let g:vimpipe_invoke_map="<leader>w"
 let g:vimpipe_close_map="<leader>W"
 
 " configure clojure folding
-let g:clojure_foldwords = "defn,defmacro,defmethod"
+let g:clojure_foldwords = "def,defn,defmacro,defmethod,defschema,defprotocol,defrecord"
 
 let g:vim_json_syntax_conceal = 0
 au FileType json setlocal foldmethod=syntax
