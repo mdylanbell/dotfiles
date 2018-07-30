@@ -4,3 +4,16 @@ puppet:ext:pp,erb
 erb:ext:erb
 --type-set
 ember:ext:em
+
+--ignore-dir
+node_modules
+--ignore-dir
+bower_components
+--ignore-dir
+tmp
+--ignore-dir
+temp
+--ignore-dir
+log
+--ignore-dir
+vendor
