@@ -71,7 +71,7 @@ alias ss="sudo strace -s 1024 -p "
 alias ipt='sudo iptables -nvL'
 
 # forget history for this session
-alias nvm="export HISTFILE=/dev/null"
+#alias nvm="export HISTFILE=/dev/null"
 
 # alias to load resty
 # resty itself will redefine this function
