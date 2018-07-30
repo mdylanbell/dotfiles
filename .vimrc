@@ -192,8 +192,7 @@ call pathogen#helptags()
 
 set bg=dark
 let g:solarized_termtrans = 1
-"let g:solarized_termcolors = &t_Co
-let g:solarized_termcolors = 256
+let g:solarized_termcolors = &t_Co
 colorscheme solarized
 syntax enable
 
