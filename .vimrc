@@ -61,12 +61,23 @@ let g:airline_symbols = {}
 let g:airline_symbols.branch = ''
 
 " configure syntastic
-let g:syntastic_enable_signs = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_rst_checkers = ['sphinx']
-let g:syntastic_mode_map = { 'mode': 'active',
-            \ 'passive_filetypes': ['python', 'puppet', 'rst'] }
-nmap <leader>st :SyntasticToggleMode<CR>
+"let g:syntastic_enable_signs = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_rst_checkers = ['sphinx']
+"let g:syntastic_mode_map = { 'mode': 'active',
+"            \ 'passive_filetypes': ['python', 'puppet', 'rst'] }
+"nmap <leader>st :SyntasticToggleMode<CR>
+
+" configure ale
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_filetype_changed = 1
+let g:ale_lint_on_text_changed = 0
+let g:ale_open_list = 1
+let g:ale_set_highlights = 1
+let g:ale_set_signs = 1
+let g:ale_echo_cursor = 1
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
