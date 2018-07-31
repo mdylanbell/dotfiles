@@ -23,6 +23,10 @@ function clearkey() {
 # let's not grep the svn dir
 alias grep='grep --exclude="*.svn*" '
 
+# alias for ignored-host-key ssh/scp
+alias sshn="ssh -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+alias scpn='scp -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+
 # no vi please
 if [ "$OS" == "Darwin" ]
 then
@@ -57,15 +61,8 @@ alias t='./Build test --test-files '
 alias tv='./Build test --verbose 1 --test-files '
 alias tc='./Build testcover'
 
-# keychain
-alias kcf="keychain --inherit any --quiet"
-alias kcr=". ~/.keychain/\$HOSTNAME-sh"
-
 # cleaning up downloads folder
 alias clean_downloads="find ~/Downloads -mtime +30 -maxdepth 1 -print -exec rmtrash '{}' ';'"
-
-# one line webserver
-alias olw="python -m SimpleHTTPServer"
 
 # make it easy to strace quickly
 alias ss="sudo strace -s 1024 -p "
@@ -74,7 +71,7 @@ alias ss="sudo strace -s 1024 -p "
 alias ipt='sudo iptables -nvL'
 
 # forget history for this session
-alias nvm="export HISTFILE=/dev/null"
+#alias nvm="export HISTFILE=/dev/null"
 
 # alias to load resty
 # resty itself will redefine this function

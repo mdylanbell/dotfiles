@@ -273,7 +273,11 @@ def _undo_to(n):
 
 INLINE_HELP = '''\
 " Gundo for %s (%d)
+<<<<<<< HEAD
 " j/k  - move between undo states
+=======
+" %s/%s  - move between undo states
+>>>>>>> nate/personal
 " p    - preview diff of selected and current states
 " <cr> - revert to selected state
 
@@ -336,7 +340,11 @@ def _fmt_time(t):
 def _output_preview_text(lines):
     _goto_window_for_buffer_name('__Gundo_Preview__')
     vim.command('setlocal modifiable')
+<<<<<<< HEAD
     vim.current.buffer[:] = lines
+=======
+    vim.current.buffer[:] = [line.rstrip('\n') for line in lines]
+>>>>>>> nate/personal
     vim.command('setlocal nomodifiable')
 
 def _generate_preview_diff(current, node_before, node_after):
@@ -361,7 +369,11 @@ def _generate_preview_diff(current, node_before, node_after):
 
         before_name = 'Original'
         before_time = ''
+<<<<<<< HEAD
         after_name = node_after.n
+=======
+        after_name = str(node_after.n)
+>>>>>>> nate/personal
         after_time = _fmt_time(node_after.time)
     else:
         _undo_to(node_before.n)
@@ -370,15 +382,25 @@ def _generate_preview_diff(current, node_before, node_after):
         _undo_to(node_after.n)
         after_lines = vim.current.buffer[:]
 
+<<<<<<< HEAD
         before_name = node_before.n
         before_time = _fmt_time(node_before.time)
         after_name = node_after.n
+=======
+        before_name = str(node_before.n)
+        before_time = _fmt_time(node_before.time)
+        after_name = str(node_after.n)
+>>>>>>> nate/personal
         after_time = _fmt_time(node_after.time)
 
     _undo_to(current)
 
     return list(difflib.unified_diff(before_lines, after_lines,
+<<<<<<< HEAD
                                      before_name, after_name,
+=======
+                                     str(before_name), str(after_name),
+>>>>>>> nate/personal
                                      before_time, after_time))
 
 def _generate_change_preview_diff(current, node_before, node_after):
@@ -390,15 +412,25 @@ def _generate_change_preview_diff(current, node_before, node_after):
     _undo_to(node_after.n)
     after_lines = vim.current.buffer[:]
 
+<<<<<<< HEAD
     before_name = node_before.n or 'Original'
     before_time = node_before.time and _fmt_time(node_before.time) or ''
     after_name = node_after.n or 'Original'
+=======
+    before_name = str(node_before.n or 'Original')
+    before_time = node_before.time and _fmt_time(node_before.time) or ''
+    after_name = str(node_after.n or 'Original')
+>>>>>>> nate/personal
     after_time = node_after.time and _fmt_time(node_after.time) or ''
 
     _undo_to(current)
 
     return list(difflib.unified_diff(before_lines, after_lines,
+<<<<<<< HEAD
                                      before_name, after_name,
+=======
+                                     str(before_name), str(after_name),
+>>>>>>> nate/personal
                                      before_time, after_time))
 
 def GundoRenderGraph():
@@ -424,9 +456,17 @@ def GundoRenderGraph():
     result = [' ' + l for l in result]
 
     target = (vim.eval('g:gundo_target_f'), int(vim.eval('g:gundo_target_n')))
+<<<<<<< HEAD
 
     if int(vim.eval('g:gundo_help')):
         header = (INLINE_HELP % target).splitlines()
+=======
+    mappings = (vim.eval('g:gundo_map_move_older'),
+                vim.eval('g:gundo_map_move_newer'))
+
+    if int(vim.eval('g:gundo_help')):
+        header = (INLINE_HELP % (target + mappings)).splitlines()
+>>>>>>> nate/personal
     else:
         header = []
 
@@ -513,7 +553,12 @@ def GundoRevert():
     _undo_to(target_n)
 
     vim.command('GundoRenderGraph')
+<<<<<<< HEAD
     _goto_window_for_buffer(back)
+=======
+    if int(vim.eval('g:gundo_return_on_revert')):
+        _goto_window_for_buffer(back)
+>>>>>>> nate/personal
 
     if int(vim.eval('g:gundo_close_on_revert')):
         vim.command('GundoToggle')
@@ -524,6 +569,10 @@ def GundoPlayTo():
 
     target_n = int(vim.eval('s:GundoGetTargetState()'))
     back = int(vim.eval('g:gundo_target_n'))
+<<<<<<< HEAD
+=======
+    delay = int(vim.eval('g:gundo_playback_delay'))
+>>>>>>> nate/personal
 
     vim.command('echo "%s"' % back)
 
@@ -570,7 +619,11 @@ def GundoPlayTo():
         normal('zz')
         _goto_window_for_buffer(back)
         vim.command('redraw')
+<<<<<<< HEAD
         vim.command('sleep 60m')
+=======
+        vim.command('sleep %dm' % delay)
+>>>>>>> nate/personal
 
 def initPythonModule():
     if sys.version_info[:2] < (2, 4):

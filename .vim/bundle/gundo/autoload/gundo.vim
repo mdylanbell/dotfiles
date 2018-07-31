@@ -19,6 +19,7 @@ if v:version < '703'"{{{
     finish
 endif"}}}
 
+<<<<<<< HEAD
 if has('python3')"{{{
     let s:has_supported_python = 2
 elseif has('python')
@@ -37,6 +38,8 @@ endif"}}}
 
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
+=======
+>>>>>>> nate/personal
 if !exists('g:gundo_width')"{{{
     let g:gundo_width = 45
 endif"}}}
@@ -61,7 +64,39 @@ endif"}}}
 if !exists("g:gundo_close_on_revert")"{{{
     let g:gundo_close_on_revert = 0
 endif"}}}
+<<<<<<< HEAD
 
+=======
+if !exists("g:gundo_prefer_python3")"{{{
+    let g:gundo_prefer_python3 = 0
+endif"}}}
+if !exists("g:gundo_auto_preview")"{{{
+    let g:gundo_auto_preview = 1
+endif"}}}
+if !exists("g:gundo_playback_delay")"{{{
+    let g:gundo_playback_delay = 60
+endif"}}}
+if !exists("g:gundo_return_on_revert")"{{{
+    let g:gundo_return_on_revert = 1
+endif"}}}
+
+let s:has_supported_python = 0
+if g:gundo_prefer_python3 && has('python3')"{{{
+    let s:has_supported_python = 2
+elseif has('python')"
+    let s:has_supported_python = 1
+endif
+
+if !s:has_supported_python
+    function! s:GundoDidNotLoad()
+        echohl WarningMsg|echomsg "Gundo requires Vim to be compiled with Python 2.4+"|echohl None
+    endfunction
+    command! -nargs=0 GundoToggle call s:GundoDidNotLoad()
+    finish
+endif"}}}
+
+let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
+>>>>>>> nate/personal
 "}}}
 
 "{{{ Gundo utility functions
@@ -110,6 +145,10 @@ function! s:GundoMapGraph()"{{{
     nnoremap <script> <silent> <buffer> gg            gg:call <sid>GundoMove(1)<CR>
     nnoremap <script> <silent> <buffer> P             :call <sid>GundoPlayTo()<CR>
     nnoremap <script> <silent> <buffer> p             :call <sid>GundoRenderChangePreview()<CR>
+<<<<<<< HEAD
+=======
+    nnoremap <script> <silent> <buffer> r             :call <sid>GundoRenderPreview()<CR>
+>>>>>>> nate/personal
     nnoremap <script> <silent> <buffer> q             :call <sid>GundoClose()<CR>
     cabbrev  <script> <silent> <buffer> q             call <sid>GundoClose()
     cabbrev  <script> <silent> <buffer> quit          call <sid>GundoClose()
@@ -215,6 +254,12 @@ function! s:GundoOpenGraph()"{{{
             call s:GundoResizeBuffers(winnr())
         endif
     endif
+<<<<<<< HEAD
+=======
+    if exists("g:gundo_tree_statusline")
+        let &l:statusline = g:gundo_tree_statusline
+    endif
+>>>>>>> nate/personal
 endfunction"}}}
 
 function! s:GundoOpenPreview()"{{{
@@ -249,6 +294,12 @@ function! s:GundoOpenPreview()"{{{
             endif
         endif
     endif
+<<<<<<< HEAD
+=======
+    if exists("g:gundo_preview_statusline")
+        let &l:statusline = g:gundo_preview_statusline
+    endif
+>>>>>>> nate/personal
 endfunction"}}}
 
 function! s:GundoClose()"{{{
@@ -265,6 +316,7 @@ endfunction"}}}
 
 function! s:GundoOpen()"{{{
     if !exists('g:gundo_py_loaded')
+<<<<<<< HEAD
 	if s:has_supported_python == 2
 	  exe 'py3file ' . s:plugin_path . '/gundo.py'
 	  python3 initPythonModule()
@@ -272,6 +324,15 @@ function! s:GundoOpen()"{{{
 	  exe 'pyfile ' . s:plugin_path . '/gundo.py'
 	  python initPythonModule()
 	endif
+=======
+        if s:has_supported_python == 2 && g:gundo_prefer_python3
+            exe 'py3file ' . escape(s:plugin_path, ' ') . '/gundo.py'
+            python3 initPythonModule()
+        else
+            exe 'pyfile ' . escape(s:plugin_path, ' ') . '/gundo.py'
+            python initPythonModule()
+        endif
+>>>>>>> nate/personal
 
         if !s:has_supported_python
             function! s:GundoDidNotLoad()
@@ -310,6 +371,23 @@ function! s:GundoToggle()"{{{
     endif
 endfunction"}}}
 
+<<<<<<< HEAD
+=======
+function! s:GundoShow()"{{{
+    if !s:GundoIsVisible()
+        let g:gundo_target_n = bufnr('')
+        let g:gundo_target_f = @%
+        call s:GundoOpen()
+    endif
+endfunction"}}}
+
+function! s:GundoHide()"{{{
+    if s:GundoIsVisible()
+        call s:GundoClose()
+    endif
+endfunction"}}}
+
+>>>>>>> nate/personal
 "}}}
 
 "{{{ Gundo mouse handling
@@ -362,7 +440,13 @@ function! s:GundoMove(direction) range"{{{
         call cursor(0, idx2 + 1)
     endif
 
+<<<<<<< HEAD
     call s:GundoRenderPreview()
+=======
+    if g:gundo_auto_preview == 1
+        call s:GundoRenderPreview()
+    endif
+>>>>>>> nate/personal
 endfunction"}}}
 
 "}}}
@@ -370,26 +454,47 @@ endfunction"}}}
 "{{{ Gundo rendering
 
 function! s:GundoRenderGraph()"{{{
+<<<<<<< HEAD
     if s:has_supported_python == 2
 	python3 GundoRenderGraph()
     else
 	python GundoRenderGraph()
+=======
+    if s:has_supported_python == 2 && g:gundo_prefer_python3
+        python3 GundoRenderGraph()
+    else
+        python GundoRenderGraph()
+>>>>>>> nate/personal
     endif
 endfunction"}}}
 
 function! s:GundoRenderPreview()"{{{
+<<<<<<< HEAD
     if s:has_supported_python == 2
 	python3 GundoRenderPreview()
     else
 	python GundoRenderPreview()
+=======
+    if s:has_supported_python == 2 && g:gundo_prefer_python3
+        python3 GundoRenderPreview()
+    else
+        python GundoRenderPreview()
+>>>>>>> nate/personal
     endif
 endfunction"}}}
 
 function! s:GundoRenderChangePreview()"{{{
+<<<<<<< HEAD
     if s:has_supported_python == 2
 	python3 GundoRenderChangePreview()
     else
 	python GundoRenderChangePreview()
+=======
+    if s:has_supported_python == 2 && g:gundo_prefer_python3
+        python3 GundoRenderChangePreview()
+    else
+        python GundoRenderChangePreview()
+>>>>>>> nate/personal
     endif
 endfunction"}}}
 
@@ -398,18 +503,32 @@ endfunction"}}}
 "{{{ Gundo undo/redo
 
 function! s:GundoRevert()"{{{
+<<<<<<< HEAD
     if s:has_supported_python == 2
 	python3 GundoRevert()
     else
 	python GundoRevert()
+=======
+    if s:has_supported_python == 2 && g:gundo_prefer_python3
+        python3 GundoRevert()
+    else
+        python GundoRevert()
+>>>>>>> nate/personal
     endif
 endfunction"}}}
 
 function! s:GundoPlayTo()"{{{
+<<<<<<< HEAD
     if s:has_supported_python == 2
 	python3 GundoPlayTo()
     else
 	python GundoPlayTo()
+=======
+    if s:has_supported_python == 2 && g:gundo_prefer_python3
+        python3 GundoPlayTo()
+    else
+        python GundoPlayTo()
+>>>>>>> nate/personal
     endif
 endfunction"}}}
 
@@ -421,6 +540,17 @@ function! gundo#GundoToggle()"{{{
     call s:GundoToggle()
 endfunction"}}}
 
+<<<<<<< HEAD
+=======
+function! gundo#GundoShow()"{{{
+    call s:GundoShow()
+endfunction"}}}
+
+function! gundo#GundoHide()"{{{
+    call s:GundoHide()
+endfunction"}}}
+
+>>>>>>> nate/personal
 function! gundo#GundoRenderGraph()"{{{
     call s:GundoRenderGraph()
 endfunction"}}}
