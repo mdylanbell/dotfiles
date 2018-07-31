@@ -197,17 +197,69 @@ au FileType rst let g:table_mode_corner_corner='+'
 au FileType markdown let g:table_mode_corner='|'
 au FileType pandoc let g:table_mode_corner='|'
 
-" enable pathogen
-filetype off
-" let g:pathogen_blacklist = ['tagbar']
-call pathogen#infect()
-call pathogen#helptags()
+" configure vim-plug
+call plug#begin('~/.vim/plugged')
+Plug 'craigemery/vim-autotag'
+Plug 'vim-scripts/L9'
+Plug 'mileszs/ack.vim'
+Plug 'w0rp/ale'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'qpkorr/vim-bufkill'
+Plug 'kien/ctrlp.vim'
+Plug 'mattn/gist-vim'
+Plug 'sjl/gundo.vim'
+Plug 'junegunn/gv.vim'
+Plug 'kassio/neoterm'
+Plug 'python-mode/python-mode'
+Plug 'luochen1990/rainbow'
+Plug 'AndrewRadev/sideways.vim'
+Plug 'gcmt/taboo.vim'
+Plug 'godlygeek/tabular'
+Plug 'majutsushi/tagbar'
+Plug 'SirVer/ultisnips'
+Plug 'mbbill/undotree'
+Plug 'vim-vdebug/vdebug'
+Plug 'tpope/vim-abolish'
+Plug 'vim-airline/vim-airline'
+Plug 'stevearc/vim-arduino'
+Plug 'altercation/vim-colors-solarized'
+Plug 'tpope/vim-commentary'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-dispatch'
+Plug 'yalesov/vim-ember-script'
+Plug 'tpope/vim-eunuch'
+Plug 'int3/vim-extradite'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'fatih/vim-go'
+Plug 'pangloss/vim-javascript'
+Plug 'elzr/vim-json'
+Plug 'mxw/vim-jsx'
+Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'tpope/vim-obsession'
+Plug 'krisajenkins/vim-pipe'
+Plug 'tpope/vim-rhubarb'
+Plug 'guns/vim-sexp'
+Plug 'tpope/vim-sexp-mappings-for-regular-people'
+Plug 'tpope/vim-sleuth'
+Plug 'honza/vim-snippets'
+Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-surround'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'janko-m/vim-test'
+Plug 'tpope/vim-unimpaired'
+Plug 'mattboehm/vim-unstack'
+Plug 'benmills/vimux'
+Plug 'mattn/webapi-vim'
+Plug 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+call plug#end()
 
+syntax enable
 set bg=dark
 let g:solarized_termtrans = 1
 let g:solarized_termcolors = &t_Co
 colorscheme solarized
-syntax enable
 
 " turn filetype goodness back on
 filetype on
