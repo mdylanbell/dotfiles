@@ -74,10 +74,12 @@ let g:ale_lint_on_enter = 1
 let g:ale_lint_on_insert_leave = 1
 let g:ale_lint_on_filetype_changed = 1
 let g:ale_lint_on_text_changed = 0
+let g:ale_completion_enabled = 1
 let g:ale_open_list = 1
 let g:ale_set_highlights = 1
 let g:ale_set_signs = 1
 let g:ale_echo_cursor = 1
+let g:airline#extensions#ale#enabled = 1
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -495,3 +497,6 @@ endfunction
 
 " open web browser, mostly for vim-fugitive
 command! -nargs=1 Browse call OpenURL(<f-args>)
+
+set swapfile
+set dir=$HOME/.vim/.swap//
