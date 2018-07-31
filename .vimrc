@@ -59,14 +59,7 @@ let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_
 " let g:airline_right_sep = ''
 let g:airline_symbols = {}
 let g:airline_symbols.branch = ''
-
-" configure syntastic
-"let g:syntastic_enable_signs = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_rst_checkers = ['sphinx']
-"let g:syntastic_mode_map = { 'mode': 'active',
-"            \ 'passive_filetypes': ['python', 'puppet', 'rst'] }
-"nmap <leader>st :SyntasticToggleMode<CR>
+let g:airline#extensions#ale#enabled = 1
 
 " configure ale
 let g:ale_lint_on_save = 1
@@ -79,7 +72,6 @@ let g:ale_open_list = 1
 let g:ale_set_highlights = 1
 let g:ale_set_signs = 1
 let g:ale_echo_cursor = 1
-let g:airline#extensions#ale#enabled = 1
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -96,9 +88,6 @@ if filereadable("/etc/redhat-release")
     endif
 endif
 
-" settings for mark.vim
-let g:mwDefaultHighlightingPalette = 'maximum'
-
 " settings for gist-vim
 let g:gist_browser_command = 'pmb openurl %URL%'
 let g:gist_clip_command = 'pmb openurl'
@@ -112,23 +101,6 @@ let g:gist_open_browser_after_post = 0
 vmap <leader>/ <Esc>/\%V
 " TODO: this one conflicts with mark.vim
 "map <leader>/ /\%V
-
-" from http://github.com/adamhjk/adam-vim
-" nicer status line
-"set laststatus=2
-"set statusline=
-"set statusline+=%-3.3n\ " buffer number
-"set statusline+=%f\ " filename
-"set statusline+=%h%m%r%w " status flags
-"set statusline+=\[%{strlen(&ft)?&ft:'none'}] " file type
-"set statusline+=%= " right align remainder
-"set statusline+=0x%-8B " character value
-"set statusline+=%-14(%l,%c%V%) " line, character
-"set statusline+=%<%P " file position
-
-" http://stackoverflow.com/questions/54255/in-vim-is-there-a-way-to-delete-without-putting-text-in-the-register
-" replaces whatever is visually highlighted with what's in the paste buffer
-"vmap r "_dP
 
 " custom surroundings for confluence editing
 " 'l' for literal
@@ -175,7 +147,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtDeleteWord()':     ['<F2>']
   \ }
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](local|blib|target|node_modules)$'
+  \ 'dir':  '\v[\/](local|blib|target|node_modules|vendor|bower_components)$'
   \ }
 let g:ctrlp_map = '<leader>ff'
 noremap <leader>fg :CtrlPRoot<CR>
@@ -261,22 +233,17 @@ let g:solarized_termtrans = 1
 let g:solarized_termcolors = &t_Co
 colorscheme solarized
 
-" turn filetype goodness back on
-filetype on
-filetype plugin on
-filetype indent on
-
 " settings for javascript/jsx
-au FileType javascript setlocal foldmethod=syntax
-au FileType javascript setlocal foldnestmax=1
+"au FileType javascript setlocal foldmethod=syntax
+"au FileType javascript setlocal foldnestmax=1
 
 " settings for go
 " fold go files with syntax
-au FileType go setlocal foldmethod=syntax
-au FileType go setlocal foldnestmax=1
+"au FileType go setlocal foldmethod=syntax
+"au FileType go setlocal foldnestmax=1
 " use goimports for formatting
-let g:go_fmt_command = "goimports"
-let g:go_fmt_experimental=1
+"let g:go_fmt_command = "goimports"
+"let g:go_fmt_experimental=1
 
 map <F2> :map<CR>
 nnoremap <F5> :GundoToggle<CR>
@@ -285,12 +252,6 @@ map <F8> :set paste!<CR>
 map <F10> :diffu<CR>
 map <F11> :echo 'Current change: ' . changenr()<CR>
 map <F12> :noh<CR>
-
-" a few extra mappings for fireplace
-" evaluate top level form
-au BufEnter *.clj nnoremap <buffer> cpt :Eval<CR>
-" show last evaluation in temp file
-au BufEnter *.clj nnoremap <buffer> cpl :Last<CR>
 
 " remove trailing whitespace when writing
 autocmd BufWritePre * :%s/\s\+$//e
@@ -318,8 +279,7 @@ set popt=paper:letter
 set printdevice=dev_np24
 
 " ruby settings
-au BufNewFile,BufRead *.rhtml set sw=2 ts=2 bs=2 et smarttab
-au BufNewFile,BufRead *.rb set sw=2 ts=2 bs=2 et smarttab
+"au BufNewFile,BufRead *.rb set sw=2 ts=2 bs=2 et smarttab
 
 " .t files are perl
 au BufNewFile,BufRead *.t set filetype=perl
@@ -338,9 +298,6 @@ noremap <leader>ss :SessionSave<CR>
 noremap <leader>so :SessionOpen
 noremap <leader>sl :SessionList<CR>
 noremap <leader>sc :SessionClose<CR>
-
-" don't be magical about the _ character in vimR
-let vimrplugin_underscore = 0
 
 " use system clipboard for everything
 if has("gui_running")
@@ -395,18 +352,11 @@ endif
 "noremap :s :s/\v
 
 " MBE
-" let g:miniBufExplSplitBelow=0              " MBE on top (or left if vert.)
-" let g:miniBufExplorerMoreThanOne=1         " Always show MBE
-" let g:miniBufExplMapWindowNavVim = 1       " control+hjkl to cycle through windows
-" let g:miniBufExplMapCTabSwitchBufs = 1     " control+(shift?)+tab cycle through buffers
-" let g:miniBufExplForceSyntaxEnable = 1     " Fix vim bug where buffers don't syntax
-
-if &diff
-    " silence syntastic
-    let g:loaded_syntastic_plugin = 1
-else
-    " nothing yet
-endif
+"let g:miniBufExplSplitBelow = 0              " MBE on top (or left if vert.)
+"let g:miniBufExplorerMoreThanOne = 1         " Always show MBE
+"let g:miniBufExplMapWindowNavVim = 1       " control+hjkl to cycle through windows
+"let g:miniBufExplMapCTabSwitchBufs = 1     " control+(shift?)+tab cycle through buffers
+"let g:miniBufExplForceSyntaxEnable = 1     " Fix vim bug where buffers don't syntax
 
 " allow writing files as root
 command! W silent w !sudo tee % > /dev/null
@@ -501,16 +451,6 @@ noremap <leader>tl :TestLast<CR>
 nnoremap <leader>h :SidewaysLeft<cr>
 nnoremap <leader>l :SidewaysRight<cr>
 
-" pandoc
-nmap <leader>vv :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
-nmap <leader>vtv :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --toc --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/pandoc.css "%" \|bcat<cr><cr>
-nmap <leader>vp :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
-nmap <leader>vtp :!pandoc -t html+smart -M title:'Pandoc Generated - "%"' --toc --standalone --self-contained --data-dir %:p:h -c ~/.dotfiles/css/buttondown.css "%" \|bcat<cr><cr>
-
-" vim-pandoc and vim-pandoc-syntax
-let g:pandoc#folding#fdc=0
-" let g:pandoc#syntax#conceal#urls=1
-
 " clojure rainbow parens
 let g:rainbow_active = 1
 let g:rainbow_conf = {
@@ -523,15 +463,9 @@ let g:rainbow_conf = {
       \  }
       \}
 
-" support mapping from old version of vim-surround
-xmap s <Plug>VSurround
-
 " configure vim-pipe
 let g:vimpipe_invoke_map="<leader>w"
 let g:vimpipe_close_map="<leader>W"
-
-" configure clojure folding
-let g:clojure_foldwords = "def,defn,defmacro,defmethod,defschema,defprotocol,defrecord"
 
 let g:vim_json_syntax_conceal = 0
 au FileType json setlocal foldmethod=syntax
