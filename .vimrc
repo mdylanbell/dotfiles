@@ -32,6 +32,9 @@ let perl_fold_anonymous_subs = 1
 set laststatus=2
 let g:airline_powerline_fonts = 1
 
+" set ruler
+set cc=80
+
 " for gitgutter
 set updatetime=100
 
@@ -231,7 +234,7 @@ call plug#end()
 
 syntax enable
 set bg=dark
-let g:solarized_termtrans = 1
+let g:solarized_termtrans = 0
 let g:solarized_termcolors = &t_Co
 colorscheme solarized
 
