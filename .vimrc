@@ -4,7 +4,10 @@ if !has('nvim')
   set redraw
 else
   set inccommand=nosplit
+  let g:python2_host_prog = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
 endif
+
 "set noremap
 set hls
 set bs=2
@@ -45,6 +48,7 @@ let g:taboo_renamed_tab_format = " %N [%l]%m "
 let g:taboo_tab_format = " %N %f%m "
 
 " show current function/module/etc in airline
+let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
 let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
@@ -62,7 +66,6 @@ let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_
 " let g:airline_right_sep = ''
 let g:airline_symbols = {}
 let g:airline_symbols.branch = ''
-let g:airline#extensions#ale#enabled = 1
 
 " configure ale
 let g:ale_lint_on_save = 1
@@ -83,18 +86,18 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " detect if we're on redhat/centos < 6 and skip ultisnips
 " older versions don't have a new enough version of python
 if filereadable("/etc/redhat-release")
-    let line = readfile("/etc/redhat-release")[0]
-    let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
-    if s:majorver < 6
-        let did_UltiSnips_vim=1
-        let did_UltiSnips_vim_after=1
-    endif
+  let line = readfile("/etc/redhat-release")[0]
+  let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
+  if s:majorver < 6
+    let did_UltiSnips_vim=1
+    let did_UltiSnips_vim_after=1
+  endif
 endif
 
 " settings for gist-vim
-let g:gist_browser_command = 'pmb openurl %URL%'
-let g:gist_clip_command = 'pmb openurl'
-let g:gist_open_browser_after_post = 0
+"let g:gist_browser_command = 'pmb openurl %URL%'
+"let g:gist_clip_command = 'pmb openurl'
+"let g:gist_open_browser_after_post = 0
 
 " Easy searching within a range:
 " step 1: Visual highlight the lines to search
@@ -137,7 +140,7 @@ noremap <leader>ev :vsp <C-R>=expand("%:.:h") . "/" <CR>
 noremap <leader>et :tabe <C-R>=expand("%:.:h") . "/" <CR>
 
 " use the octopress syntax for markdown files
-au BufNewFile,BufRead *.markdown setfiletype octopress
+"au BufNewFile,BufRead *.markdown setfiletype octopress
 
 " no default input
 let g:ctrlp_default_input = 0
@@ -174,11 +177,15 @@ au FileType pandoc let g:table_mode_corner='|'
 
 " configure vim-plug
 call plug#begin('~/.vim/plugged')
+if has('nvim')
+  Plug 'iCyMind/NeoSolarized'
+else
+  Plug 'altercation/vim-colors-solarized'
+endif
 Plug 'AndrewRadev/sideways.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'SirVer/ultisnips'
 Plug 'airblade/vim-gitgutter'
-Plug 'altercation/vim-colors-solarized'
 Plug 'benmills/vimux'
 Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
@@ -215,9 +222,11 @@ Plug 'stevearc/vim-arduino'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-sleuth'
@@ -235,9 +244,13 @@ call plug#end()
 
 syntax enable
 set bg=dark
-let g:solarized_termtrans = 0
-let g:solarized_termcolors = &t_Co
-colorscheme solarized
+if has('nvim')
+  colorscheme NeoSolarized
+else
+  let g:solarized_termtrans = 0
+  let g:solarized_termcolors = &t_Co
+  colorscheme solarized
+endif
 
 " settings for javascript/jsx
 "au FileType javascript setlocal foldmethod=syntax
