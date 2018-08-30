@@ -22,13 +22,10 @@ del_path () {
 }
 
 # make sure these paths are before the system paths
-for path in /usr/local/bin /usr/local/sbin $HOME/bin $HOME/bin/excluded $HOME/bin/outputdiff $HOME/bin/moreutils $HOME/.bashrc.d/resty $HOME/.rvm/bin; do
+for path in /usr/local/bin /usr/local/sbin $HOME/bin $HOME/.bashrc.d/resty $HOME/.rvm/bin; do
     del_path $path
     pre_path $path
 done
-
-add_path $HOME/bin/after
-add_path_no_check $HOME/bin/excluded/git-extras/bin
 
 export PATH
 

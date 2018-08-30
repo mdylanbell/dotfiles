@@ -1,8 +1,0 @@
-#!/usr/bin/env holen
----
-desc: Markdown to HTML
-strategies:
-    cmdio:
-        command: justone/md2html
-        versions:
-          - version: 'latest'

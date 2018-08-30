@@ -19,16 +19,13 @@ if [ -n "$PS1" ]; then
     bind 'set match-hidden-files off'
 fi
 
-# so whalebrew puts its scripts local
-export WHALEBREW_INSTALL_PATH=~/bin/excluded
-
 export HISTCONTROL=ignoredups:erasedups
 
 # capture more history
 export HISTSIZE=25000
 export HISTFILESIZE=25000
 
-export EDITOR=vim
+export EDITOR=vi
 
 OS=`uname -s`
 
@@ -46,23 +43,6 @@ function reconnect_ssh_agent() {
         fi
     fi
 }
-
-function sync_pmb_key() {
-    if [[ -n $TMUX ]]; then
-        NEW_PMB_KEY=`tmux showenv|grep ^PMB_KEY|cut -d = -f 2`
-        if [[ -n $NEW_SSH_AUTH_SOCK ]]; then
-            PMB_KEY=$NEW_PMB_KEY
-        else
-            PMB_KEY=$NEW_PMB_KEY
-        fi
-        export PMB_KEY
-    fi
-}
-
-if [ "$OS" == "Linux" ]
-then
-    export BROWSER='pmb openurl'
-fi
 
 # check if fzf is installed
 function guard_fzf()
@@ -90,13 +70,6 @@ function pet-select() {
   READLINE_POINT=${#BUFFER}
 }
 bind -x '"\C-x\C-r": pet-select'
-
-# binding to prefix with pmb run
-function pmb-run-prefix() {
-  READLINE_LINE="pmb run -- $READLINE_LINE"
-  READLINE_POINT=${#READLINE_LINE}
-}
-bind -x '"\C-x\C-p": pmb-run-prefix'
 
 # binding to suffix with less pipe
 function less-suffix() {

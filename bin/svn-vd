@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# use vimdiff instead of regular diff
-/usr/bin/svn diff --diff-cmd=$HOME/bin/vimdiff.pl $*

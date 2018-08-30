@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# just output the url
-svn info $* | grep URL | awk '{ print $2 }'
