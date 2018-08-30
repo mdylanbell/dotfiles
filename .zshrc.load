@@ -1,0 +1,3 @@
+path=($path $HOME/bin)
+
+. $HOME/.zshrc.d/safe

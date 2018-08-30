@@ -1,0 +1,3 @@
+. $HOME/.zshrc.d/path
+. $HOME/.zshrc.d/aliases
+. $HOME/.zshrc.d/colors
