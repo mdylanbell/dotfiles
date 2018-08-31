@@ -3,12 +3,49 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.zshrc.d/oh-my-zsh"
+export ZPLUG_HOME="$HOME/.zshrc.d/zplug"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="robbyrussell"
 ZSH_THEME="agnoster"
+
+## MDB ADDED -- ZPLUG ##
+source $ZPLUG_HOME/init.zsh
+
+zplug "plugins/git", from:oh-my-zsh
+zplug "plugins/aws", from:oh-my-zsh
+zplug "plugins/bundler", from:oh-my-zsh
+zplug "plugins/docker", from:oh-my-zsh
+zplug "plugins/gem", from:oh-my-zsh
+zplug "plugins/httpie", from:oh-my-zsh
+zplug "plugins/jira", from:oh-my-zsh
+zplug "plugins/jsontools", from:oh-my-zsh
+zplug "plugins/node-docs", from:oh-my-zsh
+zplug "plugins/npm", from:oh-my-zsh
+zplug "plugins/osx", from:oh-my-zsh
+zplug "plugins/pep8", from:oh-my-zsh
+zplug "plugins/pip", from:oh-my-zsh
+zplug "plugins/python", from:oh-my-zsh
+zplug "plugins/rvm", from:oh-my-zsh
+zplug "plugins/urltools", from:oh-my-zsh
+zplug "plugins/web-search", from:oh-my-zsh
+zplug "lib/clipboard", from:oh-my-zsh, if:"[[ $OSTYPE == *darwin* ]]"
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# Load
+zplug load
+## END ZPLUG
+#
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -62,28 +99,28 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(
-  git
-  aws
-  bundler
-  docker
-  gem
-  httpie
-  jira
-  jsontools
-  node-docs
-  npm
-  osx
-  pep8
-  pip
-  python
-  rvm
-  # tmux
-  urltools
-  # virtualenvwrapper
-  web-search
-)
-
+#plugins=(
+#  git
+#  aws
+#  bundler
+#  docker
+#  gem
+#  httpie
+#  jira
+#  jsontools
+#  node-docs
+#  npm
+#  osx
+#  pep8
+#  pip
+#  python
+#  rvm
+#  # tmux
+#  urltools
+#  # virtualenvwrapper
+#  web-search
+#)
+#
 source $ZSH/oh-my-zsh.sh
 
 # User configuration

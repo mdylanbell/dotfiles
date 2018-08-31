@@ -1,3 +1,6 @@
 [submodule ".zshrc.d/oh-my-zsh"]
 	path = .zshrc.d/oh-my-zsh
 	url = git@github.com:robbyrussell/oh-my-zsh.git
+[submodule ".zshrc.d/zplug"]
+	path = .zshrc.d/zplug
+	url = https://github.com/zplug/zplug
