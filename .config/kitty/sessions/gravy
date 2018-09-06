@@ -1,0 +1,14 @@
+layout tall
+cd ~/code/sweetgreen/gravy-vm/
+
+title "gravi"
+launch vi
+focus
+
+title "log"
+cd ~/code/sweetgreen/gravy-vm/sweetgreen
+launch
+
+title "misc"
+cd ~/code/sweetgreen/gravy-vm
+launch
