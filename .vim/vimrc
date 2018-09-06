@@ -1,0 +1,9 @@
+source ~/.vim/base.vim
+source ~/.vim/mappings.vim
+source ~/.vim/plugins.vim
+source ~/.vim/colors.vim
+
+"if has('nvim')
+"  source ~/.vim/nvim.vim
+"end
+
