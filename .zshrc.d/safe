@@ -1,4 +1,4 @@
-ZSHRC_D = $HOME/.zshrc.d/
+ZSHRC_D=$HOME/.zshrc.d/
 
 for conf in secrets path aliases colors; do
     [ -s "$ZSHRC_D/$conf" ] && \. $HOME/.zshrc.d/$conf
