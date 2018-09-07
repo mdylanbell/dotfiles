@@ -1,26 +1,54 @@
 " base.vim
 
 set nocompatible
-set ai to shell=/bin/bash terse nowarn sm ruler sw=4 ts=4
 
-"set noremap
-set hls
-set bs=2
-set history=100
-set showmode
-set incsearch
-"set ignorecase
-set smartcase
-set expandtab smarttab
+set autoindent
+set backspace=indent,eol,start
+set colorcolumn=80
 
-runtime macros/matchit.vim
+" Always do vimdiff in vertical splits
+set diffopt+=vertical
 
+set expandtab
 set foldmethod=marker
+set history=100
+set hlsearch
+set ignorecase
+set incsearch
+set laststatus=2
+set nowarn
+set ruler
 
 " printing options
-set popt=paper:letter
+set printoptions=paper:letter
 set printdevice=dev_np24
 
+" always show 5 lines of context
+set scrolloff=5
+
+" Enable global session caching (for Taboo)
+set sessionoptions+=globals
+
+set shell=/bin/bash
+set shiftwidth=4
+set showmatch
+set showmode
+set smartcase
+set smarttab
+
+" look for tags
+set tags=./tags;
+
+set tabstop=4
+set terse
+set timeout
+
+" for gitgutter
+set updatetime=100
+
+set wildmenu
+
+runtime macros/matchit.vim
 
 " the famous leader character
 let mapleader = ','
@@ -35,11 +63,6 @@ endif
 " for some reason this has to go in .vimrc
 let perl_fold = 1
 let perl_fold_anonymous_subs = 1
-
-set laststatus=2
-
-" set ruler
-set colorcolumn=80
 
 " configure vim-plug
 call plug#begin('~/.vim/plugged')
@@ -100,7 +123,7 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
+Plug 'vim-perl/vim-perl',
 Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/L9'
 Plug 'vim-vdebug/vdebug'
@@ -110,22 +133,8 @@ call plug#end()
 
 " use system clipboard for everything
 if has("gui_running")
-    set cb=unnamed
+    set clipboard=unnamed
     set guioptions-=T
-endif
-
-" Always do vimdiff in vertical splits
-set diffopt+=vertical
-" and ignore whitespace
-"set diffopt+=iwhite
-
-" look for tags
-set tags=./tags;
-
-" use brew's ctags instead of the system one
-if filereadable('/usr/local/bin/ctags')
-  let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
-  let g:autotagCtagsCmd = '/usr/local/bin/ctags'
 endif
 
 " enable persistent undo
@@ -140,17 +149,6 @@ if v:version >= 703
   set undolevels=1000
   set undoreload=10000
 endif
-
-" for gitgutter
-set updatetime=100
-
-" Enable global session caching (for Taboo)
-set sessionoptions+=globals
-
-" always show 5 lines of context
-set scrolloff=5
-
-set wildmenu
 
 " allow writing files as root
 command! W silent w !sudo tee % > /dev/null
@@ -173,3 +171,14 @@ au BufNewFile,BufRead *.mt set filetype=tt2html
 
 let g:vim_json_syntax_conceal = 0
 au FileType json setlocal foldmethod=syntax
+
+function! ToggleSyntax()
+   if exists("g:syntax_on")
+      syntax off
+   else
+      syntax enable
+   endif
+endfunction
+
+" remove trailing whitespace when writing
+autocmd BufWritePre * :%s/\s\+$//e
