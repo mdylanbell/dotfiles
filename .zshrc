@@ -164,6 +164,9 @@ export NVM_DIR="$HOME/.nvm"
 # perl/cpan
 eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
 
+# heroku autocomplete setup
+HEROKU_AC_ZSH_SETUP_PATH=/Users/matt/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+
 # python/virtualenv
 export WORKON_HOME=$HOME/.virtual_envs
 export VIRTUALENVWRAPPER_PYTHON='/usr/local/bin/python3'
