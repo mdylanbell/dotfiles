@@ -1,9 +1,0 @@
-#!/bin/bash
-
-function upsearch () {
-  test / == "$PWD" && return || test -e "$1" && cat "$PWD/$1" && return || cd .. && upsearch "$1"
-}
-
-ruby_version=$(upsearch ".ruby-version")
-
-$HOME/.rvm/bin/rvm ${ruby_version:-default} do bundle exec rubocop $@
