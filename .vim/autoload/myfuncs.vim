@@ -12,4 +12,3 @@ function! s:PasteEscaped()
   endif
 endfunction
 
-

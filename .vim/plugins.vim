@@ -1,10 +1,15 @@
 " add tab number to tabs
 let g:taboo_renamed_tab_format = " %N [%l]%m "
 let g:taboo_tab_format = " %N %f%m "
+let g:taboo_tabline = 0
 
 " airline
 let g:airline_powerline_fonts = 1
 let g:airline_symbols = {}
+" list buffers
+let g:airline#extensions#tabline#enabled = 1
+" show filename only
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 " show current function/module/etc in airline
 let g:airline#extensions#ale#enabled = 1
@@ -25,10 +30,44 @@ let g:ale_set_highlights = 1
 let g:ale_set_signs = 1
 let g:ale_echo_cursor = 1
 
-" UltiSnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" tagbar
+let g:tagbar_type_ruby = {
+    \ 'kinds' : [
+        \ 'm:modules',
+        \ 'c:classes',
+        \ 'd:describes',
+        \ 'C:contexts',
+        \ 'f:methods',
+        \ 'F:singleton methods'
+    \ ]
+\ }
+
+if executable('ripper-tags')
+    let g:tagbar_type_ruby = {
+          \ 'kinds'      : ['m:modules',
+                          \ 'c:classes',
+                          \ 'C:constants',
+                          \ 'F:singleton methods',
+                          \ 'f:methods',
+                          \ 'a:aliases'],
+          \ 'kind2scope' : { 'c' : 'class',
+                           \ 'm' : 'class' },
+          \ 'scope2kind' : { 'class' : 'c' },
+          \ 'ctagsbin'   : 'ripper-tags',
+          \ 'ctagsargs'  : ['-f', '-']
+          \ }
+endif
+
+" YouCompleteMe and UltiSnips compatibility, with the helper of supertab
+" (via http://stackoverflow.com/a/22253548/1626737)
+" https://gist.github.com/lencioni/dff45cd3d1f0e5e23fe6
+let g:SuperTabDefaultCompletionType    = '<C-n>'
+let g:SuperTabCrMapping                = 0
+let g:UltiSnipsExpandTrigger           = '<tab>'
+let g:UltiSnipsJumpForwardTrigger      = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
+let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
 
 " use brew's ctags instead of the system one
 if filereadable('/usr/local/bin/ctags')
@@ -69,7 +108,6 @@ let g:ctrlp_mruf_relative = 1
 let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
 let g:ctrlp_prompt_mappings = {
   \ 'ToggleMRURelative()': ['<c-w>'],
-  \ 'PrtDeleteWord()':     ['<F2>']
   \ }
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](local|blib|target|node_modules|vendor|bower_components)$'

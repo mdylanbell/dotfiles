@@ -5,6 +5,7 @@ set nocompatible
 set autoindent
 set backspace=indent,eol,start
 set colorcolumn=80
+set cursorline
 
 " Always do vimdiff in vertical splits
 set diffopt+=vertical
@@ -17,6 +18,7 @@ set ignorecase
 set incsearch
 set laststatus=2
 set nowarn
+set number
 set ruler
 
 " printing options
@@ -66,6 +68,8 @@ let perl_fold_anonymous_subs = 1
 
 " configure vim-plug
 call plug#begin('~/.vim/plugged')
+" supertab needs to come first
+Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
 else
@@ -74,6 +78,7 @@ endif
 Plug 'AndrewRadev/sideways.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'SirVer/ultisnips'
+Plug 'Valloric/YouCompleteMe'
 Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'craigemery/vim-autotag'
@@ -86,6 +91,7 @@ Plug 'guns/vim-sexp'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
 Plug 'janko-m/vim-test'
+Plug 'jeetsukumaran/vim-buffergator'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
@@ -104,7 +110,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'python-mode/python-mode'
 Plug 'qpkorr/vim-bufkill'
 Plug 'ryanoasis/vim-devicons'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree',
 Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'stevearc/vim-arduino'
@@ -123,6 +129,8 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-perl/vim-perl',
 Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/L9'
@@ -135,6 +143,10 @@ call plug#end()
 if has("gui_running")
     set clipboard=unnamed
     set guioptions-=T
+endif
+
+if exists('&inccommand')
+  set inccommand=nosplit
 endif
 
 " enable persistent undo
@@ -155,6 +167,17 @@ command! W silent w !sudo tee % > /dev/null
 
 " open web browser, mostly for vim-fugitive
 command! -nargs=1 Browse call OpenURL(<f-args>)
+
+function! OpenURL(url)
+  if has("unix")
+    let s:uname = system("uname")
+    if s:uname == "Darwin\n"
+      call system("open ".a:url)
+    else
+      call pmb#openurl(a:url)
+    endif
+  endif
+endfunction
 
 " Autoclose loclist when related buffer is closed  (namely for :ALELint)
 augroup CloseLoclistWindowGroup

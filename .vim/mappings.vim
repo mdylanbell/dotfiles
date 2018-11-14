@@ -19,7 +19,7 @@ nnoremap <silent> <C-P> :tabprev<CR>
 
 map <F2> :map<CR>
 nnoremap <F5> :GundoToggle<CR>
-map <F7> :call ToggleSyntax()<CR>
+map <F7> :ALEToggle<CR>
 map <F8> :set paste!<CR>
 map <F10> :diffu<CR>
 map <F11> :echo 'Current change: ' . changenr()<CR>
@@ -33,9 +33,6 @@ map <F12> :noh<CR>
 vmap <leader>/ <Esc>/\%V
 " TODO: this one conflicts with mark.vim
 "map <leader>/ /\%V
-
-" alias for quit all
-map <leader>d :qa<CR>
 
 " clear highlight quick
 nnoremap <leader><Space> :nohls<CR>
@@ -52,6 +49,17 @@ noremap <leader>et :tabe <C-R>=expand("%:.:h") . "/" <CR>
 
 map <leader>nt :NERDTreeToggle<CR>
 map <leader>nf :NERDTreeFind<CR>
+
+" Toggle ALE linting
+map <leader>at :ALEToggle<CR>
+
+" Control+o to exit insert mode in terminal
+if has('nvim')
+  tmap <C-o> <C-\><C-n>
+end
+
+" Tagbar Toggle
+noremap <leader>tb :TagbarToggle<CR>
 
 " sessionman.vim mappings
 noremap <leader>sa :SessionSaveAs<CR>
@@ -76,8 +84,27 @@ noremap <leader>ft :CtrlPTag<CR>
 noremap <leader>fb :CtrlPBuffer<CR>
 noremap <leader>fc :CtrlPClearCache<CR>
 
+" BufferGator https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
+" Go to the previous buffer open
+nmap <leader>jj :BuffergatorMruCyclePrev<cr>
+" Go to the next buffer open
+nmap <leader>kk :BuffergatorMruCycleNext<cr>
+" View the entire list of buffers open
+nmap <leader>bl :BuffergatorOpen<cr>
+
+" --- General buffer navigation ---
+" Move to the next buffer
+nmap <leader>l :bnext<CR>
+" Move to the previous buffer
+nmap <leader>h :bprevious<CR>
+" Close the current buffer and move to the previous one
+" This replicates the idea of closing a tab
+nmap <leader>bq :bp <BAR> bd #<CR>
+" Show all open buffers and their status
+nmap <leader>bl :ls<CR>
+
 " Taglist
-noremap <leader>tl :TlistToggle<CR>
+"noremap <leader>tl :TlistToggle<CR>
 
 " vim-test
 noremap <leader>tn :TestNearest<CR>
@@ -86,8 +113,8 @@ noremap <leader>ta :TestSuite<CR>
 noremap <leader>tl :TestLast<CR>
 
 " sideways.vim
-nnoremap <leader>h :SidewaysLeft<cr>
-nnoremap <leader>l :SidewaysRight<cr>
+nnoremap <leader>hh :SidewaysLeft<cr>
+nnoremap <leader>ll :SidewaysRight<cr>
 
 " http://stackoverflow.com/questions/7400743/create-a-mapping-for-vims-command-line-that-escapes-the-contents-of-a-register-b
 cnoremap <c-x> <c-r>=<SID>myfuncs#PasteEscaped()<cr>
