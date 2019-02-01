@@ -5,7 +5,10 @@ let g:taboo_tabline = 0
 
 " airline
 let g:airline_powerline_fonts = 1
-let g:airline_symbols = {}
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}  " https://github.com/vim-airline/vim-airline/issues/520
+  let g:airline_symbols.branch = ''
+endif
 " list buffers
 let g:airline#extensions#tabline#enabled = 1
 " show filename only
@@ -16,7 +19,6 @@ let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
 let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
-let g:airline_symbols.branch = ''
 
 " configure ale
 let g:ale_lint_on_save = 1
