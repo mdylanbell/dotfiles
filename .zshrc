@@ -8,7 +8,6 @@ export ZPLUG_HOME="$HOME/.zshrc.d/zplug"
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-#ZSH_THEME="robbyrussell"
 ZSH_THEME="agnoster"
 
 ## MDB ADDED -- ZPLUG ##
@@ -153,10 +152,6 @@ fi
 
 export CLICOLOR=1
 
-export FLAGS_GETOPT_CMD="$(brew --prefix gnu-getopt)/bin/getopt"
-
-export HOMEBREW_GITHUB_API_TOKEN=566367061fd49838b4e51dd4eab401f3cd07abbf
-
 # javascript/nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
@@ -164,17 +159,8 @@ export NVM_DIR="$HOME/.nvm"
 # perl/cpan
 eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
 
-# heroku autocomplete setup
-HEROKU_AC_ZSH_SETUP_PATH=/Users/matt/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
-
-# python/virtualenv
-export WORKON_HOME=$HOME/.virtual_envs
-export VIRTUALENVWRAPPER_PYTHON='/usr/local/bin/python3'
-source /usr/local/bin/virtualenvwrapper.sh
-
 source $HOME/.zshrc.load
 
 # ruby/rvm
-
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+[[ -d "$PATH:$HOME/.rvm/bin" ]] && export PATH="$PATH:$HOME/.rvm/bin"

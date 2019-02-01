@@ -1,10 +1,5 @@
 ZSHRC_D=$HOME/.zshrc.d/
 
 for conf in secrets path aliases colors; do
-    [ -s "$ZSHRC_D/$conf" ] && \. $HOME/.zshrc.d/$conf
+    [ -s "$ZSHRC_D/$conf" ] && \. $ZSHRC_D/$conf
 done
-
-# . $HOME/.zshrc.d/secrets
-# . $HOME/.zshrc.d/path
-# . $HOME/.zshrc.d/aliases
-# . $HOME/.zshrc.d/colors

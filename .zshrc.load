@@ -1,3 +1,14 @@
 path=($path $HOME/bin)
+ZSHRC_D=$HOME/.zshrc.d
 
-. $HOME/.zshrc.d/safe
+. $ZSHRC_D/safe.zsh
+
+# load os specific configuration
+if [[ -d $ZSHRC_D/${OSTYPE} ]]; then
+  for zsh_config_file in $ZSHRC_D/${OSTYPE}/*.zsh; do
+    source "$zsh_config_file"
+  done
+  unset zsh_config_file
+fi
+
+[[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local" # Load local config
