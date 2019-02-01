@@ -1,17 +1,17 @@
 " colors.vim
 
 " Term emulation stuff, not sure if required
-let &t_8f = "\e[38;2;%lu;%lu;%lum"
-let &t_8b = "\e[48;2;%lu;%lu;%lum"
-let &t_ut=''
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
 if !has('nvim')
   set redraw
 else
   let g:python2_host_prog = '/usr/local/bin/python'
   let g:python3_host_prog = '/usr/local/bin/python3'
-
-  set termguicolors
 
 " Set the terminal default background and foreground colors, thereby
 " improving performance by not needing to set these colors on empty cells.
@@ -29,8 +29,8 @@ if has('nvim')
   let g:neosolarized_underline = 1
 else
   let g:solarized_termtrans = 0
-  " let g:solarized_termcolors = &t_Co
-  let g:solarized_termcolors = 16
+  let g:solarized_termcolors = &t_Co
+  "let g:solarized_termcolors = 16
   colorscheme solarized
 endif
 
