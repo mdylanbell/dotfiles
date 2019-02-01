@@ -10,8 +10,13 @@ endif
 if !has('nvim')
   set redraw
 else
-  let g:python2_host_prog = '/usr/local/bin/python'
-  let g:python3_host_prog = '/usr/local/bin/python3'
+  if has('macunix')
+    let g:python2_host_prog = '/usr/local/bin/python'
+    let g:python3_host_prog = '/usr/local/bin/python3'
+  else
+    let g:python2_host_prog = '/usr/bin/python'
+    let g:python3_host_prog = '/usr/bin/python3'
+  endif
 
 " Set the terminal default background and foreground colors, thereby
 " improving performance by not needing to set these colors on empty cells.
