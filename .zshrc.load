@@ -3,12 +3,20 @@ ZSHRC_D=$HOME/.zshrc.d
 
 . $ZSHRC_D/safe.zsh
 
-# load os specific configuration
-if [[ -d $ZSHRC_D/${OSTYPE} ]]; then
-  for zsh_config_file in $ZSHRC_D/${OSTYPE}/*.zsh; do
+### load os specific configuration
+# For mac, OSTYPE = "darwin${ver}", the specificity is not that helpful, here
+OS=$OSTYPE
+
+if [[ $OS == "darwin*" ]]; then
+  OS="darwin"
+fi
+
+if [[ -d $ZSHRC_D/${OS} ]]; then
+  for zsh_config_file in $ZSHRC_D/${OS}/*.zsh; do
     source "$zsh_config_file"
   done
   unset zsh_config_file
 fi
 
-[[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local" # Load local config
+### Load local config
+[[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
