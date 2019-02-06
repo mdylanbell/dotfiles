@@ -95,8 +95,6 @@ let g:surround_108 = "{{\r}}"
 let g:surround_110 = "{noformat}\r{noformat}"
 
 " settings for gist-vim
-"let g:gist_browser_command = 'pmb openurl %URL%'
-"let g:gist_clip_command = 'pmb openurl'
 "let g:gist_open_browser_after_post = 0
 
 " use the octopress syntax for markdown files
