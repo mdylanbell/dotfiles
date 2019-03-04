@@ -10,14 +10,6 @@ endif
 if !has('nvim')
   set redraw
 else
-  if has('macunix')
-    let g:python2_host_prog = '/usr/local/bin/python'
-    let g:python3_host_prog = '/usr/local/bin/python3'
-  else
-    let g:python2_host_prog = '/usr/bin/python'
-    let g:python3_host_prog = '/usr/bin/python3'
-  endif
-
 " Set the terminal default background and foreground colors, thereby
 " improving performance by not needing to set these colors on empty cells.
 " hi Normal guifg=NONE guibg=NONE ctermfg=NONE ctermbg=NONE
@@ -45,5 +37,5 @@ highlight GitGutterChange ctermbg=0 guibg=#073642 guisp=#93a1a1
 highlight GitGutterDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
 highlight GitGutterChangeDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
 
-"cterm=bold
+" Set up line highlighting
 highlight CursorLineNr ctermbg=white ctermfg=black guibg=white guisp=black

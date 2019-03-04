@@ -58,9 +58,15 @@ let maplocalleader = ","
 " map backslash to comma so reversing line search is fast
 nnoremap \ ,
 
-if filereadable(expand("~/.vimrc.local"))
-  source ~/.vimrc.local
+" Specify python paths
+if has('macunix')
+  let g:python2_host_prog = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
+else
+  let g:python2_host_prog = '/usr/bin/python'
+  let g:python3_host_prog = '/usr/bin/python3'
 endif
+
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
@@ -205,3 +211,7 @@ endfunction
 
 " remove trailing whitespace when writing
 autocmd BufWritePre * :%s/\s\+$//e
+
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
