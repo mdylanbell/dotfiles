@@ -78,6 +78,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
+  Plug 'autozimu/LanguageClient-neovim', {  'do': 'bash install.sh' }
 else
   Plug 'altercation/vim-colors-solarized'
 endif
@@ -93,7 +94,7 @@ Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
-Plug 'guns/vim-sexp'
+"Plug 'guns/vim-sexp'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
 Plug 'janko-m/vim-test'
@@ -129,7 +130,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-sexp-mappings-for-regular-people'
+"Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'

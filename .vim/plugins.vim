@@ -32,6 +32,9 @@ let g:ale_set_highlights = 1
 let g:ale_set_signs = 1
 let g:ale_echo_cursor = 1
 
+" vim-jsx: don't require jsx extension
+let g:jsx_ext_required = 0
+
 " tagbar
 let g:tagbar_type_ruby = {
     \ 'kinds' : [
