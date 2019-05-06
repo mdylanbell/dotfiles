@@ -11,6 +11,8 @@ set cursorline
 set diffopt+=vertical
 
 set expandtab
+set exrc " Run local vimrc, set secure disables unsafe commands
+set secure
 set foldmethod=marker
 set history=100
 set hlsearch
@@ -115,12 +117,14 @@ Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'stevearc/vim-arduino'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-rake'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'

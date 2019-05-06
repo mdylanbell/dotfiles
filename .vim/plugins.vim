@@ -142,6 +142,8 @@ if strlen($TMUX)
 
         let g:VimuxRunnerType = 'pane'
         let g:VimuxUseNearest = 1
+        let g:VimuxOrientation = "h"
+        let g:VimuxHeight = "30"
 
         function! ToggleVimuxType()
             if g:VimuxRunnerType == 'window'
