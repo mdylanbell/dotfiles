@@ -1,3 +1,81 @@
+" configure vim-plug
+call plug#begin('~/.vim/plugged')
+" supertab needs to come first
+Plug 'ervandew/supertab'
+if has('nvim')
+  Plug 'iCyMind/NeoSolarized'
+  Plug 'autozimu/LanguageClient-neovim', {  'do': 'bash install.sh' }
+else
+  Plug 'altercation/vim-colors-solarized'
+endif
+Plug 'AndrewRadev/sideways.vim'
+Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'SirVer/ultisnips'
+Plug 'Valloric/YouCompleteMe'
+Plug 'airblade/vim-gitgutter'
+Plug 'benmills/vimux'
+Plug 'craigemery/vim-autotag'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'elzr/vim-json'
+Plug 'fatih/vim-go'
+Plug 'gcmt/taboo.vim'
+Plug 'godlygeek/tabular'
+"Plug 'guns/vim-sexp'
+Plug 'honza/vim-snippets'
+Plug 'int3/vim-extradite'
+Plug 'janko-m/vim-test'
+Plug 'jeetsukumaran/vim-buffergator'
+" Plug 'jlanzarotta/bufexplorer'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'pbogut/fzf-mru.vim'
+Plug 'junegunn/gv.vim'
+Plug 'kassio/neoterm'
+" Plug 'kien/ctrlp.vim'
+Plug 'krisajenkins/vim-pipe'
+Plug 'luochen1990/rainbow'
+Plug 'majutsushi/tagbar'
+Plug 'mattboehm/vim-unstack'
+Plug 'mattn/gist-vim'
+Plug 'mattn/webapi-vim'
+Plug 'mbbill/undotree'
+Plug 'mileszs/ack.vim'
+Plug 'moll/vim-node'
+Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
+Plug 'python-mode/python-mode'
+Plug 'qpkorr/vim-bufkill'
+Plug 'ryanoasis/vim-devicons'
+Plug 'scrooloose/nerdtree',
+Plug 'sjl/gundo.vim'
+Plug 'slim-template/vim-slim'
+Plug 'stevearc/vim-arduino'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rhubarb'
+"Plug 'tpope/vim-sexp-mappings-for-regular-people'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'vim-perl/vim-perl',
+Plug 'vim-ruby/vim-ruby'
+Plug 'vim-scripts/L9'
+Plug 'vim-vdebug/vdebug'
+Plug 'w0rp/ale'
+Plug 'yalesov/vim-ember-script'
+call plug#end()
+
 " add tab number to tabs
 let g:taboo_renamed_tab_format = " %N [%l]%m "
 let g:taboo_tab_format = " %N %f%m "
@@ -18,7 +96,10 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
-let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
+let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [%{&tabstop}/%{&shiftwidth}]'
+
+let g:airline_solarized_bg='dark'
+let g:airline_theme='solarized'
 
 " configure ale
 let g:ale_lint_on_save = 1
@@ -104,18 +185,40 @@ let g:surround_110 = "{noformat}\r{noformat}"
 "au BufNewFile,BufRead *.markdown setfiletype octopress
 
 " no default input
-let g:ctrlp_default_input = 0
-" set working dir starting at vim's working dir
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_mruf_relative = 1
-let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
-let g:ctrlp_prompt_mappings = {
-  \ 'ToggleMRURelative()': ['<c-w>'],
-  \ }
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](local|blib|target|node_modules|vendor|bower_components)$'
-  \ }
-let g:ctrlp_map = '<leader>ff'
+" let g:ctrlp_default_input = 0
+" " set working dir starting at vim's working dir
+" let g:ctrlp_working_path_mode = 0
+" let g:ctrlp_mruf_relative = 1
+" let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
+" let g:ctrlp_prompt_mappings = {
+"   \ 'ToggleMRURelative()': ['<c-w>'],
+"   \ }
+" let g:ctrlp_custom_ignore = {
+"   \ 'dir':  '\v[\/](local|blib|target|node_modules|vendor|bower_components)$'
+"   \ }
+" let g:ctrlp_map = '<leader>ff'
+
+" fzf
+if executable('fzf')
+  let g:fzf_action = {
+        \ 'ctrl-t': 'tab split',
+        \ 'ctrl-s': 'split',
+        \ 'ctrl-v': 'vsplit'
+        \ }
+  let g:fzf_layout = { 'up': '~30%' }
+  " augroup fzf
+  "   autocmd!
+  "   autocmd! FileType fzf
+  "   autocmd  FileType fzf set laststatus=0 noshowmode noruler
+  "     \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+  " augroup END
+endif
+
+function! s:find_git_root()
+  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+endfunction
+
+command! ProjectFiles execute 'Files' s:find_git_root()
 
 " pymode
 let g:pymode_options = 0

@@ -9,7 +9,7 @@ CMD=$(basename $0)
 if [[ $CMD == 'vi' ]] || [[ $CMD == 'vim' ]]; then
     exec $BIN $*
 elif [[ $CMD == 'viff' ]]; then
-    exec $BIN -c ":CtrlP" $*
+    exec $BIN -c ":FZF" $*
 elif [[ $CMD == 'vifl' ]]; then
-    exec $BIN -c ":CtrlPMRU" $*
+    exec $BIN -c ":FZFMru" $*
 fi

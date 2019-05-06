@@ -77,12 +77,19 @@ nmap <Leader>a> :Tabularize /=><CR>
 vmap <Leader>a> :Tabularize /=><CR>
 
 " CtrlP
-noremap <leader>fg :CtrlPRoot<CR>
-noremap <leader>fr :CtrlPMRU<CR>
-noremap <leader>fl :CtrlPMRU<CR>
-noremap <leader>ft :CtrlPTag<CR>
-noremap <leader>fb :CtrlPBuffer<CR>
-noremap <leader>fc :CtrlPClearCache<CR>
+" noremap <leader>fg :CtrlPRoot<CR>
+" noremap <leader>fr :CtrlPMRU<CR>
+" noremap <leader>fl :CtrlPMRU<CR>
+" noremap <leader>ft :CtrlPTag<CR>
+" noremap <leader>fb :CtrlPBuffer<CR>
+" noremap <leader>fc :CtrlPClearCache<CR>
+
+" FZF
+nnoremap <silent> <Leader>fg :ProjectFiles<cr>
+noremap <leader>ff :FZF<cr>
+noremap <leader>fr :FZFMru<CR>
+noremap <leader>fl :FZFMru<CR>
+noremap <leader>fb :Buffers<CR>
 
 " BufferGator https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
 " Go to the previous buffer open

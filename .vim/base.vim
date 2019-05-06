@@ -2,9 +2,13 @@
 
 set nocompatible
 
+" Use modern encoding
+set encoding=utf-8
+scriptencoding utf-8
+
 set autoindent
 set backspace=indent,eol,start
-set colorcolumn=80
+set colorcolumn=81
 set cursorline
 
 " Always do vimdiff in vertical splits
@@ -50,7 +54,53 @@ set updatetime=100
 
 set wildmenu
 
-runtime macros/matchit.vim
+" {{{ Testing new stuff
+
+ if v:version >= 704
+  " j Remove comment leader when joining lines (added in Vim 7.4)
+  set formatoptions+=j
+endif
+
+set ttyfast
+
+" Load matchit.vim, but only if the user hasn't installed a newer version.
+if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &runtimepath) ==# ''
+  runtime! macros/matchit.vim
+endif
+
+set lazyredraw
+
+" Maintain indent when wrapping
+if exists('+breakindent')
+  set breakindent
+endif
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
+
+set list
+" Highlight trailing spaces
+set listchars=trail:·,tab:»·
+" Show wrap indicators
+set listchars+=extends:»,precedes:«
+
+" Hide the intro screen, use [+] instead of [Modified], use [RO] instead
+" of [readyonly], and don't give completion match messages
+set shortmess+=Imrc
+
+" Close quickfix & help with q, Escape, or Control-C
+" Also, keep default <cr> binding
+augroup easy_close
+  autocmd!
+  autocmd FileType help,qf nnoremap <buffer> q :q<cr>
+  autocmd FileType help,qf nnoremap <buffer> <Esc> :q<cr>
+  autocmd FileType help,qf nnoremap <buffer> <C-c> :q<cr>
+  " Undo <cr> -> : shortcut
+  autocmd FileType help,qf nnoremap <buffer> <cr> <cr>
+augroup END
+
+" }}}
 
 " the famous leader character
 let mapleader = ','
@@ -71,80 +121,6 @@ endif
 " for some reason this has to go in .vimrc
 let perl_fold = 1
 let perl_fold_anonymous_subs = 1
-
-" configure vim-plug
-call plug#begin('~/.vim/plugged')
-" supertab needs to come first
-Plug 'ervandew/supertab'
-if has('nvim')
-  Plug 'iCyMind/NeoSolarized'
-  Plug 'autozimu/LanguageClient-neovim', {  'do': 'bash install.sh' }
-else
-  Plug 'altercation/vim-colors-solarized'
-endif
-Plug 'AndrewRadev/sideways.vim'
-Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'SirVer/ultisnips'
-Plug 'Valloric/YouCompleteMe'
-Plug 'airblade/vim-gitgutter'
-Plug 'benmills/vimux'
-Plug 'craigemery/vim-autotag'
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'elzr/vim-json'
-Plug 'fatih/vim-go'
-Plug 'gcmt/taboo.vim'
-Plug 'godlygeek/tabular'
-"Plug 'guns/vim-sexp'
-Plug 'honza/vim-snippets'
-Plug 'int3/vim-extradite'
-Plug 'janko-m/vim-test'
-Plug 'jeetsukumaran/vim-buffergator'
-" Plug 'jlanzarotta/bufexplorer'
-Plug 'junegunn/gv.vim'
-Plug 'kassio/neoterm'
-Plug 'kien/ctrlp.vim'
-Plug 'krisajenkins/vim-pipe'
-Plug 'luochen1990/rainbow'
-Plug 'majutsushi/tagbar'
-Plug 'mattboehm/vim-unstack'
-Plug 'mattn/gist-vim'
-Plug 'mattn/webapi-vim'
-Plug 'mbbill/undotree'
-Plug 'mileszs/ack.vim'
-Plug 'moll/vim-node'
-Plug 'mxw/vim-jsx'
-Plug 'pangloss/vim-javascript'
-Plug 'python-mode/python-mode'
-Plug 'qpkorr/vim-bufkill'
-Plug 'ryanoasis/vim-devicons'
-Plug 'scrooloose/nerdtree',
-Plug 'sjl/gundo.vim'
-Plug 'slim-template/vim-slim'
-Plug 'stevearc/vim-arduino'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-obsession'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-rhubarb'
-"Plug 'tpope/vim-sexp-mappings-for-regular-people'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-speeddating'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-pandoc/vim-pandoc'
-Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'vim-perl/vim-perl',
-Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/L9'
-Plug 'vim-vdebug/vdebug'
-Plug 'w0rp/ale'
-Plug 'yalesov/vim-ember-script'
-call plug#end()
 
 " use system clipboard for everything
 if has("gui_running")
@@ -212,7 +188,3 @@ endfunction
 
 " remove trailing whitespace when writing
 autocmd BufWritePre * :%s/\s\+$//e
-
-if filereadable(expand("~/.vimrc.local"))
-  source ~/.vimrc.local
-endif

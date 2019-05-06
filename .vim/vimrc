@@ -7,3 +7,7 @@ if has('nvim')
   source ~/.vim/nvim.vim
 end
 
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
+
