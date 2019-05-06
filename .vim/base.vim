@@ -60,9 +60,15 @@ let maplocalleader = ","
 " map backslash to comma so reversing line search is fast
 nnoremap \ ,
 
-if filereadable(expand("~/.vimrc.local"))
-  source ~/.vimrc.local
+" Specify python paths
+if has('macunix')
+  let g:python2_host_prog = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
+else
+  let g:python2_host_prog = '/usr/bin/python'
+  let g:python3_host_prog = '/usr/bin/python3'
 endif
+
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
@@ -74,6 +80,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
+  Plug 'autozimu/LanguageClient-neovim', {  'do': 'bash install.sh' }
 else
   Plug 'altercation/vim-colors-solarized'
 endif
@@ -89,7 +96,7 @@ Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
-Plug 'guns/vim-sexp'
+"Plug 'guns/vim-sexp'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
 Plug 'janko-m/vim-test'
@@ -127,7 +134,7 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-rake'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-sexp-mappings-for-regular-people'
+"Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
@@ -209,3 +216,7 @@ endfunction
 
 " remove trailing whitespace when writing
 autocmd BufWritePre * :%s/\s\+$//e
+
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
