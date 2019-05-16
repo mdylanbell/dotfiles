@@ -1,31 +1,64 @@
 " base.vim
 
+" Basics {{{
 set nocompatible
 
 " Use modern encoding
 set encoding=utf-8
 scriptencoding utf-8
 
-set autoindent
-set backspace=indent,eol,start
+set exrc " Run local vimrc, set secure disables unsafe commands
+set secure
+set history=100
+set laststatus=2
+
+set shell=/bin/bash
+" }}}
+
+" UI {{{
 set colorcolumn=81
 set cursorline
 
-" Always do vimdiff in vertical splits
-set diffopt+=vertical
+set number
+set ruler
 
-set expandtab
-set exrc " Run local vimrc, set secure disables unsafe commands
-set secure
-set foldmethod=marker
-set history=100
+" Search
 set hlsearch
 set ignorecase
 set incsearch
-set laststatus=2
 set nowarn
-set number
-set ruler
+
+set showmatch
+set showmode
+set smartcase
+
+" for gitgutter
+set updatetime=100
+
+set wildmenu
+
+" Always do vimdiff in vertical splits
+set diffopt+=vertical
+" }}}
+
+" Editing {{{
+" Indentation {{{
+set autoindent
+set backspace=indent,eol,start
+set shiftwidth=4
+set tabstop=4
+set smarttab
+set expandtab
+" }}}
+
+" Folds {{{
+set foldclose=all
+set foldenable
+set foldmethod=marker
+set foldlevelstart=99
+set foldnestmax=7 " 5
+set foldopen+=jump
+" }}}
 
 " printing options
 set printoptions=paper:letter
@@ -37,24 +70,12 @@ set scrolloff=5
 " Enable global session caching (for Taboo)
 set sessionoptions+=globals
 
-set shell=/bin/bash
-set shiftwidth=4
-set showmatch
-set showmode
-set smartcase
-set smarttab
-
 " look for tags
 set tags=./tags;
 
-set tabstop=4
 set terse
 set timeout
-
-" for gitgutter
-set updatetime=100
-
-set wildmenu
+" }}}
 
 " {{{ Testing new stuff
 
@@ -101,6 +122,8 @@ augroup easy_close
   " Undo <cr> -> : shortcut
   autocmd FileType help,qf nnoremap <buffer> <cr> <cr>
 augroup END
+
+set completeopt=longest,menuone,noinsert,noselect,preview
 
 " }}}
 
@@ -158,8 +181,6 @@ function! OpenURL(url)
     let s:uname = system("uname")
     if s:uname == "Darwin\n"
       call system("open ".a:url)
-    else
-      call pmb#openurl(a:url)
     endif
   endif
 endfunction
