@@ -4,7 +4,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
-  Plug 'autozimu/LanguageClient-neovim', {  'do': 'bash install.sh' }
+  Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'bash install.sh',
+      \ }
 else
   Plug 'altercation/vim-colors-solarized'
 endif
@@ -20,18 +23,15 @@ Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
-"Plug 'guns/vim-sexp'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-buffergator'
-" Plug 'jlanzarotta/bufexplorer'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
-" Plug 'kien/ctrlp.vim'
 Plug 'krisajenkins/vim-pipe'
 Plug 'luochen1990/rainbow'
 Plug 'majutsushi/tagbar'
@@ -59,7 +59,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
-"Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
@@ -96,7 +95,7 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
-let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [%{&tabstop}/%{&shiftwidth}]'
+let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
 
 let g:airline_solarized_bg='dark'
 let g:airline_theme='solarized'
