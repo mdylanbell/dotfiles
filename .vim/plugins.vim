@@ -14,7 +14,7 @@ endif
 Plug 'AndrewRadev/sideways.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'SirVer/ultisnips'
-Plug 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer --go-completer --js-completer' }
 Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'craigemery/vim-autotag'
@@ -41,7 +41,7 @@ Plug 'mattn/webapi-vim'
 Plug 'mbbill/undotree'
 Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
-Plug 'mxw/vim-jsx'
+"Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'python-mode/python-mode'
 Plug 'qpkorr/vim-bufkill'
@@ -51,6 +51,7 @@ Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'stevearc/vim-arduino'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
@@ -58,6 +59,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rake'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
@@ -306,3 +308,8 @@ let g:rainbow_conf = {
 " configure vim-pipe
 let g:vimpipe_invoke_map="<leader>w"
 let g:vimpipe_close_map="<leader>W"
+
+" inoremap <expr><silent> <CR> <SID>my_cr_function()
+" function! s:my_cr_function()
+"   return pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
+" endfunction
