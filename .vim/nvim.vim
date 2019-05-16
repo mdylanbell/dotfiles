@@ -8,6 +8,6 @@ let g:LanguageClient_serverCommands = {
 
 let g:LanguageClient_autoStart = 1
 
-nnoremap <localleader>lh :call LanguageClient_textDocument_hover()<CR>
-nnoremap <localleader>ld :call LanguageClient_textDocument_definition()<CR>
-nnoremap <localleader>lr :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <localleader>lr :call LanguageClient#textDocument_rename()<CR>
