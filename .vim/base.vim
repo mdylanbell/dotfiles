@@ -15,6 +15,8 @@ set cursorline
 set diffopt+=vertical
 
 set expandtab
+set exrc " Run local vimrc, set secure disables unsafe commands
+set secure
 set foldmethod=marker
 set history=100
 set hlsearch
