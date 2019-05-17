@@ -43,5 +43,8 @@ else
   highlight link GitGutterChangeDelete DiffText
 endif
 
-" Set up line highlighting - nvim only
+" Set up line highlighting
 highlight CursorLineNr ctermbg=white ctermfg=black guibg=white guisp=black
+
+highlight! link ALEWarningSign DiffChange
+highlight! link ALEErrorSign DiffDelete

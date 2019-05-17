@@ -16,6 +16,7 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'SirVer/ultisnips'
 Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer --go-completer --js-completer' }
 Plug 'airblade/vim-gitgutter'
+Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
 Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
