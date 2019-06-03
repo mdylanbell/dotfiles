@@ -1,7 +1,7 @@
 " configure vim-plug
 call plug#begin('~/.vim/plugged')
 " supertab needs to come first
-Plug 'ervandew/supertab'
+" Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
   Plug 'autozimu/LanguageClient-neovim', {
@@ -13,8 +13,8 @@ else
 endif
 Plug 'AndrewRadev/sideways.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'SirVer/ultisnips'
-Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer --go-completer --js-completer' }
+" Plug 'SirVer/ultisnips'
+" Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer --go-completer --js-completer' }
 Plug 'airblade/vim-gitgutter'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
@@ -43,6 +43,10 @@ Plug 'mbbill/undotree'
 Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
 "Plug 'mxw/vim-jsx'
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'pangloss/vim-javascript'
 Plug 'python-mode/python-mode'
 Plug 'qpkorr/vim-bufkill'
@@ -149,13 +153,13 @@ endif
 " YouCompleteMe and UltiSnips compatibility, with the helper of supertab
 " (via http://stackoverflow.com/a/22253548/1626737)
 " https://gist.github.com/lencioni/dff45cd3d1f0e5e23fe6
-let g:SuperTabDefaultCompletionType    = '<C-n>'
-let g:SuperTabCrMapping                = 0
-let g:UltiSnipsExpandTrigger           = '<tab>'
-let g:UltiSnipsJumpForwardTrigger      = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
-let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
+" let g:SuperTabDefaultCompletionType    = '<C-n>'
+" let g:SuperTabCrMapping                = 0
+" let g:UltiSnipsExpandTrigger           = '<tab>'
+" let g:UltiSnipsJumpForwardTrigger      = '<tab>'
+" let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
+" let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
+" let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
 
 " use brew's ctags instead of the system one
 if filereadable('/usr/local/bin/ctags')
@@ -165,14 +169,14 @@ endif
 
 " detect if we're on redhat/centos < 6 and skip ultisnips
 " older versions don't have a new enough version of python
-if filereadable("/etc/redhat-release")
-  let line = readfile("/etc/redhat-release")[0]
-  let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
-  if s:majorver < 6
-    let did_UltiSnips_vim=1
-    let did_UltiSnips_vim_after=1
-  endif
-endif
+" if filereadable("/etc/redhat-release")
+"   let line = readfile("/etc/redhat-release")[0]
+"   let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
+"   if s:majorver < 6
+"     let did_UltiSnips_vim=1
+"     let did_UltiSnips_vim_after=1
+"   endif
+" endif
 
 " custom surroundings for confluence editing
 " 'l' for literal

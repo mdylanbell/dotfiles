@@ -91,15 +91,20 @@ noremap <leader>fr :FZFMru<CR>
 noremap <leader>fl :FZFMru<CR>
 noremap <leader>fb :Buffers<CR>
 
-" BufferGator https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
+" {{{ Buffers
+
+" {{{ BufferGator
+" https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
+
 " Go to the previous buffer open
 nmap <leader>jj :BuffergatorMruCyclePrev<cr>
 " Go to the next buffer open
 nmap <leader>kk :BuffergatorMruCycleNext<cr>
 " View the entire list of buffers open
 nmap <leader>bl :BuffergatorOpen<cr>
+" }}}
 
-" --- General buffer navigation ---
+" {{{ General buffer navigation
 " Move to the next buffer
 nmap <leader>l :bnext<CR>
 " Move to the previous buffer
@@ -109,19 +114,71 @@ nmap <leader>h :bprevious<CR>
 nmap <leader>bq :bp <BAR> bd #<CR>
 " Show all open buffers and their status
 " nmap <leader>bl :ls<CR> " Use buffergator instead
+" }}}
+
+" }}}
 
 " Taglist
 "noremap <leader>tl :TlistToggle<CR>
 
-" vim-test
+" {{{ vim-test
 noremap <leader>tn :TestNearest<CR>
 noremap <leader>tf :TestFile<CR>
 noremap <leader>ta :TestSuite<CR>
 noremap <leader>tl :TestLast<CR>
+" }}}
 
-" sideways.vim
+" {{{ sideways.vim
 nnoremap <leader>hh :SidewaysLeft<cr>
 nnoremap <leader>ll :SidewaysRight<cr>
+" }}}
 
 " http://stackoverflow.com/questions/7400743/create-a-mapping-for-vims-command-line-that-escapes-the-contents-of-a-register-b
 cnoremap <c-x> <c-r>=<SID>myfuncs#PasteEscaped()<cr>
+
+" {{{ CoC
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+" MDB: Currently conflicts with vim-endwise
+" (https://github.com/tpope/vim-endwise/issues/22)
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" }}}
