@@ -165,3 +165,5 @@ source $HOME/.zshrc.load
 # ruby/rvm
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 [[ -d "$PATH:$HOME/.rvm/bin" ]] && export PATH="$PATH:$HOME/.rvm/bin"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
