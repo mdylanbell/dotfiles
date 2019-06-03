@@ -44,6 +44,7 @@ Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
 "Plug 'mxw/vim-jsx'
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+Plug 'neoclide/coc-snippets'
 Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
@@ -180,9 +181,9 @@ endif
 
 " custom surroundings for confluence editing
 " 'l' for literal
-let g:surround_108 = "{{\r}}"
+" let g:surround_108 = "{{\r}}"
 " 'n' for noformat
-let g:surround_110 = "{noformat}\r{noformat}"
+" let g:surround_110 = "{noformat}\r{noformat}"
 
 " settings for gist-vim
 "let g:gist_open_browser_after_post = 0
