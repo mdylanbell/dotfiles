@@ -4,10 +4,10 @@ call plug#begin('~/.vim/plugged')
 " Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
-  Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ 'do': 'bash install.sh',
-      \ }
+  " Plug 'autozimu/LanguageClient-neovim', {
+  "     \ 'branch': 'next',
+  "     \ 'do': 'bash install.sh',
+  "     \ }
 else
   Plug 'altercation/vim-colors-solarized'
 endif
@@ -22,7 +22,7 @@ Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
-Plug 'gcmt/taboo.vim'
+"Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
@@ -34,7 +34,7 @@ Plug 'pbogut/fzf-mru.vim'
 Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
 Plug 'krisajenkins/vim-pipe'
-Plug 'luochen1990/rainbow'
+"Plug 'luochen1990/rainbow'
 Plug 'majutsushi/tagbar'
 Plug 'mattboehm/vim-unstack'
 Plug 'mattn/gist-vim'
@@ -43,8 +43,8 @@ Plug 'mbbill/undotree'
 Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
 "Plug 'mxw/vim-jsx'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
-Plug 'neoclide/coc-snippets'
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
@@ -88,7 +88,7 @@ let g:taboo_renamed_tab_format = " %N [%l]%m "
 let g:taboo_tab_format = " %N %f%m "
 let g:taboo_tabline = 0
 
-" airline
+" {{{ airline
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}  " https://github.com/vim-airline/vim-airline/issues/520
@@ -99,6 +99,25 @@ let g:airline#extensions#tabline#enabled = 1
 " show filename only
 let g:airline#extensions#tabline#fnamemod = ':t'
 
+" Git control
+"let g:airline#extensions#hunks#enabled = 0
+"let g:airline#extensions#branch#enabled = 0
+" Only show tail (after last '/') # 2 for truncated pre-slash parts
+" let g:airline#extensions#branch#format = 1
+let g:airline#extensions#hunks#non_zero_only = 1
+
+let g:airline#extensions#quickfix#quickfix_text = 'Quickfix'
+let g:airline#extensions#quickfix#location_text = 'Location'
+
+let g:airline#extensions#default#section_truncate_width = {
+    \ 'b': 130,
+    \ 'x': 60,
+    \ 'y': 88,
+    \ 'z': 45,
+    \ 'warning': 80,
+    \ 'error': 80,
+    \ }
+
 " show current function/module/etc in airline
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
@@ -107,6 +126,9 @@ let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_
 
 let g:airline_solarized_bg='dark'
 let g:airline_theme='solarized'
+
+
+" }}}
 
 " configure ale
 let g:ale_lint_on_save = 1

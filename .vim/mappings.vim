@@ -62,11 +62,11 @@ end
 noremap <leader>tb :TagbarToggle<CR>
 
 " sessionman.vim mappings
-noremap <leader>sa :SessionSaveAs<CR>
-noremap <leader>ss :SessionSave<CR>
-noremap <leader>so :SessionOpen
-noremap <leader>sl :SessionList<CR>
-noremap <leader>sc :SessionClose<CR>
+" noremap <leader>sa :SessionSaveAs<CR>
+" noremap <leader>ss :SessionSave<CR>
+" noremap <leader>so :SessionOpen
+" noremap <leader>sl :SessionList<CR>
+" noremap <leader>sc :SessionClose<CR>
 
 " tabular mappings (http://vimcasts.org/episodes/aligning-text-with-tabular-vim/)
 nmap <Leader>a= :Tabularize /=<CR>
@@ -90,6 +90,8 @@ noremap <leader>ff :FZF<cr>
 noremap <leader>fr :FZFMru<CR>
 noremap <leader>fl :FZFMru<CR>
 noremap <leader>fb :Buffers<CR>
+" Ripgrep
+noremap <leader>ft :Rg<CR>
 
 " {{{ Buffers
 

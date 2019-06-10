@@ -68,7 +68,7 @@ set printdevice=dev_np24
 set scrolloff=5
 
 " Enable global session caching (for Taboo)
-set sessionoptions+=globals
+" set sessionoptions+=globals
 
 " look for tags
 set tags=./tags;
