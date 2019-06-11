@@ -6,6 +6,12 @@ nnoremap k gk
 vnoremap j gj
 vnoremap k gk
 
+" Navigate windows
+nnoremap <C-H> <C-W>h
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
+
 " scroll up and down the page a little faster
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
