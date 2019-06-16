@@ -1,7 +1,9 @@
 " base.vim
 
 " Basics {{{
-set nocompatible
+if &compatible
+  set nocompatible
+endif
 
 " Use modern encoding
 set encoding=utf-8
@@ -44,9 +46,12 @@ set diffopt+=vertical
 " Editing {{{
 " Indentation {{{
 set autoindent
+filetype plugin indent on
+
 set backspace=indent,eol,start
-set shiftwidth=4
+
 set tabstop=4
+set shiftwidth=4
 set smarttab
 set expandtab
 " }}}
@@ -78,7 +83,6 @@ set timeout
 " }}}
 
 " {{{ Testing new stuff
-
  if v:version >= 704
   " j Remove comment leader when joining lines (added in Vim 7.4)
   set formatoptions+=j
@@ -87,9 +91,9 @@ endif
 set ttyfast
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.
-if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &runtimepath) ==# ''
-  runtime! macros/matchit.vim
-endif
+" if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &runtimepath) ==# ''
+"   runtime! macros/matchit.vim
+" endif
 
 set lazyredraw
 
@@ -124,12 +128,12 @@ augroup easy_close
 augroup END
 
 set completeopt=longest,menuone,noinsert,noselect,preview
-
 " }}}
 
 " the famous leader character
 let mapleader = ','
 let maplocalleader = ","
+
 " map backslash to comma so reversing line search is fast
 nnoremap \ ,
 
@@ -141,7 +145,6 @@ else
   let g:python2_host_prog = '/usr/bin/python'
   let g:python3_host_prog = '/usr/bin/python3'
 endif
-
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1
@@ -191,15 +194,20 @@ augroup CloseLoclistWindowGroup
   autocmd QuitPre * if empty(&buftype) | lclose | endif
 augroup END
 
-" .t files are perl
-au BufNewFile,BufRead *.t set filetype=perl
+augroup AssignFileTypes
+  autocmd!
 
-" tt and mt files are tt2html
-au BufNewFile,BufRead *.tt set filetype=tt2html
-au BufNewFile,BufRead *.mt set filetype=tt2html
+  " .t files are perl
+  autocmd BufNewFile,BufRead *.t set filetype=perl
+
+  " tt and mt files are tt2html
+  autocmd BufNewFile,BufRead *.tt set filetype=tt2html
+  autocmd BufNewFile,BufRead *.mt set filetype=tt2html
+
+  autocmd FileType json setlocal foldmethod=syntax
+augroup END
 
 let g:vim_json_syntax_conceal = 0
-au FileType json setlocal foldmethod=syntax
 
 function! ToggleSyntax()
    if exists("g:syntax_on")
@@ -210,4 +218,7 @@ function! ToggleSyntax()
 endfunction
 
 " remove trailing whitespace when writing
-autocmd BufWritePre * :%s/\s\+$//e
+augroup NewlineCleanUp
+  autocmd!
+  autocmd BufWritePre * :%s/\s\+$//e
+augroup END
