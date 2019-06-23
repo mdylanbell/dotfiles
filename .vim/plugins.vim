@@ -190,74 +190,77 @@ let g:pymode_rope_complete_on_dot = 0
 
 " Tagbar {{{
 if executable('ripper-tags')
-    let g:tagbar_type_ruby = {
-          \ 'kinds'      : ['m:modules',
-                          \ 'c:classes',
-                          \ 'C:constants',
-                          \ 'F:singleton methods',
-                          \ 'f:methods',
-                          \ 'a:aliases'],
-          \ 'kind2scope' : { 'c' : 'class',
-                           \ 'm' : 'class' },
-          \ 'scope2kind' : { 'class' : 'c' },
-          \ 'ctagsbin'   : 'ripper-tags',
-          \ 'ctagsargs'  : ['-f', '-']
-          \ }
+  let g:tagbar_type_ruby = {
+    \ 'kinds'      : ['m:modules',
+                    \ 'c:classes',
+                    \ 'C:constants',
+                    \ 'F:singleton methods',
+                    \ 'f:methods',
+                    \ 'a:aliases'],
+    \ 'kind2scope' : { 'c' : 'class',
+                     \ 'm' : 'class' },
+    \ 'scope2kind' : { 'class' : 'c' },
+    \ 'ctagsbin'   : 'ripper-tags',
+    \ 'ctagsargs'  : ['-f', '-']
+    \ }
   let g:autotagCtagsCmd = 'rippertags'
 else
+  if executable('ctags')
+    let g:autotagCtagsCmd = 'ctags'
+  endif
+
   let g:tagbar_type_ruby = {
-      \ 'kinds' : [
-          \ 'm:modules',
-          \ 'c:classes',
-          \ 'd:describes',
-          \ 'C:contexts',
-          \ 'f:methods',
-          \ 'F:singleton methods'
-      \ ]
+    \ 'kinds' : [
+      \ 'm:modules',
+      \ 'c:classes',
+      \ 'd:describes',
+      \ 'C:contexts',
+      \ 'f:methods',
+      \ 'F:singleton methods'
+    \ ]
   \ }
-  let g:autotagCtagsCmd = 'ctags'
 endif
 " }}}
 " }}}
 
 " vimux {{{
 if strlen($TMUX)
-    let tmuxver = str2float(matchstr(system("tmux -V"), '\d\d*\.\d\d*'))
-    if tmuxver >= 1.8
-        function! InterruptRunnerAndRunLastCommand()
-            :VimuxInterruptRunner
-            :VimuxRunLastCommand
-        endfunction
+  let tmuxver = str2float(matchstr(system("tmux -V"), '\d\d*\.\d\d*'))
+  if tmuxver >= 1.8
+    function! InterruptRunnerAndRunLastCommand()
+      :VimuxInterruptRunner
+      :VimuxRunLastCommand
+    endfunction
 
+    let g:VimuxRunnerType = 'pane'
+    let g:VimuxUseNearest = 1
+    let g:VimuxOrientation = "h"
+    let g:VimuxHeight = "30"
+
+    function! ToggleVimuxType()
+      if g:VimuxRunnerType == 'window'
         let g:VimuxRunnerType = 'pane'
         let g:VimuxUseNearest = 1
-        let g:VimuxOrientation = "h"
-        let g:VimuxHeight = "30"
+        echo "VimuxType -> pane"
+      else
+        call VimuxCloseRunner()
+        let g:VimuxRunnerType = 'window'
+        let g:VimuxUseNearest = 0
+        echo "VimuxType -> window"
+      end
+    endfunction
+    command! ToggleVimuxType call ToggleVimuxType()
 
-        function! ToggleVimuxType()
-            if g:VimuxRunnerType == 'window'
-                let g:VimuxRunnerType = 'pane'
-                let g:VimuxUseNearest = 1
-                echo "VimuxType -> pane"
-            else
-                call VimuxCloseRunner()
-                let g:VimuxRunnerType = 'window'
-                let g:VimuxUseNearest = 0
-                echo "VimuxType -> window"
-            end
-        endfunction
-        command! ToggleVimuxType call ToggleVimuxType()
-
-        noremap <Leader>tp :VimuxPromptCommand<CR>
-        noremap <Leader>tr :VimuxRunLastCommand<CR>
-        noremap <Leader>ty :call InterruptRunnerAndRunLastCommand()<CR>
-        noremap <Leader>ti :VimuxInspectRunner<CR>
-        noremap <Leader>tx :VimuxCloseRunner<CR>
-        noremap <Leader>tc :VimuxInterruptRunner<CR>
-        noremap <Leader>tz :VimuxZoomRunner<CR>
-    else
-        noremap <Leader>tp :echo "Upgrade tmux to at least 1.8"<CR>
-    endif
+    noremap <Leader>tp :VimuxPromptCommand<CR>
+    noremap <Leader>tr :VimuxRunLastCommand<CR>
+    noremap <Leader>ty :call InterruptRunnerAndRunLastCommand()<CR>
+    noremap <Leader>ti :VimuxInspectRunner<CR>
+    noremap <Leader>tx :VimuxCloseRunner<CR>
+    noremap <Leader>tc :VimuxInterruptRunner<CR>
+    noremap <Leader>tz :VimuxZoomRunner<CR>
+  else
+    noremap <Leader>tp :echo "Upgrade tmux to at least 1.8"<CR>
+  endif
 endif
 " }}}
 
