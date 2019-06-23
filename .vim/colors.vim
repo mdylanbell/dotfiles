@@ -13,6 +13,26 @@ endif
 syntax enable
 set background=dark
 
+" Custom hilighting {{{
+function! MyHighlights() abort
+  " GitGutter
+  highlight! link GitGutterAdd DiffAdd
+  highlight! link GitGutterChange DiffChange
+  highlight! link GitGutterDelete DiffDelete
+  highlight! link GitGutterChangeDelete DiffText
+
+  highlight CursorLineNr ctermbg=white ctermfg=black guibg=white guisp=black
+
+  highlight! link ALEWarningSign DiffChange
+  highlight! link ALEErrorSign DiffDelete
+endfunction
+
+augroup MyColors
+  autocmd!
+  autocmd ColorScheme * call MyHighlights()
+augroup END
+" }}}
+
 if has('nvim')
   " Term emulation stuff, not sure if required
   if exists('+termguicolors')
@@ -25,26 +45,14 @@ if has('nvim')
   let g:neosolarized_bold = 1
   let g:neosolarized_underline = 1
 
-  " GitGutter
-  highlight GitGutterAdd ctermbg=0 guibg=#073642 guisp=#93a1a1
-  highlight GitGutterChange ctermbg=0 guibg=#073642 guisp=#93a1a1
-  highlight GitGutterDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
-  highlight GitGutterChangeDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
+  " " GitGutter
+  " highlight GitGutterAdd ctermbg=0 guibg=#073642 guisp=#93a1a1
+  " highlight GitGutterChange ctermbg=0 guibg=#073642 guisp=#93a1a1
+  " highlight GitGutterDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
+  " highlight GitGutterChangeDelete ctermbg=0 guibg=#073642 guisp=#93a1a1
 else
   let g:solarized_termtrans = 0
   " let g:solarized_termcolors = &t_Co
   let g:solarized_termcolors = 16
   colorscheme solarized
-
-  " GitGutter
-  highlight link GitGutterAdd DiffAdd
-  highlight link GitGutterChange DiffChange
-  highlight link GitGutterDelete DiffDelete
-  highlight link GitGutterChangeDelete DiffText
 endif
-
-" Set up line highlighting
-highlight CursorLineNr ctermbg=white ctermfg=black guibg=white guisp=black
-
-highlight! link ALEWarningSign DiffChange
-highlight! link ALEErrorSign DiffDelete
