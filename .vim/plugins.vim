@@ -1,26 +1,18 @@
 " vim-plug // Install Plugins {{{
 call plug#begin('~/.vim/plugged')
-" supertab needs to come first
-" Plug 'ervandew/supertab'
 if has('nvim')
   Plug 'iCyMind/NeoSolarized'
-  " Plug 'autozimu/LanguageClient-neovim', {
-  "     \ 'branch': 'next',
-  "     \ 'do': 'bash install.sh',
-  "     \ }
 else
   Plug 'altercation/vim-colors-solarized'
 endif
 Plug 'AndrewRadev/sideways.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
-" Plug 'SirVer/ultisnips'
-" Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer --go-completer --js-completer' }
 Plug 'airblade/vim-gitgutter'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
 Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
-"Plug 'elzr/vim-json'
+Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 "Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
@@ -36,10 +28,10 @@ Plug 'kassio/neoterm'
 Plug 'krisajenkins/vim-pipe'
 "Plug 'luochen1990/rainbow'
 Plug 'majutsushi/tagbar'
-Plug 'mattboehm/vim-unstack'
-Plug 'mattn/gist-vim'
-Plug 'mattn/webapi-vim'
-Plug 'mbbill/undotree'
+"Plug 'mattboehm/vim-unstack'
+"Plug 'mattn/gist-vim'
+"Plug 'mattn/webapi-vim'
+"Plug 'mbbill/undotree'
 Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
 "Plug 'mxw/vim-jsx'
@@ -77,8 +69,8 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-perl/vim-perl',
 Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/L9'
-Plug 'vim-vdebug/vdebug'
+"Plug 'vim-scripts/L9'
+"Plug 'vim-vdebug/vdebug'
 Plug 'w0rp/ale'
 Plug 'yalesov/vim-ember-script'
 call plug#end()
