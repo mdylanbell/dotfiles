@@ -1,6 +1,7 @@
 path=(
   $HOME/bin
   /usr/local/bin
+  /usr/local/sbin
   $path
 )
 
