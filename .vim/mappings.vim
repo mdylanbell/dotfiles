@@ -56,8 +56,13 @@ noremap <leader>et :tabe <C-R>=expand("%:.:h") . "/" <CR>
 map <leader>nt :NERDTreeToggle<CR>
 map <leader>nf :NERDTreeFind<CR>
 
+" ALE {{{
 " Toggle ALE linting
 map <leader>at :ALEToggle<CR>
+
+nmap <silent> [c <Plug>(ale_previous_wrap)
+nmap <silent> ]c <Plug>(ale_next_wrap)
+" }}}
 
 " Control+o to exit insert mode in terminal
 if has('nvim')
@@ -91,13 +96,16 @@ vmap <Leader>a> :Tabularize /=><CR>
 " noremap <leader>fc :CtrlPClearCache<CR>
 
 " FZF
-nnoremap <silent> <Leader>fg :ProjectFiles<cr>
-noremap <leader>ff :FZF<cr>
+nnoremap <silent> <Leader>fg :ProjectFiles<CR>
+noremap <leader>ff :FZF<CR>
 noremap <leader>fr :FZFMru<CR>
 noremap <leader>fl :FZFMru<CR>
 noremap <leader>fb :Buffers<CR>
+noremap <leader>ft :BTags<CR>
+noremap <leader>fT :Tags<CR>
+
 " Ripgrep
-noremap <leader>ft :Rg<CR>
+noremap <leader>fx :Rg<CR>
 
 " {{{ Buffers
 
@@ -170,8 +178,8 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+" nmap <silent> [c <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)

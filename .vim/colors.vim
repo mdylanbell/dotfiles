@@ -25,6 +25,9 @@ function! MyHighlights() abort
 
   highlight! link ALEWarningSign DiffChange
   highlight! link ALEErrorSign DiffDelete
+
+  let g:airline_solarized_dark_inactive_background = 1
+  let g:airline_solarized_enable_command_color = 1
 endfunction
 
 augroup MyColors

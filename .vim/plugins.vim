@@ -39,7 +39,7 @@ Plug 'moll/vim-node'
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'pangloss/vim-javascript'
 Plug 'python-mode/python-mode'
@@ -111,7 +111,7 @@ let g:airline#extensions#default#section_truncate_width = {
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
-let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
+"let g:airline_section_z = '%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v [  %{&tabstop}/%{&shiftwidth}]'
 
 let g:airline_solarized_bg='dark'
 let g:airline_theme='solarized'
@@ -273,6 +273,39 @@ elseif has('nvim')
 endif
 let g:test#python#pytest#options = '--verbose'
 " }}}
+
+" vim-startify {{{
+augroup CustomStartup
+  autocmd!
+  autocmd VimEnter *
+              \   if !argc()
+              \ |   Startify
+              \ |   NERDTree
+              \ |   wincmd w
+              \ | endif
+augroup END
+
+" redir => startify_banner
+"   silent !(figlet -c -k -f shadow sweetgreen)
+" redir END
+let startify_banner = system('figlet -c -k -f shadow sweetgreen')
+
+let g:startify_custom_header = split(startify_banner, '\n')
+" }}}
+
+" coc-snippets
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
 
 " Deprecated (remove some day) {{{
 " CtrlP {{{
