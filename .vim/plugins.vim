@@ -10,7 +10,7 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'airblade/vim-gitgutter'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
-Plug 'craigemery/vim-autotag'
+" Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
@@ -27,7 +27,7 @@ Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
 Plug 'krisajenkins/vim-pipe'
 "Plug 'luochen1990/rainbow'
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
 "Plug 'mattboehm/vim-unstack'
 "Plug 'mattn/gist-vim'
 "Plug 'mattn/webapi-vim'
@@ -182,37 +182,37 @@ let g:pymode_rope_complete_on_dot = 0
 " endif
 
 " Tagbar {{{
-if executable('ripper-tags')
-  let g:tagbar_type_ruby = {
-    \ 'kinds'      : ['m:modules',
-                    \ 'c:classes',
-                    \ 'C:constants',
-                    \ 'F:singleton methods',
-                    \ 'f:methods',
-                    \ 'a:aliases'],
-    \ 'kind2scope' : { 'c' : 'class',
-                     \ 'm' : 'class' },
-    \ 'scope2kind' : { 'class' : 'c' },
-    \ 'ctagsbin'   : 'ripper-tags',
-    \ 'ctagsargs'  : ['-f', '-']
-    \ }
-  let g:autotagCtagsCmd = 'rippertags'
-else
-  if executable('ctags')
-    let g:autotagCtagsCmd = 'ctags'
-  endif
+" if executable('ripper-tags')
+"   let g:tagbar_type_ruby = {
+"     \ 'kinds'      : ['m:modules',
+"                     \ 'c:classes',
+"                     \ 'C:constants',
+"                     \ 'F:singleton methods',
+"                     \ 'f:methods',
+"                     \ 'a:aliases'],
+"     \ 'kind2scope' : { 'c' : 'class',
+"                      \ 'm' : 'class' },
+"     \ 'scope2kind' : { 'class' : 'c' },
+"     \ 'ctagsbin'   : 'ripper-tags',
+"     \ 'ctagsargs'  : ['-f', '-']
+"     \ }
+"   let g:autotagCtagsCmd = 'rippertags'
+" else
+"   if executable('ctags')
+"     let g:autotagCtagsCmd = 'ctags'
+"   endif
 
-  let g:tagbar_type_ruby = {
-    \ 'kinds' : [
-      \ 'm:modules',
-      \ 'c:classes',
-      \ 'd:describes',
-      \ 'C:contexts',
-      \ 'f:methods',
-      \ 'F:singleton methods'
-    \ ]
-  \ }
-endif
+"   let g:tagbar_type_ruby = {
+"     \ 'kinds' : [
+"       \ 'm:modules',
+"       \ 'c:classes',
+"       \ 'd:describes',
+"       \ 'C:contexts',
+"       \ 'f:methods',
+"       \ 'F:singleton methods'
+"     \ ]
+"   \ }
+" endif
 " }}}
 " }}}
 
