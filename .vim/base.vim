@@ -40,7 +40,10 @@ set updatetime=100
 set wildmenu
 
 " Always do vimdiff in vertical splits
-set diffopt+=vertical
+if &diff
+    set diffopt-=internal " Unsupported on MacOS
+    set diffopt+=vertical
+endif
 " }}}
 
 " Editing {{{
@@ -89,11 +92,6 @@ set timeout
 endif
 
 set ttyfast
-
-" Load matchit.vim, but only if the user hasn't installed a newer version.
-" if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &runtimepath) ==# ''
-"   runtime! macros/matchit.vim
-" endif
 
 set lazyredraw
 

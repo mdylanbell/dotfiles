@@ -111,7 +111,7 @@ font:
     #   - (Windows) Consolas
     #family: monospace
   normal:
-    family: MesloLGM Nerd Font
+    family: MesloLGM Nerd Font Mono
 
     # The `style` can be specified to pick a specific face.
     #style: Regular
@@ -301,7 +301,7 @@ colors:
 #   - Linear
 #
 # Specifying a `duration` of `0` will disable the visual bell.
-visual_bell:
+bell:
   animation: EaseOutExpo
   duration: 0
   color: '0xffffff'
@@ -563,7 +563,7 @@ key_bindings:
   #- { key: H,      mods: Command,         action: Hide             }
   #- { key: Q,      mods: Command,         action: Quit             }
   #- { key: W,      mods: Command,         action: Quit             }
-  #- { key: F,      mods: Command|Control, action: ToggleFullscreen }
+  - { key: F,      mods: Command|Control, action: ToggleSimpleFullscreen }
 
   - { key: Paste,                   action: Paste                            }
   - { key: Copy,                    action: Copy                             }

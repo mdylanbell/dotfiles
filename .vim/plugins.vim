@@ -288,7 +288,7 @@ augroup END
 " redir => startify_banner
 "   silent !(figlet -c -k -f shadow sweetgreen)
 " redir END
-let startify_banner = system('figlet -c -k -f shadow sweetgreen')
+let startify_banner = system('figlet -c -k -f shadow serve automation')
 
 let g:startify_custom_header = split(startify_banner, '\n')
 " }}}
