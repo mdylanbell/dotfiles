@@ -1,5 +1,4 @@
 README.md skip
-.mjolnir recurse
 .ssh recurse
 .config recurse
 .df skip
