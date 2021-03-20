@@ -153,17 +153,10 @@ fi
 
 export CLICOLOR=1
 
-# javascript/nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-# perl/cpan
-eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
-
 source $HOME/.zshrc.load
 
-# ruby/rvm
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-[[ -d "$PATH:$HOME/.rvm/bin" ]] && export PATH="$PATH:$HOME/.rvm/bin"
+. $HOME/.shellrc.load
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/__tabtab.zsh ]] && . ~/.config/tabtab/__tabtab.zsh || true
