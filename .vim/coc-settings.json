@@ -1,4 +1,11 @@
 {
-    // "diagnostic.displayByAle": true
+  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact"],
+  "diagnostic.displayByAle": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.validate": [
+    "json",
+    {"language": "typescript", "autoFix": true}
+  ]
 }
 
