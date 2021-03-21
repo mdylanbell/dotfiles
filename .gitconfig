@@ -1,6 +1,6 @@
 [user]
 	name = Matthew Bell
-	email = m.dylan.bell@gmail.com
+	email = mbell@serveautomation.com
 [color]
 	diff = auto
 	status = auto
@@ -33,7 +33,6 @@
 	wl = walklog
 	isunclean = "![ -n \"`git ls-files --modified --deleted --others --exclude-standard`\" ]"
 	serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
-	pr = "!f() { git fetch origin pull/$1/head:pr-$1 && git checkout pr-$1; }; f"
 	db = delete-branch
 	hide = update-index --assume-unchanged
 	unhide = update-index --no-assume-unchanged
@@ -52,6 +51,8 @@
 	excludesfile = ~/.gitignore.global
 [github]
 	user = mdylanbell
+[gitlab]
+	user = sa-mbell
 [include]
 	path = ~/.gitconfig.local
 [credential "https://github.com"]
