@@ -26,6 +26,7 @@ Plug 'pbogut/fzf-mru.vim'
 Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
 Plug 'krisajenkins/vim-pipe'
+Plug 'leafgarland/typescript-vim'
 "Plug 'luochen1990/rainbow'
 " Plug 'majutsushi/tagbar'
 "Plug 'mattboehm/vim-unstack'
@@ -37,15 +38,18 @@ Plug 'mileszs/ack.vim'
 Plug 'moll/vim-node'
 "Plug 'mxw/vim-jsx'
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
 " Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'pangloss/vim-javascript'
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'python-mode/python-mode'
 Plug 'qpkorr/vim-bufkill'
 Plug 'ryanoasis/vim-devicons'
-Plug 'scrooloose/nerdtree',
+Plug 'scrooloose/nerdtree'
+Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'stevearc/vim-arduino'
@@ -226,9 +230,9 @@ if strlen($TMUX)
     endfunction
 
     let g:VimuxRunnerType = 'pane'
-    let g:VimuxUseNearest = 1
-    let g:VimuxOrientation = "h"
-    let g:VimuxHeight = "30"
+    let g:VimuxUseNearest = 0
+    let g:VimuxOrientation = "v"
+    let g:VimuxHeight = "20"
 
     function! ToggleVimuxType()
       if g:VimuxRunnerType == 'window'
@@ -272,6 +276,8 @@ elseif has('nvim')
   let test#strategy = "neovim"
 endif
 let g:test#python#pytest#options = '--verbose'
+
+let test#python#runner = 'pytest'
 " }}}
 
 " vim-startify {{{
