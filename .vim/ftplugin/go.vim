@@ -6,4 +6,5 @@ setlocal foldnestmax=1
 let g:go_fmt_command = "goimports"
 let g:go_fmt_experimental=1
 
-
+setlocal nolist
+setlocal tabstop=2 shiftwidth=2

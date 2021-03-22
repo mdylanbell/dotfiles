@@ -153,4 +153,6 @@ fi
 
 export CLICOLOR=1
 
-. $HOME/.zshrc.load
+source $HOME/.zshrc.load
+
+source $HOME/.shellrc.load

@@ -5,15 +5,18 @@ if has('nvim')
 else
   Plug 'altercation/vim-colors-solarized'
 endif
+
 Plug 'AndrewRadev/sideways.vim'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'airblade/vim-gitgutter'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
 " Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 "Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
 Plug 'honza/vim-snippets'
@@ -43,6 +46,7 @@ Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-solargraph', {'do': 'yarn install --frozen-lockfile'}
 " Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-prettier', {'do': 'yarn install --forzen lockfile'}
 Plug 'pangloss/vim-javascript'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'python-mode/python-mode'
@@ -77,7 +81,6 @@ Plug 'vim-ruby/vim-ruby'
 "Plug 'vim-scripts/L9'
 "Plug 'vim-vdebug/vdebug'
 Plug 'w0rp/ale'
-Plug 'yalesov/vim-ember-script'
 call plug#end()
 " }}}
 

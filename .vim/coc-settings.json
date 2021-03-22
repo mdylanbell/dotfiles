@@ -1,5 +1,12 @@
 {
+  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact"],
   "diagnostic.displayByAle": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.validate": [
+    "json",
+    {"language": "typescript", "autoFix": true}
+  ],
   "typescript.suggestionActions.enabled": false,
   "javascript.suggestionActions.enabled": false,
   "python.linting.pylintEnabled": false,

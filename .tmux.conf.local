@@ -302,4 +302,6 @@ set -g mouse on
 bind a send-prefix
 bind b send-prefix
 
-# set-option -g default-shell /bin/zsh
+set-option -sa terminal-overrides ',alacritty:RGB'
+
+set-option -g default-shell /bin/zsh

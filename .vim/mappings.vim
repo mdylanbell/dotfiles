@@ -152,6 +152,10 @@ nnoremap <leader>ll :SidewaysRight<cr>
 " http://stackoverflow.com/questions/7400743/create-a-mapping-for-vims-command-line-that-escapes-the-contents-of-a-register-b
 cnoremap <c-x> <c-r>=<SID>myfuncs#PasteEscaped()<cr>
 
+" {{{ vim-markdown-preview.vim
+let vim_markdown_preview_hotkey='<C-m>'
+" }}}
+
 " {{{ CoC
 
 " Use tab for trigger completion with characters ahead and navigate.
