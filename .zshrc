@@ -153,6 +153,9 @@ fi
 
 export CLICOLOR=1
 
+# Turn off share_history, enabled by zsh
+unsetopt share_history
+
 source $HOME/.zshrc.load
 
 source $HOME/.shellrc.load

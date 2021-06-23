@@ -7,10 +7,12 @@ else
 endif
 
 Plug 'AndrewRadev/sideways.vim'
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'airblade/vim-gitgutter'
+Plug 'aklt/plantuml-syntax'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
 " Plug 'craigemery/vim-autotag'
@@ -49,7 +51,7 @@ Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --forzen lockfile'}
 Plug 'pangloss/vim-javascript'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'python-mode/python-mode'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 Plug 'qpkorr/vim-bufkill'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
@@ -72,6 +74,7 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'tyru/open-browser.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-pandoc/vim-pandoc'
@@ -80,6 +83,7 @@ Plug 'vim-perl/vim-perl',
 Plug 'vim-ruby/vim-ruby'
 "Plug 'vim-scripts/L9'
 "Plug 'vim-vdebug/vdebug'
+Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'w0rp/ale'
 call plug#end()
 " }}}
@@ -171,9 +175,16 @@ command! ProjectFiles execute 'Files' s:find_git_root()
 
 " pymode {{{
 let g:pymode_options = 0
+let g:pymode_indent = 1
+let g:pymode_motion = 1
+let g:pymode_doc = 1
 let g:pymode_run = 0
-let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'pylint']
+let g:pymode_lint_checkers = ['flake8', 'pyflakes', 'pep8', 'pylint']
 let g:pymode_rope_complete_on_dot = 0
+" }}}
+"
+" splitjoin {{{
+let g:splitjoin_python_brackets_on_separate_lines = 1
 " }}}
 
 " Tags {{{
@@ -234,8 +245,8 @@ if strlen($TMUX)
 
     let g:VimuxRunnerType = 'pane'
     let g:VimuxUseNearest = 0
-    let g:VimuxOrientation = "v"
-    let g:VimuxHeight = "20"
+    let g:VimuxOrientation = "h"
+    let g:VimuxHeight = "30"
 
     function! ToggleVimuxType()
       if g:VimuxRunnerType == 'window'
@@ -294,9 +305,6 @@ augroup CustomStartup
               \ | endif
 augroup END
 
-" redir => startify_banner
-"   silent !(figlet -c -k -f shadow sweetgreen)
-" redir END
 let startify_banner = system('figlet -c -k -f shadow serve automation')
 
 let g:startify_custom_header = split(startify_banner, '\n')
