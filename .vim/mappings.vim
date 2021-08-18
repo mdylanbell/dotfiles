@@ -97,12 +97,13 @@ vmap <Leader>a> :Tabularize /=><CR>
 
 " FZF
 nnoremap <silent> <Leader>fg :ProjectFiles<CR>
-noremap <leader>ff :FZF<CR>
+noremap <leader>ff :Files<CR>
 noremap <leader>fr :FZFMru<CR>
 noremap <leader>fl :FZFMru<CR>
 noremap <leader>fb :Buffers<CR>
 noremap <leader>ft :BTags<CR>
 noremap <leader>fT :Tags<CR>
+noremap <leader>fz :FZF<CR>
 
 " Ripgrep
 noremap <leader>fx :Rg<CR>

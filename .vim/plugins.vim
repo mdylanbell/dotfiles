@@ -126,8 +126,6 @@ let g:airline#extensions#tagbar#flags = 'f'
 
 let g:airline_solarized_bg='dark'
 let g:airline_theme='solarized'
-
-
 " }}}
 
 " Ale {{{
@@ -145,10 +143,6 @@ let g:ale_echo_cursor = 1
 
 " vim-jsx: don't require jsx extension
 " let g:jsx_ext_required = 0
-
-" gist-vim {{{
-"let g:gist_open_browser_after_post = 0
-" }}}
 
 " fzf {{{
 if executable('fzf')
@@ -171,6 +165,13 @@ function! s:find_git_root()
 endfunction
 
 command! ProjectFiles execute 'Files' s:find_git_root()
+
+" Fancy previews with `bat`
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+"    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--info=inline']}), <bang>0)
+
+set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 " }}}
 
 " pymode {{{
@@ -185,53 +186,6 @@ let g:pymode_rope_complete_on_dot = 0
 "
 " splitjoin {{{
 let g:splitjoin_python_brackets_on_separate_lines = 1
-" }}}
-
-" Tags {{{
-" taglist.vim {{{
-" let Tlist_GainFocus_On_ToggleOpen = 1
-" let Tlist_Close_On_Select = 1
-" }}}
-
-" use brew's ctags instead of the system one
-" if filereadable('/usr/local/bin/ctags')
-"   " let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
-"   let g:autotagCtagsCmd = '/usr/local/bin/ctags'
-" endif
-
-" Tagbar {{{
-" if executable('ripper-tags')
-"   let g:tagbar_type_ruby = {
-"     \ 'kinds'      : ['m:modules',
-"                     \ 'c:classes',
-"                     \ 'C:constants',
-"                     \ 'F:singleton methods',
-"                     \ 'f:methods',
-"                     \ 'a:aliases'],
-"     \ 'kind2scope' : { 'c' : 'class',
-"                      \ 'm' : 'class' },
-"     \ 'scope2kind' : { 'class' : 'c' },
-"     \ 'ctagsbin'   : 'ripper-tags',
-"     \ 'ctagsargs'  : ['-f', '-']
-"     \ }
-"   let g:autotagCtagsCmd = 'rippertags'
-" else
-"   if executable('ctags')
-"     let g:autotagCtagsCmd = 'ctags'
-"   endif
-
-"   let g:tagbar_type_ruby = {
-"     \ 'kinds' : [
-"       \ 'm:modules',
-"       \ 'c:classes',
-"       \ 'd:describes',
-"       \ 'C:contexts',
-"       \ 'f:methods',
-"       \ 'F:singleton methods'
-"     \ ]
-"   \ }
-" endif
-" }}}
 " }}}
 
 " vimux {{{
@@ -308,9 +262,14 @@ augroup END
 let startify_banner = system('figlet -c -k -f shadow serve automation')
 
 let g:startify_custom_header = split(startify_banner, '\n')
+let g:startify_change_to_dir = 0
+let g:startify_change_to_vcs_root = 1
 " }}}
 
-" coc-snippets
+" coc {{{
+let g:coc_force_debug = 1
+
+" coc-snippets {{{
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? coc#_select_confirm() :
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
@@ -323,71 +282,5 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
-
-" Deprecated (remove some day) {{{
-" CtrlP {{{
-" no default input
-" let g:ctrlp_default_input = 0
-" " set working dir starting at vim's working dir
-" let g:ctrlp_working_path_mode = 0
-" let g:ctrlp_mruf_relative = 1
-" let g:ctrlp_match_window = 'top,order:ttb,min:1,max:10,results:100'
-" let g:ctrlp_prompt_mappings = {
-"   \ 'ToggleMRURelative()': ['<c-w>'],
-"   \ }
-" let g:ctrlp_custom_ignore = {
-"   \ 'dir':  '\v[\/](local|blib|target|node_modules|vendor|bower_components)$'
-"   \ }
-" let g:ctrlp_map = '<leader>ff'
-" }}}
-
-" rainbow {{{
-" " clojure
-" let g:rainbow_active = 1
-" let g:rainbow_conf = {
-"       \  'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-"       \  'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
-"       \  'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-"       \  'separately': {
-"       \      '*': 0,
-"       \      'clojure': {},
-"       \  }
-"       \}
-" }}}
-
-" vim-pipe {{{
-" let g:vimpipe_invoke_map="<leader>w"
-" let g:vimpipe_close_map="<leader>W"
-" }}}
-"
-" YouCompleteMe / Ultisnips / supertab {{{
-" YouCompleteMe and UltiSnips compatibility, with the helper of supertab
-" (via http://stackoverflow.com/a/22253548/1626737)
-" https://gist.github.com/lencioni/dff45cd3d1f0e5e23fe6
-" let g:SuperTabDefaultCompletionType    = '<C-n>'
-" let g:SuperTabCrMapping                = 0
-" let g:UltiSnipsExpandTrigger           = '<tab>'
-" let g:UltiSnipsJumpForwardTrigger      = '<tab>'
-" let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
-" let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
-" let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
-
-" detect if we're on redhat/centos < 6 and skip ultisnips
-" older versions don't have a new enough version of python
-" if filereadable("/etc/redhat-release")
-"   let line = readfile("/etc/redhat-release")[0]
-"   let s:majorver = matchlist(line, '\(\d\)\(.\d*\)\? *(\(.*\))')[1]
-"   if s:majorver < 6
-"     let did_UltiSnips_vim=1
-"     let did_UltiSnips_vim_after=1
-"   endif
-" endif
-" }}}
-
-" taboo {{{
-" add tab number to tabs
-" let g:taboo_renamed_tab_format = " %N [%l]%m "
-" let g:taboo_tab_format = " %N %f%m "
-" let g:taboo_tabline = 0
 " }}}
 " }}}
