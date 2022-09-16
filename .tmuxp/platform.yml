@@ -17,4 +17,4 @@ windows:
   panes:
     - shell_command: make up
     - pane
-    - shell_command: make test
+    - pane
