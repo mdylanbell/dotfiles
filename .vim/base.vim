@@ -13,8 +13,6 @@ set exrc " Run local vimrc, set secure disables unsafe commands
 set secure
 set history=100
 set laststatus=2
-
-set shell=/bin/bash
 " }}}
 
 " UI {{{
