@@ -49,6 +49,7 @@
 	cmd = nvim -d $BASE $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [core]
 	excludesfile = ~/.gitignore.global
+	autocrlf = input
 [github]
 	user = mdylanbell
 [gitlab]
@@ -70,3 +71,5 @@
 	process = git-lfs filter-process
 [pull]
 	rebase = false
+[blame]
+	ignoreRevsFile = .git-blame-ignore-revs
