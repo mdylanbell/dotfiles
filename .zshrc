@@ -23,7 +23,7 @@ zplug "plugins/jira", from:oh-my-zsh
 zplug "plugins/jsontools", from:oh-my-zsh
 zplug "plugins/node-docs", from:oh-my-zsh
 zplug "plugins/npm", from:oh-my-zsh
-zplug "plugins/osx", from:oh-my-zsh
+zplug "plugins/macos", from:oh-my-zsh
 zplug "plugins/pep8", from:oh-my-zsh
 zplug "plugins/pip", from:oh-my-zsh
 zplug "plugins/python", from:oh-my-zsh
