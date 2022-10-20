@@ -79,7 +79,6 @@ set scrolloff=5
 " look for tags
 set tags=./tags;
 
-set terse
 set timeout
 " }}}
 
@@ -111,6 +110,12 @@ set listchars+=extends:»,precedes:«
 " Hide the intro screen, use [+] instead of [Modified], use [RO] instead
 " of [readyonly], and don't give completion match messages
 set shortmess+=Imrc
+
+if has('nvim')
+  set shortmess+=s
+else
+  set terse
+endif
 
 " Close quickfix & help with q, Escape, or Control-C
 " Also, keep default <cr> binding
