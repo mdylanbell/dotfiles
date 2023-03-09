@@ -139,13 +139,13 @@ let maplocalleader = ","
 nnoremap \ ,
 
 " Specify python paths
-if has('macunix')
-  let g:python2_host_prog = '/usr/local/bin/python'
-  let g:python3_host_prog = '/usr/local/bin/python3'
-else
-  let g:python2_host_prog = '/usr/bin/python'
-  let g:python3_host_prog = '/usr/bin/python3'
-endif
+" if has('macunix')
+"   let g:python2_host_prog = '/usr/local/bin/python'
+"   let g:python3_host_prog = '/usr/local/bin/python3'
+" else
+"   let g:python2_host_prog = '/usr/bin/python'
+"   let g:python3_host_prog = '/usr/bin/python3'
+" endif
 
 " for some reason this has to go in .vimrc
 let perl_fold = 1

@@ -44,5 +44,6 @@
         "N": "hint"
       }
     }
-  }
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }
