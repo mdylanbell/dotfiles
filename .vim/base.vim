@@ -67,8 +67,8 @@ set foldopen+=jump
 " }}}
 
 " printing options
-set printoptions=paper:letter
-set printdevice=dev_np24
+" set printoptions=paper:letter
+" set printdevice=dev_np24
 
 " always show 5 lines of context
 set scrolloff=5
