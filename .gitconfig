@@ -14,9 +14,9 @@
 	rbr = branch --sort=-committerdate
 	st = status
 	ss = status --short
+	sw = switch
 	ci = commit
 	di = diff
-	co = checkout
 	w = whatchanged
 	vimdiff = difftool --tool=vimdiff -y
 	vd = difftool --tool=vimdiff -y
