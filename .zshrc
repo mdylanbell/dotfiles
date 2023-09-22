@@ -8,9 +8,32 @@ source "${ZINIT_HOME}/zinit.zsh"
 setopt prompt_subst
 zinit light agnoster/agnoster-zsh-theme
 
+# load OMZ stuff
+zinit light-mode for \
+  OMZ::lib/clipboard.zsh                           \
+  OMZ::lib/compfix.zsh                             \
+  OMZ::lib/completion.zsh                          \
+  OMZ::lib/correction.zsh                          \
+  OMZ::lib/directories.zsh                         \
+  OMZ::lib/functions.zsh                           \
+  OMZ::lib/git.zsh                                 \
+  OMZ::lib/history.zsh                             \
+  OMZ::lib/key-bindings.zsh                        \
+  OMZ::lib/spectrum.zsh                            \
+  OMZ::lib/termsupport.zsh                         \
+  atinit"zicompinit; zicdreplay"                   \
+      zdharma-continuum/fast-syntax-highlighting   \
+  atload"_zsh_autosuggest_start"                   \
+      zsh-users/zsh-autosuggestions                \
+  blockf atpull'zinit creinstall -q .'             \
+      zsh-users/zsh-completions                    \
+  atload"!export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'" \
+     zsh-users/zsh-history-substring-search \
+  pick"zsh-interactive-cd.plugin.zsh" \
+     changyuheng/zsh-interactive-cd
+
 # load plugins
 zinit wait lucid light-mode for \
-  OMZ::lib/git.zsh \
   OMZP::aws \
   OMZP::bundler \
   OMZP::colored-man-pages \
@@ -32,17 +55,17 @@ zinit wait lucid light-mode for \
   # OMZP::pep8
 
 # https://github.com/zdharma/zinit-configs/blob/a60ff64823778969ce2b66230fd8cfb1a957fe89/psprint/zshrc.zsh#L277
-zinit wait lucid for \
- silent atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" \
-    zdharma-continuum/fast-syntax-highlighting \
- atload"!_zsh_autosuggest_start" \
-    zsh-users/zsh-autosuggestions \
- as"completion" \
-    zsh-users/zsh-completions \
- atload"!export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'" \
-    zsh-users/zsh-history-substring-search \
- pick"zsh-interactive-cd.plugin.zsh" \
-    changyuheng/zsh-interactive-cd
+# zinit wait lucid for \
+#  silent atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" \
+#     zdharma-continuum/fast-syntax-highlighting \
+#  atload"!_zsh_autosuggest_start" \
+#     zsh-users/zsh-autosuggestions \
+#  as"completion" \
+#     zsh-users/zsh-completions \
+#  atload"!export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'" \
+#     zsh-users/zsh-history-substring-search \
+#  pick"zsh-interactive-cd.plugin.zsh" \
+#     changyuheng/zsh-interactive-cd
 
 export EDITOR='vi'
 export VISUAL='vi'
