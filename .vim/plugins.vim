@@ -291,7 +291,7 @@ augroup CustomStartup
               \ | endif
 augroup END
 
-let startify_banner = system('figlet -c -k -f shadow serve automation')
+let startify_banner = system('figlet -c -k -f shadow stellar')
 
 let g:startify_custom_header = split(startify_banner, '\n')
 let g:startify_change_to_dir = 0
