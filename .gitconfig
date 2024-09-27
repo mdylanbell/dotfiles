@@ -1,6 +1,8 @@
 [user]
 	name = Matthew Bell
-	email = mbell@serveautomation.com
+	email = m.dylan.bell@gmail.com
+[includeIf "gitdir:~/work/"]
+	path = ~/work/.gitconfig
 [color]
 	diff = auto
 	status = auto

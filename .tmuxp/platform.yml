@@ -10,11 +10,11 @@ windows:
     - shell_command: cd .dotfiles && clear
     - shell_command: gotop
 - window_name: editor
-  start_directory: '~/code/platform'
+  start_directory: '~/work/code/platform'
   panes:
     - shell_command: vi
 - window_name: docker
-  start_directory: '~/code/platform'
+  start_directory: '~/work/code/platform'
   layout: main-vertical
   options:
     main-pane-width: 67%
