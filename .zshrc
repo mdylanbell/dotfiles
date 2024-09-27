@@ -34,6 +34,7 @@ zinit light-mode for \
 
 # load plugins
 zinit wait lucid light-mode for \
+  OMZP::asdf \
   OMZP::aws \
   OMZP::bundler \
   OMZP::colored-man-pages \
