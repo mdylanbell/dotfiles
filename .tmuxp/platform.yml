@@ -3,6 +3,8 @@ start_directory: '~'
 windows:
 - window_name: sys
   layout: main-vertical
+  options:
+    main-pane-width: 67%
   panes:
     - pane
     - shell_command: cd .dotfiles && clear
@@ -14,6 +16,8 @@ windows:
 - window_name: docker
   start_directory: '~/code/platform'
   layout: main-vertical
+  options:
+    main-pane-width: 67%
   panes:
     - shell_command: make up
     - pane
