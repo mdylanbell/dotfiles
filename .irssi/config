@@ -19,7 +19,11 @@ servers = (
     chatnet = "liberachat";
     port = "6697";
     use_tls = "yes";
+    # https://wiki.archlinux.org/title/Irssi#Client_certificates
+    tls_cert = "~/.irssi/irssi.pem";
+    tls_pass = "irssi.pem_password";
     tls_verify = "yes";
+    autoconnect = "yes";
   },
   {
     address = "irc.gamesurge.net";
@@ -47,7 +51,7 @@ servers = (
     use_tls = "yes";
     tls_verify = "yes";
   },
-  {
+  { 
     address = "irc.quakenet.org";
     chatnet = "QuakeNet";
     port = "6667";
@@ -60,7 +64,7 @@ servers = (
     tls_verify = "yes";
   },
   { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
-  {
+  { 
     address = "irc.undernet.org";
     chatnet = "Undernet";
     port = "6667";
@@ -74,7 +78,7 @@ chatnets = {
     max_msgs = "20";
     max_whois = "30";
   };
-  EFNet = {
+  EFNet = { 
     type = "IRC";
     max_kicks = "1";
     max_msgs = "4";
@@ -98,7 +102,7 @@ chatnets = {
     max_msgs = "1";
     max_whois = "1";
   };
-  IRCnet = {
+  IRCnet = { 
     type = "IRC";
     max_kicks = "1";
     max_msgs = "1";
@@ -123,7 +127,7 @@ chatnets = {
     max_msgs = "1";
     max_whois = "1";
   };
-  Rizon = {
+  Rizon = { 
     type = "IRC";
     max_kicks = "1";
     max_msgs = "1";
@@ -147,7 +151,10 @@ channels = (
   { name = "#ircsource"; chatnet = "IRCSource"; autojoin = "No"; },
   { name = "#netfuze"; chatnet = "NetFuze"; autojoin = "No"; },
   { name = "#oftc"; chatnet = "OFTC"; autojoin = "No"; },
-  { name = "silc"; chatnet = "SILC"; autojoin = "No"; }
+  { name = "silc"; chatnet = "SILC"; autojoin = "No"; },
+  { name = "#python"; chatnet = "liberachat"; autojoin = "yes"; },
+  { name = "#go-nuts"; chatnet = "liberachat"; autojoin = "yes"; },
+  { name = "#django"; chatnet = "liberachat"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -309,4 +316,35 @@ statusbar = {
 };
 settings = {
   core = { real_name = "matt"; user_name = "hylite"; nick = "hylite"; };
+  "fe-common/core" = {
+    # Solarized
+    theme = "solarized-universal";
+    hilight_color = "= %R";
+  };
+  hilights = (
+    { text = "hylite"; color = "%M"; nick = "yes"; word = "yes"; }
+  );
+  statusbar = {
+    items = {
+      # Solarized
+      lag = "{sb Lag: %m$0-%n}";
+      act = "{sb Act: $0-}";
+      more = "%k%3-- more --%n";
+    };
+  };
+  "perl/core/scripts" = {
+    ### For Solarized adv_windowlist.pl script
+    awl_display_key_active = "%k%2[$Q=$N:$C]%n";
+    awl_display_nokey_active = "%k%2[$N:$C]%n";
+    awl_display_key = "[$Q:$H$C$S]";
+    awl_display_nokey = "[$N:$H$C$S]";
+
+    ### For Solarized trackbar.pl script
+    trackbar_style = "%B";
+
+    awl_shared_sbar = "OFF";
+  };
 };
+keyboard = ( 
+  { key = "meta-[M"; id = "command"; data = "mouse_xterm "; }
+);
