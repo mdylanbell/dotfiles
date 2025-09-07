@@ -1,5 +1,5 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact"],
+  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact", "python"],
   "eslint.autoFixOnSave": true,
   "eslint.filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "eslint.validate": [
@@ -45,5 +45,48 @@
       }
     }
   },
-  "snippets.ultisnips.pythonPrompt": false
+  "languageserver": {
+    "helm": {
+      "command": "helm_ls",
+      "args": ["serve"],
+      "filetypes": ["helm", "helmfile"],
+      "rootPatterns": ["Chart.yaml"]
+    },
+    "terraform": {
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "filetypes": ["terraform", "tf"],
+      "rootPatterns": [".terraform", ".git/"],
+      "initializationOptions": {}
+    }
+  },
+  "yaml.fileAssociations": [
+    "**/*.yaml",
+    "**/*.yml",
+    "**/*.gotmpl"
+  ],
+  "helm.ls.templateFiles": {
+    "enabled": true
+  },
+  "coc.preferences.willSaveHandlerTimeout": 1000,
+  "helm-ls.experimental.templateFiles": true,
+  "snippets.ultisnips.pythonPrompt": false,
+  "pyright.enable": true,
+  "pyright.inlayHints.enable": true,
+  "pyright.organizeimports.provider": "ruff",
+  "python.formatting.blackPath": "~/.pyenv/versions/default/bin/black",
+  "python.formatting.provider": "ruff",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Path": "~/.pyenv/versions/default/bin/flake8",
+  "python.linting.pylintEnabled": false,
+  "python.pythonPath": "~/.pyenv/versions/default/bin/python",
+  "python.venvPath": "${env:HOME}/.pyenv/versions",
+  "ruff.enable": true,
+  "ruff.nativeBinaryPath": "~/.pyenv/versions/default/bin/ruff",
+  "ruff.nativeServer": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  }
 }

@@ -46,13 +46,18 @@ Plug 'moll/vim-node'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Not sure this works, recommendation is `yarn global add diagnostic-languageserver`
 " Plug 'iamcco/diagnostic-languageserver', {'do': 'yarn install --frozen-lockfile', 'branch': 'master'}
-Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build', 'branch': 'main' }
 Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-" Plug 'neoclide/coc-prettier', {'do': 'yarn install --forzen lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
+Plug 'fannheyward/coc-pyright', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build', 'branch': 'main' }
+Plug 'yaegassy/coc-ruff', {'do': 'yarn install --frozen-lockfile'}"
+" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 Plug 'pangloss/vim-javascript'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+" Plug 'neoclide/coc-prettier', {'do': 'yarn install --forzen lockfile'}
 Plug 'qpkorr/vim-bufkill'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
@@ -291,7 +296,7 @@ augroup CustomStartup
               \ | endif
 augroup END
 
-let startify_banner = system('figlet -c -k -f shadow stellar')
+let startify_banner = system('figlet -c -k -f shadow datavant')
 
 let g:startify_custom_header = split(startify_banner, '\n')
 let g:startify_change_to_dir = 0

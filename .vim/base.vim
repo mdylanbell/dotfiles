@@ -210,6 +210,12 @@ augroup END
 
 let g:vim_json_syntax_conceal = 0
 
+" Sessions
+let g:session_dir = '~/.vim/sessions/'
+exec 'nnoremap <Leader>ss :mks! ' . g:session_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+exec 'nnoremap <Leader>sr :so ' . g:session_dir. '/*.vim<C-D><BS><BS><BS><BS><BS>'
+
+
 function! ToggleSyntax()
    if exists("g:syntax_on")
       syntax off

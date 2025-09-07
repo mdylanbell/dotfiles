@@ -5,6 +5,10 @@ if type nvim &> /dev/null; then
     BIN=nvim
 fi
 
+if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
+    source "$VIRTUAL_ENV/bin/activate"
+fi
+
 CMD=$(basename $0)
 if [[ $CMD == 'vi' ]] || [[ $CMD == 'vim' ]]; then
     exec $BIN $*
@@ -13,3 +17,8 @@ elif [[ $CMD == 'viff' ]]; then
 elif [[ $CMD == 'vifl' ]]; then
     exec $BIN -c ":FZFMru" $*
 fi
+
+if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
+    deactivate
+fi
+
