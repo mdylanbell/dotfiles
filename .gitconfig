@@ -1,8 +1,8 @@
 [user]
 	name = Matthew Bell
 	email = m.dylan.bell@gmail.com
-[includeIf "gitdir:~/work/"]
-	path = ~/work/.gitconfig
+[includeIf "gitdir:~/code/work/**"]
+	path = ~/code/work/.gitconfig
 [color]
 	diff = auto
 	status = auto
