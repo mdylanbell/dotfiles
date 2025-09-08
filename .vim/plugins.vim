@@ -8,18 +8,11 @@ endif
 
 Plug 'AndrewRadev/sideways.vim'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'airblade/vim-gitgutter'
-Plug 'aklt/plantuml-syntax'
 Plug 'andymass/vim-matchup'
 Plug 'benmills/vimux'
-" Plug 'craigemery/vim-autotag'
 Plug 'dhruvasagar/vim-table-mode'
-Plug 'elzr/vim-json'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-"Plug 'gcmt/taboo.vim'
 Plug 'godlygeek/tabular'
 Plug 'honza/vim-snippets'
 Plug 'int3/vim-extradite'
@@ -32,39 +25,13 @@ Plug 'hashivim/vim-terraform'
 Plug 'junegunn/gv.vim'
 Plug 'kassio/neoterm'
 Plug 'krisajenkins/vim-pipe'
-Plug 'leafgarland/typescript-vim'
-"Plug 'luochen1990/rainbow'
-" Plug 'majutsushi/tagbar'
-"Plug 'mattboehm/vim-unstack'
-"Plug 'mattn/gist-vim'
-"Plug 'mattn/webapi-vim'
-"Plug 'mbbill/undotree'
 Plug 'mhinz/vim-startify'
 Plug 'mileszs/ack.vim'
-Plug 'moll/vim-node'
-"Plug 'mxw/vim-jsx'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Not sure this works, recommendation is `yarn global add diagnostic-languageserver`
-" Plug 'iamcco/diagnostic-languageserver', {'do': 'yarn install --frozen-lockfile', 'branch': 'master'}
-Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
-Plug 'fannheyward/coc-pyright', {'do': 'yarn install --frozen-lockfile'}
-" Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build', 'branch': 'main' }
-Plug 'yaegassy/coc-ruff', {'do': 'yarn install --frozen-lockfile'}"
-" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
-Plug 'pangloss/vim-javascript'
-Plug 'peitalin/vim-jsx-typescript'
-" Plug 'neoclide/coc-prettier', {'do': 'yarn install --forzen lockfile'}
 Plug 'qpkorr/vim-bufkill'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
-Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'sjl/gundo.vim'
-Plug 'slim-template/vim-slim'
-Plug 'stevearc/vim-arduino'
 Plug 'tmhedberg/SimpylFold'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-bundler'
@@ -74,8 +41,6 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-rake'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
@@ -86,14 +51,25 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'vim-perl/vim-perl',
-Plug 'vim-ruby/vim-ruby'
-"Plug 'vim-scripts/L9'
-"Plug 'vim-vdebug/vdebug'
-Plug 'weirongxu/plantuml-previewer.vim'
-" Plug 'w0rp/ale'
 call plug#end()
 " }}}
+
+let g:coc_global_extensions = [
+\ 'coc-pyright',
+\ 'coc-rust-analyzer',
+\ 'coc-go',
+\ 'coc-json',
+\ 'coc-snippets',
+\ 'coc-tsserver',
+\ 'coc-yaml',
+\ '@yaegassy/coc-ruff',
+\ ]
+
+" Treat coc-settings as JSONC (comments allowed)
+augroup CocJson
+  autocmd!
+  autocmd BufNewFile,BufRead coc-settings.json set filetype=jsonc
+augroup END
 
 " airline {{{
 let g:airline_powerline_fonts = 1
