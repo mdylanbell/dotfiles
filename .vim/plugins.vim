@@ -55,10 +55,11 @@ call plug#end()
 " }}}
 
 let g:coc_global_extensions = [
-\ 'coc-pyright',
-\ 'coc-rust-analyzer',
+\ 'coc-clangd',
 \ 'coc-go',
 \ 'coc-json',
+\ 'coc-pyright',
+\ 'coc-rust-analyzer',
 \ 'coc-snippets',
 \ 'coc-tsserver',
 \ 'coc-yaml',
@@ -158,22 +159,22 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 " }}}
 
 " pymode {{{
-let g:pymode_options = 0
-let g:pymode_breakpoint = 1
-" let g:pymode_folding = 1  " too slow :(
-let g:pymode_indent = 1
-let g:pymode_motion = 1
-let g:pymode_syntax = 1
-let g:pymode_syntax_all = 1
-let g:pymode_syntax_slow_sync = 1
-let g:pymode_trim_whitespaces = 1
-let g:pymode_doc = 0
-let g:pymode_run = 0
-let g:pymode_lint = 0
-let g:pymode_rope = 0
-let g:pymode_rope_completion = 0
-" let g:pymode_lint_checkers = ['flake8', 'pyflakes', 'pep8', 'pylint']
-let g:pymode_rope_complete_on_dot = 0
+" let g:pymode_options = 0
+" let g:pymode_breakpoint = 1
+" " let g:pymode_folding = 1  " too slow :(
+" let g:pymode_indent = 1
+" let g:pymode_motion = 1
+" let g:pymode_syntax = 1
+" let g:pymode_syntax_all = 1
+" let g:pymode_syntax_slow_sync = 1
+" let g:pymode_trim_whitespaces = 1
+" let g:pymode_doc = 0
+" let g:pymode_run = 0
+" let g:pymode_lint = 0
+" let g:pymode_rope = 0
+" let g:pymode_rope_completion = 0
+" " let g:pymode_lint_checkers = ['flake8', 'pyflakes', 'pep8', 'pylint']
+" let g:pymode_rope_complete_on_dot = 0
 
 " This is super slow on large files
 " augroup unset_folding_in_insert_mode
@@ -330,12 +331,21 @@ function! ShowDocumentation()
   endif
 endfunction
 
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
+
+" augroup mygroup
+"   autocmd!
+"   " Setup formatexpr specified filetype(s)
+"   autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+" augroup end
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
@@ -344,8 +354,18 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+" Apply the most preferred quickfix action to fix diagnostic on the current line" Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+
+" Run the Code Lens action on the current line
+nmap <leader>cl  <Plug>(coc-codelens-action)
 
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
@@ -367,6 +387,11 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
+
+" Use CTRL-S for selections ranges
+" Requires 'textDocument/selectionRange' support of language server
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocActionAsync('format')

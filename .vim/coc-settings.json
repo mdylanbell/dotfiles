@@ -10,10 +10,7 @@
   "editor.codeActionsOnSave": {
     // general
     "source.organizeImports": "always",
-    "source.fixAll": "always",
-    // ruff
-    "source.organizeImports.ruff": true,
-    "source.fixAll.ruff": true,
+    "source.fixAll": "always"
   },
   // languageserver -- helm & ts
   "languageserver": {
@@ -55,20 +52,24 @@
   "snippets.ultisnips.pythonPrompt": false,
   // python
   "[python]": {
-    "coc.preferences.formatOnSave": true
+    "coc.preferences.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": true,
+      "source.fixAll.ruff": true
+    }
   },
   "pyright.enable": true,
   "pyright.organizeimports.provider": "ruff",
-  "python.formatting.blackPath": "~/.pyenv/versions/default/bin/black",
+  "python.formatting.blackPath": "~/.local/share/mise/installs/python/3.13.7/bin/black",
   "python.formatting.provider": "ruff",
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": "~/.pyenv/versions/default/bin/flake8",
   "python.linting.pylintEnabled": false,
-  "python.pythonPath": "~/.pyenv/versions/default/bin/python",
-  "python.venvPath": "${env:HOME}/.pyenv/versions",
+  "python.pythonPath": "~/.local/share/mise/installs/python/3.13.7/bin/python",
+  // "python.venvPath": "${env:HOME}/.pyenv/versions",
   "ruff.enable": true,
-  "ruff.nativeBinaryPath": "~/.pyenv/versions/default/bin/ruff",
+  "ruff.nativeBinaryPath": "~/.local/share/mise/installs/python/3.13.7/bin/ruff",
   "ruff.nativeServer": true,
   // rust
   "workspace.ignoredFolders": [

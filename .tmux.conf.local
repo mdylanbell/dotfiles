@@ -419,6 +419,7 @@ bind a send-prefix
 bind b send-prefix
 
 set-option -sa terminal-overrides ',alacritty:RGB'
+set-option -sa terminal-features ',xterm-256color:RGB'
 
 set-option -g default-shell /bin/zsh
 
