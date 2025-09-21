@@ -15,7 +15,7 @@ return {
     "LazyVim/LazyVim",
     init = function()
       -----------------------------------------------------------------------
-      -- Float/border defaults (play nice with NeoSolarized)
+      -- 1) Float/border defaults (play nice with NeoSolarized)
       -----------------------------------------------------------------------
       local aug = vim.api.nvim_create_augroup("neo_ui_highlights", { clear = true })
       local function set_global_float_links()
@@ -26,60 +26,55 @@ return {
       end
 
       -----------------------------------------------------------------------
-      -- Picker highlights (Snacks default; Telescope/fzf-lua if enabled)
+      -- 2) Picker highlights (Snacks default; Telescope/fzf-lua if enabled)
       -----------------------------------------------------------------------
       local function set_picker_hls()
-        -- Snacks (LazyVim’s default picker)
-        local snacks_links = {
-          SnacksPicker = "NormalFloat",
-          SnacksPickerBorder = "FloatBorder",
-          SnacksPickerTitle = "FloatTitle",
-          SnacksPickerPrompt = "Pmenu",
-          SnacksPickerPromptTitle = "FloatTitle",
-          SnacksPickerList = "NormalFloat",
-          SnacksPickerListCursorLine = "CursorLine", -- selected row
-          SnacksPickerMatch = "Search",
-          SnacksPickerPreview = "NormalFloat",
-          SnacksPickerPreviewBorder = "FloatBorder",
-          SnacksPickerPreviewTitle = "FloatTitle",
-          SnacksPickerPreviewCursorLine = "CursorLine",
-        }
-        for g, link in pairs(snacks_links) do
-          vim.api.nvim_set_hl(0, g, { link = link, default = false })
+        local function link(g, target)
+          vim.api.nvim_set_hl(0, g, { link = target, default = false })
         end
 
-        -- Telescope (if you enable the extra)
-        -- local telescope_links = {
-        --   TelescopeSelection = "Visual", -- selected row
-        --   TelescopeSelectionCaret = "IncSearch",
-        --   TelescopePromptNormal = "NormalFloat",
-        --   TelescopeResultsNormal = "NormalFloat",
-        --   TelescopePreviewNormal = "NormalFloat",
-        --   TelescopePromptBorder = "FloatBorder",
-        --   TelescopeResultsBorder = "FloatBorder",
-        --   TelescopePreviewBorder = "FloatBorder",
-        --   TelescopePromptTitle = "FloatTitle",
-        --   TelescopeResultsTitle = "FloatTitle",
-        --   TelescopePreviewTitle = "FloatTitle",
-        -- }
-        -- for g, link in pairs(telescope_links) do
-        --   vim.api.nvim_set_hl(0, g, { link = link, default = false })
-        -- end
-
-        -- fzf-lua (if you enable it)
-        local fzf_links = {
-          FzfLuaNormal = "NormalFloat",
-          FzfLuaBorder = "FloatBorder",
-          FzfLuaTitle = "FloatTitle",
-          FzfLuaCursorLine = "CursorLine", -- selected row
-          FzfLuaPreviewNormal = "NormalFloat",
-          FzfLuaPreviewBorder = "FloatBorder",
-          FzfLuaPreviewTitle = "FloatTitle",
-          FzfLuaPreviewCursorLine = "CursorLine",
-        }
-        for g, link in pairs(fzf_links) do
-          vim.api.nvim_set_hl(0, g, { link = link, default = false })
+        -- Snacks (unchanged except selection -> PmenuSel)
+        link("SnacksPicker", "NormalFloat")
+        link("SnacksPickerList", "NormalFloat")
+        link("SnacksPickerPreview", "NormalFloat")
+        link("SnacksPickerPrompt", "Pmenu")
+        link("SnacksPickerMatch", "Search")
+        link("SnacksPickerBorder", "FloatBorder")
+        link("SnacksPickerPreviewBorder", "FloatBorder")
+        link("SnacksPickerTitle", "FloatTitle")
+        link("SnacksPickerPreviewTitle", "FloatTitle")
+        link("SnacksPickerPromptTitle", "FloatTitle")
+        for _, g in ipairs({
+          "SnacksPickerListCursorLine",
+          "SnacksPickerCursorLine",
+          "SnacksPickerPreviewCursorLine",
+        }) do
+          link(g, "PmenuSel")
         end
+
+        -- Telescope
+        link("TelescopeSelection", "PmenuSel") -- selected row
+        link("TelescopeSelectionCaret", "PmenuSel")
+        link("TelescopeMultiSelection", "PmenuSel")
+        link("TelescopeMatching", "Search")
+        link("TelescopePromptNormal", "NormalFloat")
+        link("TelescopeResultsNormal", "NormalFloat")
+        link("TelescopePreviewNormal", "NormalFloat")
+        link("TelescopePromptBorder", "FloatBorder")
+        link("TelescopeResultsBorder", "FloatBorder")
+        link("TelescopePreviewBorder", "FloatBorder")
+        link("TelescopePromptTitle", "FloatTitle")
+        link("TelescopeResultsTitle", "FloatTitle")
+        link("TelescopePreviewTitle", "FloatTitle")
+
+        -- fzf-lua
+        link("FzfLuaNormal", "NormalFloat")
+        link("FzfLuaBorder", "FloatBorder")
+        link("FzfLuaTitle", "FloatTitle")
+        link("FzfLuaCursorLine", "PmenuSel") -- selected row
+        link("FzfLuaPreviewCursorLine", "PmenuSel")
+        link("FzfLuaCursor", "PmenuSel") -- caret/arrow
+        link("FzfLuaSearch", "Search")
       end
 
       -- Apply on theme load + once at startup
@@ -94,7 +89,7 @@ return {
       set_picker_hls()
 
       -----------------------------------------------------------------------
-      -- Neotest windows: distinct bg + clearer border, window-local only
+      -- 3) Neotest windows: distinct bg + clearer border, window-local only
       -----------------------------------------------------------------------
       local grp = vim.api.nvim_create_augroup("neotest_contrast_bg", { clear = true })
 
