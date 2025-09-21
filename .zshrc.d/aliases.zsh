@@ -3,7 +3,7 @@ alias gitnp='git --no-pager'
 alias ctagsjs="ctags -R . && sed -i '' -E '/^(if|switch|function|module\.exports|it|describe).+language:js$/d' tags"
 alias git-branch-cp="git --no-pager branch --show-current | tr -d '[:space:]' | pbcopy"
 alias vimup='vi --headless +PlugUpdate -c "call coc#util#install()" +qall'
-alias upd='brew update; brew upgrade; zinit self-update; zinit update --all; pip install --upgrade pip pynvim tmuxp; npm i -g npm neovim; echo Updates completed at $(date)'
+alias upd='brew update; brew upgrade; zinit self-update; zinit update --all; pip install --upgrade pip pynvim tmuxp; npm i -g npm neovim @openai/neovim; echo Updates completed at $(date)'
 alias pyclean="find . -name '*.pyc' -o -name '__pycache__' -exec rm -rf {} \;"
 alias ls='ls --color'
 
