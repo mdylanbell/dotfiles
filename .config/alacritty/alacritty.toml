@@ -1,39 +1,79 @@
 [bell]
 animation = "EaseOutExpo"
-color = "0xffffff"
+color = "#ffffff"
 duration = 1
 
 # Colors (Solarized Dark)
+# [colors.primary]
+# background = "#001217"
+# foreground = "#708183"
+#
+# [colors.normal]
+# black = "#002b36"
+# red = "#dc322f"
+# green = "#859900"
+# yellow = "#b58900"
+# blue = "#268bd2"
+# magenta = "#d33682"
+# cyan = "#2aa198"
+# white = "#eee8d5"
+#
+# [colors.bright]
+# black = "#002b36"
+# red = "#cb4b16"
+# green = "#586e75"
+# yellow = "#657b83"
+# blue = "#839496"
+# magenta = "#6c71c4"
+# cyan = "#93a1a1"
+# white = "#fdf6e3"
+
+# new experiments from gpt
 [colors.primary]
-background = "0x001217"
-foreground = "0x708183"
+background = "#002b36" # base03
+foreground = "#839496" # base0
+
+[colors.cursor]
+text = "#002b36"   # base03
+cursor = "#93a1a1" # base1
+
+[colors.selection]
+text = "#002b36"       # base03
+background = "#93a1a1" # base1
 
 [colors.normal]
-black = "0x002b36"
-red = "0xdc322f"
-green = "0x859900"
-yellow = "0xb58900"
-blue = "0x268bd2"
-magenta = "0xd33682"
-cyan = "0x2aa198"
-white = "0xeee8d5"
+black = "#073642"   # base02
+red = "#dc322f"
+green = "#859900"
+yellow = "#b58900"
+blue = "#268bd2"
+magenta = "#d33682"
+cyan = "#2aa198"
+white = "#eee8d5"   # base2
 
 [colors.bright]
-black = "0x002b36"
-red = "0xcb4b16"
-green = "0x586e75"
-yellow = "0x657b83"
-blue = "0x839496"
-magenta = "0x6c71c4"
-cyan = "0x93a1a1"
-white = "0xfdf6e3"
+black = "#002b36"   # base03
+red = "#cb4b16"     # orange
+green = "#586e75"   # base01
+yellow = "#657b83"  # base00
+blue = "#839496"    # base0
+magenta = "#6c71c4" # violet
+cyan = "#93a1a1"    # base1
+white = "#fdf6e3"   # base3
+
+[colors]
+draw_bold_text_with_bright_colors = false
+# end experiments from gpt
 
 [font]
 size = 12.0
+normal = { family = "MesloLGMDZ Nerd Font", style = "Regular" }
+bold = { family = "MesloLGMDZ Nerd Font", style = "Bold" }
+italic = { family = "MesloLGMDZ Nerd Font", style = "Italic" }
 
-[font.normal]
+# [font.normal]
+# # family = "MesloLGMDZ Nerd Font"
 # family = "MesloLGMDZ Nerd Font"
-family = "MesloLGMDZ Nerd Font"
 
 [[keyboard.bindings]]
 action = "ToggleFullscreen"
