@@ -1,0 +1,10 @@
+Workaround
+
+    Create a file ~/Library/KeyBindings/DefaultKeyBinding.dict (if it doesn't exist yet)
+    Add the following rule to DefaultKeyBinding.dict:
+
+{
+    "^/" = "noop:";
+}
+
+https://youtrack.jetbrains.com/issue/IJPL-54541/Control-Slash-Ctrl-on-OS-X-macOS-producing-audible-alert
