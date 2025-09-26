@@ -1,0 +1,6 @@
+[tools]
+node = "22"
+perl = "5.42"
+pip = "3.13"
+python = "3.13"
+rust = "latest"
