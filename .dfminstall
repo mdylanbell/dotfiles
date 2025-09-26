@@ -1,7 +1,9 @@
-README.md skip
-.ssh recurse
+.cache recurse
 .config recurse
 .df skip
-.set_git_push_config.sh exec
-.set_git_push_config.sh skip
 .gitignore skip
+.local recurse
+.local recurse
+.ssh recurse
+.tmux skip
+README.md skip

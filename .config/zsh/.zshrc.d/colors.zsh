@@ -3,4 +3,4 @@ if (( $+commands[gdircolors] )); then
 else
   DIRCOLORS=dircolors
 fi
-eval `$DIRCOLORS -b $HOME/.dircolors`
+eval `$DIRCOLORS "$XDG_CONFIG_HOME"/dircolors`

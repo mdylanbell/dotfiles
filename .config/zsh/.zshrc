@@ -82,6 +82,10 @@ unsetopt share_history
 
 # load more stuff
 for cfg_file in .zshrc.load .shellrc.load .profile; do
-  cfg="$HOME/${cfg_file}"
+  cfg="$XDG_CONFIG_HOME/zsh/${cfg_file}"
   [[ -s $cfg ]] && source ${cfg}
 done
+
+# xdg tweaks
+export HISTFILE="$XDG_STATE_HOME"/zsh/history
+compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"

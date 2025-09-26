@@ -1,5 +1,6 @@
 path=($path $HOME/bin)
-ZSHRC_D=$HOME/.zshrc.d
+ZSH_CONF_D=$XDG_CONFIG_HOME/zsh
+ZSHRC_D=$ZSH_CONF_D/.zshrc.d
 
 . $ZSHRC_D/safe.zsh
 
@@ -19,4 +20,4 @@ if [[ -d $ZSHRC_D/${OS} ]]; then
 fi
 
 ### Load local config
-[[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+[[ -s "${ZSH_CONF_D}/.zshrc.local" ]] && source "${ZSH_CONF_D}/.zshrc.local"
