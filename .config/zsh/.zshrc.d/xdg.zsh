@@ -12,6 +12,7 @@ export CARGO_HOME="$XDG_DATA_HOME"/cargo
 
 # perl - cpanm
 export PERL_CPANM_HOME="$XDG_CACHE_HOME"/cpanm
+export PERLTIDY="$XDG_CONFIG_HOME"/perltidy/perltidyrc
 
 # dircolors
 # eval $(dircolors "$XDG_CONFIG_HOME"/dircolors)

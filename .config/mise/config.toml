@@ -1,4 +1,5 @@
 [tools]
+lua = "5.1"
 node = "22"
 perl = "5.42"
 pip = "3.13"
