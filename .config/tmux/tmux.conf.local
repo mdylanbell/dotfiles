@@ -433,12 +433,6 @@ set-option -g default-shell /bin/zsh
 # xdg
 set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins
 
-# solarized dark via tmp -- not good
-# set -g @plugin 'tmux-plugins/tpm'
-# set -g @plugin 'seebi/tmux-colors-solarized'
-# set -g @colors-solarized 'dark'
-
-# --- Solarized Dark for oh-my-tmux -----------------------------------------
 # Truecolor inside tmux (oh-my-tmux can auto-detect; force if you like)
 # set -g default-terminal "tmux-256color"
 # set -sa terminal-overrides ',*:Tc'

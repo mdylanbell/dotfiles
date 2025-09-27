@@ -68,8 +68,10 @@ zinit wait lucid light-mode for \
 #  pick"zsh-interactive-cd.plugin.zsh" \
 #     changyuheng/zsh-interactive-cd
 
-export EDITOR='vi'
-export VISUAL='vi'
+export EDITOR='nvim'
+export VISUAL='nvim'
+# export EDITOR='vi'
+# export VISUAL='vi'
 
 if [ "$TERM" = "kitty" ]; then
   kitty + complete setup zsh | source /dev/stdin

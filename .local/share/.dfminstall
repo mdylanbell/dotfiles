@@ -1,3 +1,5 @@
+cargo recurse
+go recurse
 nvm recurse
 pyenv recurse
 tmux recurse
