@@ -6,5 +6,4 @@
 .local recurse
 .local recurse
 .ssh recurse
-.tmux skip
 README.md skip

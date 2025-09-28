@@ -123,38 +123,9 @@ tmux_conf_theme=enabled
 #tmux_conf_theme_colour_16="colour1"
 #tmux_conf_theme_colour_17="colour15"
 
-# Core Solarized palette (Dark)
-# base03  #002b36  base02  #073642  base01  #586e75  base00  #657b83
-# base0   #839496  base1   #93a1a1  base2   #eee8d5  base3   #fdf6e3
-# yellow  #b58900  orange  #cb4b16  red     #dc322f  magenta #d33682
-# violet  #6c71c4  blue    #268bd2  cyan    #2aa198  green   #859900
-
-# theme color slots used throughout oh-my-tmux
-tmux_conf_theme_colour_1="#073642"   # status bg (base02)
-tmux_conf_theme_colour_2="#586e75"   # borders / focused-pane bg (base01)
-tmux_conf_theme_colour_3="#93a1a1"   # status fg (base1)
-tmux_conf_theme_colour_4="#268bd2"   # accent (blue) — active border/current win
-tmux_conf_theme_colour_5="#b58900"   # messages / bell (yellow)
-
-# left status segment (fg over bg 9..11)
-tmux_conf_theme_colour_6="#002b36"   # left fg 1 (base03)
-tmux_conf_theme_colour_7="#002b36"   # left fg 2
-tmux_conf_theme_colour_8="#002b36"   # left fg 3
-tmux_conf_theme_colour_9="#2aa198"   # left bg 1 (cyan)
-tmux_conf_theme_colour_10="#d33682"  # left bg 2 (magenta)
-tmux_conf_theme_colour_11="#859900"  # left bg 3 (green)
-
-# right status segment (fg over bg 15..17)
-tmux_conf_theme_colour_12="#93a1a1"  # right fg 1 (base1)
-tmux_conf_theme_colour_13="#fdf6e3"  # right fg 2 (base3)
-tmux_conf_theme_colour_14="#002b36"  # right fg 3 (base03)
-tmux_conf_theme_colour_15="#073642"  # right bg 1 (base02)
-tmux_conf_theme_colour_16="#cb4b16"  # right bg 2 (orange)
-tmux_conf_theme_colour_17="#eee8d5"  # right bg 3 (base2)
-
 # window style
-tmux_conf_theme_window_fg="default"
-tmux_conf_theme_window_bg="default"
+# tmux_conf_theme_window_fg="default"
+# tmux_conf_theme_window_bg="default"
 
 # highlight focused pane, possible values are:
 #   - true
@@ -300,11 +271,9 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{uptime_s}
 #     - #{username}
 #     - #{username_ssh}
-tmux_conf_theme_status_left=' ❐ #S '
-#tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
+tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
 #tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} | #{pretty_pane_current_path} "
 tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
-# tmux_conf_theme_status_right='#{prefix}#{pairing}#{synchronized} %Y-%m-%d %R '
 
 # status left style
 tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
@@ -446,25 +415,96 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 #set -g status-position top
 
 ## Custom by Matt
-#set derfault shell
-set-option -g default-shell /bin/zsh
-
-# use c-space for prefix, unbind c-a and c-b
+# old -- ensure we send through double C-a or double C-b
+# bind a send-prefix
+# bind b send-prefix
+# new -- use C-Space
 unbind c-a
 unbind c-b
 set -gu prefix2
 set -g prefix C-Space
 bind C-Space send-prefix
 
-# Truecolor inside tmux
 set-option -sa terminal-overrides ',alacritty:RGB'
 set-option -sa terminal-overrides ',xterm-256color:Tc'
+
+set-option -g default-shell /bin/zsh
+
+# xdg
+set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins
+
+# Truecolor inside tmux (oh-my-tmux can auto-detect; force if you like)
+# set -g default-terminal "tmux-256color"
 # set -sa terminal-overrides ',*:Tc'
-# tmux_conf_24b_colour=true  # not necessary with alacritty config
 
-# xdg config for tpm
-# set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins
+# Use the theme system
+tmux_conf_theme=enabled
+tmux_conf_24b_colour=true
 
+# Solarized palette
+# base03  base02  base0    blue     yellow   base02  base2    base02
+tmux_conf_theme_colour_1="#002b36"
+tmux_conf_theme_colour_2="#073642"
+tmux_conf_theme_colour_3="#839496"
+tmux_conf_theme_colour_4="#268bd2"
+tmux_conf_theme_colour_5="#b58900"
+tmux_conf_theme_colour_6="#073642"
+tmux_conf_theme_colour_7="#eee8d5"
+tmux_conf_theme_colour_8="#073642"
+# orange   magenta green    base1    base2    base03   base03   red      base3
+tmux_conf_theme_colour_9="#cb4b16"
+tmux_conf_theme_colour_10="#d33682"
+tmux_conf_theme_colour_11="#859900"
+tmux_conf_theme_colour_12="#93a1a1"
+tmux_conf_theme_colour_13="#eee8d5"
+tmux_conf_theme_colour_14="#002b36"
+tmux_conf_theme_colour_15="#002b36"
+tmux_conf_theme_colour_16="#dc322f"
+tmux_conf_theme_colour_17="#fdf6e3"
+
+# Window & pane look
+tmux_conf_theme_window_fg="default"
+tmux_conf_theme_window_bg="default"
+
+tmux_conf_theme_pane_border_style=thin
+tmux_conf_theme_pane_border="$tmux_conf_theme_colour_2"        # subtle border
+tmux_conf_theme_pane_active_border="$tmux_conf_theme_colour_4" # blue active
+
+# Status line
+tmux_conf_theme_status_fg="$tmux_conf_theme_colour_3"          # base0 text
+tmux_conf_theme_status_bg="$tmux_conf_theme_colour_1"          # base03 bg
+tmux_conf_theme_status_attr="none"
+
+# Window titles in status
+tmux_conf_theme_window_status_fg="$tmux_conf_theme_colour_3"   # base0
+tmux_conf_theme_window_status_bg="$tmux_conf_theme_colour_1"   # base03
+tmux_conf_theme_window_status_attr="none"
+
+tmux_conf_theme_window_status_current_fg="$tmux_conf_theme_colour_1" # text on blue
+tmux_conf_theme_window_status_current_bg="$tmux_conf_theme_colour_4" # blue chip
+tmux_conf_theme_window_status_current_attr="bold"
+
+# Messages / prompts / copy-mode
+tmux_conf_theme_message_fg="$tmux_conf_theme_colour_1"
+tmux_conf_theme_message_bg="$tmux_conf_theme_colour_5"         # yellow
+tmux_conf_theme_message_attr="bold"
+
+tmux_conf_theme_message_command_fg="$tmux_conf_theme_colour_5"
+tmux_conf_theme_message_command_bg="$tmux_conf_theme_colour_1"
+tmux_conf_theme_message_command_attr="bold"
+
+tmux_conf_theme_mode_fg="$tmux_conf_theme_colour_1"
+tmux_conf_theme_mode_bg="$tmux_conf_theme_colour_5"
+tmux_conf_theme_mode_attr="bold"
+
+# Left/right segments (use Solarized accents + bases)
+tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
+tmux_conf_theme_status_left_bg="$tmux_conf_theme_colour_9,$tmux_conf_theme_colour_10,$tmux_conf_theme_colour_11"
+tmux_conf_theme_status_left_attr="bold,none,none"
+
+tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14"
+tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17"
+tmux_conf_theme_status_right_attr="none,none,bold"
 
 # -- tpm -----------------------------------------------------------------------
 
