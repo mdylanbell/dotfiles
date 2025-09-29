@@ -1,17 +1,11 @@
+[general]
+# import solarized_dark theme
+import = ["~/.config/alacritty/colors/solarized_dark.toml"]
+
 [bell]
 animation = "EaseOutExpo"
 color = "#ffffff"
 duration = 1
-
-# import solarized_dark theme
-import = ["~/.config/alacritty/colors/solarized_dark.toml"]
-
-# recommended if blue/magenta looked “too bright” when bold:
-# draw_bold_text_with_bright_colors = false
-
-[colors]
-draw_bold_text_with_bright_colors = false
-# end experiments from gpt
 
 [env]
 COLORTERM = "truecolor"
