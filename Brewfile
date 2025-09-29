@@ -16,6 +16,7 @@ brew "curl"
 brew "openssl@3"
 brew "unzip"
 brew "gnu-tar"
+brew "pipx"
 brew "shellcheck"
 
 # Runtime/version manager
