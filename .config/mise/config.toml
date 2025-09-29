@@ -7,3 +7,84 @@ perl = "5.42"
 
 [settings]
 experimental = true
+
+# -------------------------
+# Tasks (global)
+# -------------------------
+[tasks.setup]
+description = "Install/upgrade global CLIs by language/tool; then reshim"
+depends = [
+  "setup_node",
+  "setup_python",
+  "setup_lua",
+  "setup_toml",
+  "setup_yaml",
+  "setup_sql",
+  "setup_rust",
+  "setup_go",
+]
+run = ["mise reshim"]
+
+# Node (global CLIs)
+[tasks.setup_node]
+description = "Node globals via npm; enable Corepack for repo-declared managers"
+run = [
+  "corepack enable || true",
+  "npm i -g npm",
+  "npm i -g pyright prettier markdownlint-cli2",
+]
+
+# Python (global CLIs via pipx)
+[tasks.setup_python]
+description = "Python formatters/linters via pipx (uses mise python)"
+run = [
+  "pipx ensurepath || true",
+  "pipx install --python $(which python3) ruff || pipx upgrade ruff",
+  "pipx install --python $(which python3) debugpy || pipx upgrade debugpy",
+]
+
+# Rebuild pipx shims after changing Python minor/patch
+[tasks.python_rebuild]
+description = "Reinstall pipx apps against current mise Python"
+run = ["pipx reinstall-all --python $(mise which python)", "mise reshim"]
+
+# Lua (via cargo)
+[tasks.setup_lua]
+description = "Lua tooling"
+run = ["cargo install stylua || true"]
+
+# TOML (via cargo)
+[tasks.setup_toml]
+description = "TOML tooling"
+run = ["cargo install taplo-cli || true"]
+
+# YAML (style linter)
+[tasks.setup_yaml]
+description = "YAML style checking"
+run = [
+  "pipx install --python $(which python3) yamllint || pipx upgrade yamllint",
+]
+
+# SQL (style/standards)
+[tasks.setup_sql]
+description = "SQL linting/formatting (configure dialects per-project; default postgres)"
+run = [
+  "pipx install --python $(which python3) sqlfluff || pipx upgrade sqlfluff",
+]
+
+# Rust (ensure analyzer available for rustaceanvim)
+[tasks.setup_rust]
+description = "Rust analyzer availability"
+run = [
+  "rustup default stable || true",
+  "rustup component add rust-analyzer || true",
+]
+
+# Go (extras optional; LazyVim go extra covers basics)
+[tasks.setup_go]
+description = "Go tooling (optional extras)"
+run = [
+  # Examples to enable later:
+  # "go install mvdan.cc/sh/v3/cmd/shfmt@latest",
+  # "go install github.com/segmentio/golines@latest",
+]
