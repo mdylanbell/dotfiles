@@ -28,11 +28,7 @@ run = ["mise reshim"]
 # Node (global CLIs)
 [tasks.setup_node]
 description = "Node globals via npm; enable Corepack for repo-declared managers"
-run = [
-  "corepack enable || true",
-  "npm i -g npm",
-  "npm i -g pyright prettier markdownlint-cli2",
-]
+run = ["corepack enable || true", "npm i -g npm", "npm i -g pyright prettier"]
 
 # Python (global CLIs via pipx)
 [tasks.setup_python]
@@ -40,7 +36,7 @@ description = "Python formatters/linters via pipx (uses mise python)"
 run = [
   "pipx ensurepath || true",
   "pipx install --python $(which python3) ruff || pipx upgrade ruff",
-  "pipx install --python $(which python3) debugpy || pipx upgrade debugpy",
+  # "pipx install --python $(which python3) debugpy || pipx upgrade debugpy",
 ]
 
 # Rebuild pipx shims after changing Python minor/patch
@@ -57,13 +53,6 @@ run = ["cargo install stylua || true"]
 [tasks.setup_toml]
 description = "TOML tooling"
 run = ["cargo install taplo-cli || true"]
-
-# YAML (style linter)
-[tasks.setup_yaml]
-description = "YAML style checking"
-run = [
-  "pipx install --python $(which python3) yamllint || pipx upgrade yamllint",
-]
 
 # SQL (style/standards)
 [tasks.setup_sql]
