@@ -91,3 +91,6 @@ done
 # xdg tweaks
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
 compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
+
+# Activate mise (version/runtime manager)
+eval "$(mise activate zsh)"

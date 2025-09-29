@@ -1,7 +1,9 @@
 [tools]
-lua = "5.1"
-node = "22"
+node = "lts"
+python = "3.12"
+rust = "stable"
+go = "1.23"
 perl = "5.42"
-pip = "3.13"
-python = "3.13"
-rust = "latest"
+
+[settings]
+experimental = true
