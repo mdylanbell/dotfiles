@@ -1,4 +1,8 @@
 # Solarized Dark for Alacritty
+[colors]
+# recommended if blue/magenta looked “too bright” when bold:
+draw_bold_text_with_bright_colors = false
+
 [colors.primary]
 background = "#002b36" # base03
 foreground = "#839496" # base0
