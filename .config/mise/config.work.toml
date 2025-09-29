@@ -1,0 +1,4 @@
+# Loaded when MISE_ENV=work is exported in your shell
+[tools]
+terraform = "latest"
+helm = "latest"
