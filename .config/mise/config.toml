@@ -18,7 +18,6 @@ depends = [
   "setup_python",
   "setup_lua",
   "setup_toml",
-  "setup_yaml",
   "setup_sql",
   "setup_rust",
   "setup_go",
