@@ -11,6 +11,52 @@ experimental = true
 # -------------------------
 # Tasks (global)
 # -------------------------
+[tasks.update]
+description = "Update all tools and global CLIs"
+depends = [
+  "update_brew",
+  "update_zinit",
+  "update_package_managers",
+  "update_nvim",
+]
+run = [
+  "pip install --upgrade tmuxp",
+  "npm i -g @openai/codex",
+  "echo Updates completed at $(date)",
+]
+
+[tasks.update_brew]
+description = "Update Homebrew and all installed formulae/casks"
+run = ["brew update", "brew upgrade"]
+
+[tasks.update_zinit]
+description = "Update zinit and plugins"
+run = '''
+#!/usr/bin/env zsh
+# Source zinit explicitly so the function exists in this non-interactive shell
+ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
+source "$ZINIT_HOME/zinit.git/zinit.zsh"
+
+zinit self-update
+zinit update --parallel --all
+'''
+
+[tasks.update_package_managers]
+description = "Update package managers (pip, npm, etc.)"
+run = ["pip install --upgrade pip", "npm i -g npm"]
+
+[tasks.update_nvim]
+description = "Update Neovim and plugins"
+run = [
+  "pip install --upgrade pynvim",
+  "npm i -g neovim",
+  "nvim --headless \"+Lazy! sync\" +qa",
+]
+
+[tasks.clean_env]
+description = "Clean up old packages and caches"
+run = ["brew cleanup -s", "zinit delete --clean", "mise clean"]
+
 [tasks.setup]
 description = "Install/upgrade global CLIs by language/tool; then reshim"
 depends = [
