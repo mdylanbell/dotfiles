@@ -9,8 +9,9 @@ perl = "5.42"
 experimental = true
 
 # -------------------------
-# Tasks (global)
+# Tasks :: update
 # -------------------------
+
 [tasks.update]
 description = "Update all tools and global CLIs"
 depends = [
@@ -53,9 +54,36 @@ run = [
   "nvim --headless \"+Lazy! sync\" +qa",
 ]
 
+# -------------------------
+# Tasks :: clean
+# -------------------------
+
 [tasks.clean_env]
 description = "Clean up old packages and caches"
-run = ["brew cleanup -s", "zinit delete --clean", "mise clean"]
+depends = ["clean_brew", "clean_mise"]
+
+[tasks.clean_brew]
+description = "Cleanup Homebrew cache and old versions"
+run = ["brew cleanup -s"]
+
+[tasks.clean_mise]
+description = "Mise prune"
+run = ["mise prune"]
+
+# [tasks.clean_zinit]
+# description = "Clean zinit cache"
+# run = '''
+# #!/usr/bin/env zsh
+# # Source zinit explicitly so the function exists in this non-interactive shell
+# ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
+# source "$ZINIT_HOME/zinit.git/zinit.zsh"
+#
+# zinit delete --clean
+# '''
+
+# -------------------------
+# Tasks :: setup
+# -------------------------
 
 [tasks.setup]
 description = "Install/upgrade global CLIs by language/tool; then reshim"
