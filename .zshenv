@@ -6,3 +6,10 @@ export ZDOTDIR=${ZDOTDIR:=${XDG_CONFIG_HOME}/zsh}
 if [ -f $ZDOTDIR/.zshenv ]; then
   source $ZDOTDIR/.zshenv
 fi
+
+# cargo / rust
+if [ -f "${XDG_DATA_HOME}/cargo/env" ]; then
+  source "$XDG_DATA_HOME"/cargo/env
+elif [ -f "${HOME}/.cargo/env" ]; then
+  source "$HOME"/.cargo/env
+fi
