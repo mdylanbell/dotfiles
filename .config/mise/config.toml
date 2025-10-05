@@ -1,8 +1,8 @@
 [tools]
-node = "lts"
+node = { version = "lts", postinstall = "corepack enable" }
 python = "3.12"
 rust = "stable"
-go = "1.23"
+go = "1.24"
 perl = "5.42"
 
 [settings]
