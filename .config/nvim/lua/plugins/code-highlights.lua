@@ -153,6 +153,14 @@ return {
         set("@lsp.typemod.property.readonly", { fg = FIELD, italic = true })
 
         -- (Intentionally leave @lsp.type.keyword and diagnostics to the theme.)
+
+        -- ── Go struct tags (injected go_tags) ──────────────────────────────────────────
+        -- set("@variable.go_tags", { fg = MOD, italic = true })
+        set("@attribute.go_tags", { fg = FIELD, bold = true, italic = true })
+        set("@string.go_tags", { fg = STR })
+        set("@punctuation.delimiter.go_tags", { fg = OP_PUNC })
+        set("@punctuation.special.go_tags", { fg = OP_PUNC })
+        set("@operator.go_tags", { fg = OP_PUNC }) -- safety net
       end
 
       -- Re-apply after any colorscheme, and once at UI start
