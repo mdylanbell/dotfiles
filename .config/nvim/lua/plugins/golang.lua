@@ -19,11 +19,9 @@ return {
         group = vim.api.nvim_create_augroup("treesitter-go-tags", { clear = true }),
         callback = function()
           require("nvim-treesitter.parsers").go_tags = {
-            tier = 100, -- arbitrary
             install_info = {
               url = "https://github.com/DanWlker/tree-sitter-go_tags",
               branch = "tree-sitter-1.25.5",
-              revision = "HEAD",
               queries = "queries",
             },
           }
