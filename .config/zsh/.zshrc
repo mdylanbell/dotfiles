@@ -55,23 +55,8 @@ zinit wait lucid light-mode for \
   # OMZP::macos
   # OMZP::pep8
 
-# https://github.com/zdharma/zinit-configs/blob/a60ff64823778969ce2b66230fd8cfb1a957fe89/psprint/zshrc.zsh#L277
-# zinit wait lucid for \
-#  silent atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" \
-#     zdharma-continuum/fast-syntax-highlighting \
-#  atload"!_zsh_autosuggest_start" \
-#     zsh-users/zsh-autosuggestions \
-#  as"completion" \
-#     zsh-users/zsh-completions \
-#  atload"!export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'" \
-#     zsh-users/zsh-history-substring-search \
-#  pick"zsh-interactive-cd.plugin.zsh" \
-#     changyuheng/zsh-interactive-cd
-
 export EDITOR='nvim'
 export VISUAL='nvim'
-# export EDITOR='vi'
-# export VISUAL='vi'
 
 if [ "$TERM" = "kitty" ]; then
   kitty + complete setup zsh | source /dev/stdin
@@ -82,11 +67,8 @@ export CLICOLOR=1
 # Turn off share_history, enabled by zsh
 unsetopt share_history
 
-# load more stuff
-for cfg_file in .zshrc.load .shellrc.load .profile; do
-  cfg="$XDG_CONFIG_HOME/zsh/${cfg_file}"
-  [[ -s $cfg ]] && source ${cfg}
-done
+# load remaining config -- local, os specific, and others in .zshrc.d
+[[ -s "$ZDOTDIR"/.zshrc.load ]] && source "$ZDOTDIR"/.zshrc.load
 
 # xdg tweaks
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
