@@ -1,23 +1,25 @@
 path=($path $HOME/bin)
-ZSH_CONF_D=$XDG_CONFIG_HOME/zsh
-ZSHRC_D=$ZSH_CONF_D/.zshrc.d
+ZSHRC_D="$ZDOTDIR"/.zshrc.d
 
 . $ZSHRC_D/safe.zsh
 
 ### load os specific configuration
-# For mac, OSTYPE = "darwin${ver}", the specificity is not that helpful, here
+# For mac, OSTYPE = "darwin${ver}", the specificity is not that helpful here
 OS=$OSTYPE
 
-if [[ $OS == "darwin*" ]]; then
+if [[ $OS == "darwin"* ]]; then
   OS="darwin"
 fi
 
-if [[ -d $ZSHRC_D/${OS} ]]; then
-  for zsh_config_file in $ZSHRC_D/${OS}/*.zsh; do
+if [[ -d "$ZSHRC_D/${OS}" ]]; then
+  for zsh_config_file in "$ZSHRC_D/${OS}"/*.zsh; do
     source "$zsh_config_file"
   done
   unset zsh_config_file
 fi
 
 ### Load local config
-[[ -s "${ZSH_CONF_D}/.zshrc.local" ]] && source "${ZSH_CONF_D}/.zshrc.local"
+[[ -s "${ZDOTDIR}"/.zshrc.local ]] && source "${ZDOTDIR}"/.zshrc.local
+
+### Load colors
+[[ -s "${ZSHRC_D}"/colors.zsh ]] && source "${ZSHRC_D}"/colors.zsh

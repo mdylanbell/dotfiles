@@ -1,8 +1,9 @@
 # ack
 export ACKRC="$XDG_CONFIG_HOME/ack/ackrc"
 
-# asdf
-# export ASDF_DATA_DIR="$XDG_DATA_HOME"/asdf
+# aws
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
 
 # azure
 # export AZURE_CONFIG_DIR="$XDG_DATA_HOME"/azure
@@ -23,8 +24,18 @@ export PERLTIDY="$XDG_CONFIG_HOME"/perltidy/perltidyrc
 # dotnet
 # export DOTNET_CLI_HOME="$XDG_DATA_HOME"/dotnet
 
+# psql
+export PSQL_HISTORY="$XDG_DATA_HOME/psql_history"
+
+# Ruby / gem
+export GEM_HOME="$XDG_DATA_HOME"/gem
+export GEM_SPECT_CACHE="$XDG_CACHE_HOME"/gem
+
 # screen
 # export SCREENRC="$XDG_CONFIG_HOME"/screen/screenrc
+
+export TERMINFO="$XDG_DATA_HOME"/terminfo
+export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
 
 # gnupg
 # export GNUPGHOME="$XDG_DATA_HOME"/gnupg
@@ -36,7 +47,7 @@ export GOPATH="$XDG_DATA_HOME"/go
 alias irssi=irssi --config="$XDG_CONFIG_HOME"/irssi/config -- home="$XDG_DATA_HOME"/irssi
 
 # less -- only needed if verseion < 598
-# export LESSHISTFILE="${XDG_STATE_HOME}"/lesshst
+export LESSHISTFILE="${XDG_STATE_HOME}"/lesshst
 
 # npm
 # export NPM_CONFIG_INIT_MODULE="$XDG_CONFIG_HOME"/npm/config/npm-init.js
