@@ -8,6 +8,10 @@ perl = "5.42"
 [settings]
 experimental = true
 
+[env]
+# automatically create a virtualenv in .cache/venv
+_.python.venv = { path = "{{env.XDG_CACHE_HOME}}/venv/default", create = true }
+
 # -------------------------
 # Tasks :: update
 # -------------------------

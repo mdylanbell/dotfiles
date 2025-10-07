@@ -2,3 +2,6 @@
 [tools]
 terraform = "latest"
 helm = "latest"
+
+[env]
+MISE_POETRY_VENV_AUTO = 1
