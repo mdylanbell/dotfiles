@@ -41,6 +41,7 @@
 	hidden = !git ls-files -v | grep \"^[a-z]\"
 [merge]
 	tool = vimdiff
+	conflictStyle = zdiff3
 [diff]
 	tool = vimdiff
 [difftool]
@@ -52,6 +53,7 @@
 [core]
 	excludesfile = ~/.gitignore.global
 	autocrlf = input
+	pager = delta
 [github]
 	user = mdylanbell
 [gitlab]
@@ -75,3 +77,10 @@
 	rebase = false
 [blame]
 	ignoreRevsFile = .git-blame-ignore-revs
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+  dark = true
+  side-by-side = true
+  syntax-theme = Visual Studio Dark+
