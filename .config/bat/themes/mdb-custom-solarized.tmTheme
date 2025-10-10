@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>mdb-custom-theme</string>
+  <key>author</key>
+  <string>Matt Bell + ChatGPT</string>
+  <key>uuid</key>
+  <string>a7a8a7b5-0e7a-4f21-9f2e-0c9f2d2f3c11</string>
+
+  <key>settings</key>
+  <array>
+    <!-- ===== Globals (Solarized Dark) ===== -->
+    <dict><key>settings</key><dict>
+      <key>background</key><string>#002b36</string>
+      <key>foreground</key><string>#839496</string>
+      <key>caret</key><string>#eee8d5</string>
+      <key>invisibles</key><string>#586e75</string>
+      <key>lineHighlight</key><string>#073642</string>
+      <key>selection</key><string>#073642</string>
+    </dict></dict>
+
+    <!-- ===== Core code roles (unchanged from our last build) ===== -->
+    <dict><key>name</key><string>Comment</string><key>scope</key><string>comment</string><key>settings</key><dict><key>foreground</key><string>#586e75</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Variables</string><key>scope</key><string>variable, variable.other, variable.other.readwrite, variable.language.self</string><key>settings</key><dict><key>foreground</key><string>#839496</string></dict></dict>
+    <dict><key>name</key><string>Parameters</string><key>scope</key><string>variable.parameter, meta.parameter, variable.language.this</string><key>settings</key><dict><key>foreground</key><string>#839496</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Fields / Properties</string><key>scope</key><string>variable.other.member, meta.member, meta.object-literal.key, meta.property, support.variable.property</string><key>settings</key><dict><key>foreground</key><string>#93a1a1</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Functions</string><key>scope</key><string>entity.name.function, meta.function-call, meta.function-call entity.name.function, support.function, meta.method, entity.name.method</string><key>settings</key><dict><key>foreground</key><string>#268bd2</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Constructors</string><key>scope</key><string>entity.name.type.instance, meta.instance.constructor, support.function.constructor, keyword.operator.new</string><key>settings</key><dict><key>foreground</key><string>#268bd2</string></dict></dict>
+    <dict><key>name</key><string>Types</string><key>scope</key><string>entity.name.type, support.type, storage.type, entity.other.inherited-class, support.class, entity.name.class, entity.name.interface, entity.name.enum</string><key>settings</key><dict><key>foreground</key><string>#859900</string></dict></dict>
+    <dict><key>name</key><string>Modules / Namespaces</string><key>scope</key><string>entity.name.namespace, support.module, support.other.namespace, meta.namespace, entity.name.package, support.other.package</string><key>settings</key><dict><key>foreground</key><string>#b58900</string></dict></dict>
+    <dict><key>name</key><string>Constants / Numbers / Booleans</string><key>scope</key><string>constant, constant.other, constant.numeric, constant.language, variable.other.constant, constant.language.boolean, keyword.other.unit</string><key>settings</key><dict><key>foreground</key><string>#cb4b16</string></dict></dict>
+    <dict><key>name</key><string>Strings</string><key>scope</key><string>string, constant.character, punctuation.definition.string</string><key>settings</key><dict><key>foreground</key><string>#2aa198</string></dict></dict>
+    <dict><key>name</key><string>Regex</string><key>scope</key><string>string.regexp, string.regexp punctuation, constant.character.escape</string><key>settings</key><dict><key>foreground</key><string>#2aa198</string></dict></dict>
+    <dict><key>name</key><string>Annotations / Decorators</string><key>scope</key><string>meta.annotation, storage.type.annotation, entity.other.attribute-name, punctuation.definition.annotation, storage.type.attribute, meta.decorator, support.annotation</string><key>settings</key><dict><key>foreground</key><string>#6c71c4</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Exceptions</string><key>scope</key><string>keyword.control.exception, support.class.exception, keyword.control.trycatch, keyword.control.catch, keyword.control.throw</string><key>settings</key><dict><key>foreground</key><string>#d33682</string></dict></dict>
+    <dict><key>name</key><string>Keywords</string><key>scope</key><string>keyword, keyword.control, keyword.operator.word, keyword.other</string><key>settings</key><dict><key>foreground</key><string>#fdf6e3</string></dict></dict>
+    <dict><key>name</key><string>Function Keywords</string><key>scope</key><string>keyword.declaration, keyword.function, storage.type.function, storage.type.function.arrow</string><key>settings</key><dict><key>foreground</key><string>#fdf6e3</string></dict></dict>
+    <dict><key>name</key><string>Type Keywords</string><key>scope</key><string>storage.type.class, storage.type.interface, storage.type, keyword.declaration.class, keyword.declaration.interface, keyword.type</string><key>settings</key><dict><key>foreground</key><string>#fdf6e3</string></dict></dict>
+    <dict><key>name</key><string>Storage Modifiers</string><key>scope</key><string>storage.modifier, keyword.declaration.modifier, storage.modifier.access</string><key>settings</key><dict><key>foreground</key><string>#fdf6e3</string></dict></dict>
+    <dict><key>name</key><string>Operators &amp; Punctuation</string><key>scope</key><string>keyword.operator, punctuation, punctuation.separator, punctuation.definition.parameters, punctuation.section, punctuation.accessor, punctuation.separator.key-value</string><key>settings</key><dict><key>foreground</key><string>#93a1a1</string></dict></dict>
+    <dict><key>name</key><string>Imports</string><key>scope</key><string>keyword.control.import, keyword.import, keyword.package, support.type.import, support.type.export</string><key>settings</key><dict><key>foreground</key><string>#fdf6e3</string></dict></dict>
+    <dict><key>name</key><string>Mapping Keys</string><key>scope</key><string>entity.name.tag.yaml, support.type.property-name.json, support.type.property-name.toml</string><key>settings</key><dict><key>foreground</key><string>#93a1a1</string><key>fontStyle</key><string>italic</string></dict></dict>
+    <dict><key>name</key><string>Go Tag Keys</string><key>scope</key><string>entity.other.attribute-name.go, meta.tag.entity.other.attribute-name</string><key>settings</key><dict><key>foreground</key><string>#93a1a1</string><key>fontStyle</key><string>bold italic</string></dict></dict>
+    <dict><key>name</key><string>Go Tag String</string><key>scope</key><string>string.quoted.double.go meta.tag, string.quoted.raw.go meta.tag</string><key>settings</key><dict><key>foreground</key><string>#2aa198</string></dict></dict>
+
+    <!-- ===== Diagnostics & Diff ===== -->
+    <dict><key>name</key><string>Deprecated</string><key>scope</key><string>invalid.deprecated, markup.deprecated</string><key>settings</key><dict><key>foreground</key><string>#cb4b16</string><key>fontStyle</key><string>underline</string></dict></dict>
+    <dict><key>name</key><string>Illegal / Error</string><key>scope</key><string>invalid.illegal, markup.error, message.error</string><key>settings</key><dict><key>foreground</key><string>#dc322f</string><key>fontStyle</key><string>underline</string></dict></dict>
+    <dict><key>name</key><string>Warning</string><key>scope</key><string>markup.warning, message.warning</string><key>settings</key><dict><key>foreground</key><string>#b58900</string><key>fontStyle</key><string>underline</string></dict></dict>
+    <dict><key>name</key><string>Info</string><key>scope</key><string>markup.info, message.info, markup.note</string><key>settings</key><dict><key>foreground</key><string>#268bd2</string><key>fontStyle</key><string>underline</string></dict></dict>
+    <dict><key>name</key><string>Diff Inserted</string><key>scope</key><string>markup.inserted, meta.diff.header.to-file, meta.diff.range.inserted, punctuation.definition.inserted</string><key>settings</key><dict><key>foreground</key><string>#859900</string></dict></dict>
+    <dict><key>name</key><string>Diff Deleted</string><key>scope</key><string>markup.deleted, meta.diff.header.from-file, meta.diff.range.deleted, punctuation.definition.deleted</string><key>settings</key><dict><key>foreground</key><string>#dc322f</string></dict></dict>
+    <dict><key>name</key><string>Diff Changed</string><key>scope</key><string>markup.changed, meta.diff.range, punctuation.definition.changed</string><key>settings</key><dict><key>foreground</key><string>#b58900</string></dict></dict>
+
+    <!-- ===== XML / PLIST (tuned) ===== -->
+
+    <!-- Tag punctuation <, </, > → base01 gray -->
+    <dict><key>name</key><string>XML Tag Punctuation</string>
+      <key>scope</key><string>text.xml punctuation.definition.tag, source.plist punctuation.definition.tag</string>
+      <key>settings</key><dict><key>foreground</key><string>#586e75</string></dict>
+    </dict>
+
+    <!-- Regular tag names (note, to, body) → blue -->
+    <dict><key>name</key><string>XML Tag Name</string>
+      <key>scope</key><string>text.xml entity.name.tag - (entity.name.tag.doctype|entity.name.tag.cdata), source.plist entity.name.tag</string>
+      <key>settings</key><dict><key>foreground</key><string>#268bd2</string></dict>
+    </dict>
+
+    <!-- Attribute names (version, type, id) → base1 italic -->
+    <dict><key>name</key><string>XML Attribute Name</string>
+      <key>scope</key><string>text.xml entity.other.attribute-name, source.plist entity.other.attribute-name</string>
+      <key>settings</key><dict><key>foreground</key><string>#93a1a1</string><key>fontStyle</key><string>italic</string></dict>
+    </dict>
+
+    <!-- Attribute values (general) → cyan -->
+    <dict><key>name</key><string>XML Attribute Value</string>
+      <key>scope</key><string>text.xml string.quoted.double, text.xml string.quoted.single, source.plist string.quoted.double, source.plist string.quoted.single</string>
+      <key>settings</key><dict><key>foreground</key><string>#2aa198</string></dict>
+    </dict>
+
+    <!-- XML declaration: brackets → gray; 'xml' token → green; values → orange -->
+    <dict><key>name</key><string>XML Decl Brackets</string>
+      <key>scope</key><string>text.xml meta.tag.preprocessor.xml punctuation.definition.tag</string>
+      <key>settings</key><dict><key>foreground</key><string>#586e75</string></dict>
+    </dict>
+    <dict><key>name</key><string>XML Decl Name</string>
+      <key>scope</key><string>text.xml meta.tag.preprocessor.xml entity.name.tag, text.xml keyword.other.xml, text.xml constant.language.xml</string>
+      <key>settings</key><dict><key>foreground</key><string>#859900</string></dict> <!-- green 'xml' -->
+    </dict>
+    <dict><key>name</key><string>XML Decl Values</string>
+      <key>scope</key><string>text.xml meta.tag.preprocessor.xml string.quoted.double, text.xml meta.tag.preprocessor.xml string.quoted.single</string>
+      <key>settings</key><dict><key>foreground</key><string>#cb4b16</string></dict> <!-- orange '1.0' -->
+    </dict>
+
+    <!-- DOCTYPE block base → green (ensures 'DOCTYPE' is green) -->
+    <dict><key>name</key><string>XML Doctype Block</string>
+      <key>scope</key><string>text.xml meta.tag.sgml.doctype</string>
+      <key>settings</key><dict><key>foreground</key><string>#859900</string></dict>
+    </dict>
+
+    <!-- DOCTYPE root name (e.g., 'note') → orange -->
+    <dict><key>name</key><string>XML Doctype Root Name</string>
+      <key>scope</key><string>text.xml meta.tag.sgml.doctype entity.name.tag - (keyword|string)</string>
+      <key>settings</key><dict><key>foreground</key><string>#cb4b16</string></dict>
+    </dict>
+
+    <!-- SYSTEM → bold white (only if grammar exposes a distinct scope) -->
+    <dict><key>name</key><string>XML Doctype SYSTEM</string>
+      <key>scope</key><string>
+        text.xml meta.tag.sgml.doctype keyword.other.system,
+        text.xml meta.tag.sgml.doctype support.constant.system,
+        text.xml meta.tag.sgml.doctype constant.other.system
+      </string>
+      <key>settings</key><dict><key>foreground</key><string>#fdf6e3</string><key>fontStyle</key><string>bold</string></dict>
+    </dict>
+
+    <!-- External ID (e.g., "Note.dtd") → magenta -->
+    <dict><key>name</key><string>XML Doctype External ID</string>
+      <key>scope</key><string>text.xml meta.tag.sgml.doctype string.quoted.double, text.xml meta.tag.sgml.doctype string.quoted.single</string>
+      <key>settings</key><dict><key>foreground</key><string>#d33682</string></dict>
+    </dict>
+
+    <!-- Entities like &amp; → orange -->
+    <dict><key>name</key><string>XML Entity</string>
+      <key>scope</key><string>text.xml constant.character.entity</string>
+      <key>settings</key><dict><key>foreground</key><string>#cb4b16</string></dict>
+    </dict>
+
+    <!-- CDATA markers (<![, CDATA, ]]>) → yellow -->
+    <dict><key>name</key><string>XML CDATA Markers</string>
+      <key>scope</key><string>
+        text.xml meta.tag.sgml.cdata,
+        text.xml meta.tag.cdata,
+        text.xml keyword.cdata,
+        text.xml keyword.other.cdata,
+        text.xml entity.name.tag.cdata,
+        text.xml punctuation.definition.cdata,
+        text.xml punctuation.definition.tag.cdata,
+        text.xml punctuation.definition.string.begin.cdata,
+        text.xml punctuation.definition.string.end.cdata
+      </string>
+      <key>settings</key><dict><key>foreground</key><string>#b58900</string></dict>
+    </dict>
+
+    <!-- CDATA content → cyan -->
+    <dict><key>name</key><string>XML CDATA Content</string>
+      <key>scope</key><string>text.xml string.unquoted.cdata</string>
+      <key>settings</key><dict><key>foreground</key><string>#2aa198</string></dict>
+    </dict>
+  </array>
+</dict>
+</plist>
