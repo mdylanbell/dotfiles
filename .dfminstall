@@ -1,9 +1,7 @@
 .cache recurse
 .config recurse
-.df skip
 .gitignore skip
 .gitmodules skip
-.local recurse
 .local recurse
 .ssh recurse
 Brewfile skip
