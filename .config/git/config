@@ -83,4 +83,5 @@
 	navigate = true
   dark = true
   side-by-side = true
-  syntax-theme = Visual Studio Dark+
+  syntax-theme = mdb-custom-solarized
+  ; syntax-theme = Visual Studio Dark+
