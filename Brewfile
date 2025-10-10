@@ -1,6 +1,7 @@
 # System utilities only (languages managed by mise)
 brew "ast-grep"
 brew "bat"
+brew "bat-extras"
 brew "coreutils"
 brew "curl"
 brew "eza"
