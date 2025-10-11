@@ -446,7 +446,7 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 #set -g status-position top
 
 ## Custom by Matt
-#set derfault shell
+# set default shell
 set-option -g default-shell /bin/zsh
 
 # use c-space for prefix, unbind c-a and c-b
@@ -456,14 +456,17 @@ set -gu prefix2
 set -g prefix C-Space
 bind C-Space send-prefix
 
-# Truecolor inside tmux
+# set truecolor inside tmux
 set-option -sa terminal-overrides ',alacritty:RGB'
 set-option -sa terminal-overrides ',xterm-256color:Tc'
 # set -sa terminal-overrides ',*:Tc'
 # tmux_conf_24b_colour=true  # not necessary with alacritty config
 
 # xdg config for tpm
-# set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins
+set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins'
+
+# tmux-fzf
+set -g @plugin 'sainnhe/tmux-fzf'
 
 
 # -- tpm -----------------------------------------------------------------------
