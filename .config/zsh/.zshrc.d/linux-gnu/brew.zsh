@@ -7,7 +7,7 @@ fi
 
 # activate brew
 if [[ -x "$HOMEBREW_PREFIX"/bin/brew ]]; then
-  eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+  eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 fi
 
 # configure getopt if present
@@ -19,8 +19,8 @@ fi
 if [[ -x "$HOMEBREW_PREFIX"/bin/gcc-15 ]]; then
   export CC=/home/linuxbrew/.linuxbrew/bin/gcc-15
 fi
-# configure openssl if present
 
+# configure openssl if present
 if [[ -x "$HOMEBREW_PREFIX"/opt/openssl@3/bin/openssl ]]; then
   export LDFLAGS="-L$HOMEBREW_PREFIX/opt/openssl@3/lib"
   export CPPFLAGS="-I$HOMEBREW_PREFIX/opt/openssl@3/include"
