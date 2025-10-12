@@ -13,7 +13,7 @@ depends = [
   "setup_rust",
   "setup_go",
 ]
-run = ["mise reshim"]
+run = ["bat cache --build", "mise reshim"]
 
 # Node (global CLIs)
 [tasks.setup_node]
