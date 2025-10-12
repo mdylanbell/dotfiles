@@ -463,7 +463,7 @@ set-option -sa terminal-overrides ',xterm-256color:Tc'
 # tmux_conf_24b_colour=true  # not necessary with alacritty config
 
 # xdg config for tpm
-set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.local/share/tmux/plugins'
+set-environment -g TMUX_PLUGIN_MANAGER_PATH "$XDG_DATA_HOME/tmux/plugins"
 
 # tmux-fzf
 set -g @plugin 'sainnhe/tmux-fzf'
