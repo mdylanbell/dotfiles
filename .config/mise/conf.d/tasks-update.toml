@@ -9,6 +9,7 @@ depends = [
   "update_zinit",
   "update_package_managers",
   "update_nvim",
+  "update_pipx",
 ]
 run = [
   "pip install --upgrade tmuxp",
@@ -43,3 +44,7 @@ run = [
   "npm i -g neovim",
   "nvim --headless \"+Lazy! sync\" +qa",
 ]
+
+[tasks.update_pipx]
+description = "Update all pipx packages"
+run = ["pipx upgrade-all"]
