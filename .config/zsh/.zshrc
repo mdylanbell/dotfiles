@@ -1,6 +1,24 @@
+export EDITOR='nvim'
+export VISUAL='nvim'
+
+if [ "$TERM" = "kitty" ]; then
+  kitty + complete setup zsh | source /dev/stdin
+fi
+
+export CLICOLOR=1
+
+# Turn off share_history, enabled by zsh
+unsetopt share_history
+
+# load remaining config -- local, os specific, and others in .zshrc.d
+[[ -s "$ZDOTDIR"/.zshrc.load ]] && source "$ZDOTDIR"/.zshrc.load
+
+# Activate mise (version/runtime manager)
+eval "$(mise activate zsh)"
 # FZF
 # use fd, follow links, show hidden files, follow symlinks
 export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+export FZF_COLORS="bg+:-1,bg:-1,fg:254,fg+:254,hl:61,hl+:61,info:136,prompt:136,pointer:61,marker:61,spinner:136,header:136,border:254"
 
 # initialize zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -75,31 +93,14 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 # custom fzf flags
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
 # TODO: Fix coloring -- green default?
-# zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg:2 --bind=tab:accept
+# zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg:2 --bind=tab:accept
 # To make fzf-tab follow FZF_DEFAULT_OPTS.
 # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # switch group using `<` and `>`
 zstyle ':fzf-tab:*' switch-group '<' '>'
 
-export EDITOR='nvim'
-export VISUAL='nvim'
-
-if [ "$TERM" = "kitty" ]; then
-  kitty + complete setup zsh | source /dev/stdin
-fi
-
-export CLICOLOR=1
-
-# Turn off share_history, enabled by zsh
-unsetopt share_history
-
-# load remaining config -- local, os specific, and others in .zshrc.d
-[[ -s "$ZDOTDIR"/.zshrc.load ]] && source "$ZDOTDIR"/.zshrc.load
-
 # xdg tweaks
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
 compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
-
-# Activate mise (version/runtime manager)
-eval "$(mise activate zsh)"
