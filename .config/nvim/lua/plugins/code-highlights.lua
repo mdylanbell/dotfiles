@@ -38,7 +38,15 @@ return {
         end
       end
 
+      local function is_solarized_dark()
+        return (vim.g.colors_name == "solarized") and (vim.o.background == "dark")
+      end
+
       local function apply()
+        if not is_solarized_dark() then
+          return {}
+        end
+
         local c = get_colors()
 
         -- ROLE → COLOR (Solarized rationale):
