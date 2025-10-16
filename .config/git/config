@@ -3,6 +3,8 @@
 	email = m.dylan.bell@gmail.com
 [includeIf "gitdir:~/code/work/**"]
 	path = ~/code/work/.gitconfig
+[init]
+	defaultBranch = main
 [color]
 	diff = auto
 	status = auto
