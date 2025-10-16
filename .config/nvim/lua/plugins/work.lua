@@ -1,7 +1,9 @@
 local is_datavant_laptop = vim.uv.os_gethostname() == "DatavantLaptop.local"
+if not is_datavant_laptop then
+  return {}
+end
 return {
   "neovim/nvim-lspconfig",
-  enabled = is_datavant_laptop,
   opts = {
     servers = {
       ruff = {
