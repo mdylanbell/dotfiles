@@ -26,6 +26,11 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 source "${ZINIT_HOME}/zinit.zsh"
 
+# hide username from prompt unless we're on a remote system
+if (( $+commands[whoami] )); then
+  export DEFAULT_USER=$(whoami)
+fi
+
 # setup agnoster prompt
 setopt prompt_subst
 zinit light agnoster/agnoster-zsh-theme
