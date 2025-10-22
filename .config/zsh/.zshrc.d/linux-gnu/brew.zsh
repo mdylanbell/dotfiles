@@ -17,7 +17,7 @@ fi
 
 # configure CC if present
 if [[ -x "$HOMEBREW_PREFIX"/bin/gcc-15 ]]; then
-  export CC=/home/linuxbrew/.linuxbrew/bin/gcc-15
+  export CC="$HOMEBREW_PREFIX"/bin/gcc-15
 fi
 
 # configure openssl if present
