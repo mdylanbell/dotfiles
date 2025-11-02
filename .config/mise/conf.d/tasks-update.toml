@@ -12,6 +12,7 @@ depends = [
   "update_pipx",
 ]
 run = [
+  "bat cache --build",
   "pip install --upgrade tmuxp",
   "npm i -g @openai/codex",
   "echo Updates completed at $(date)",
