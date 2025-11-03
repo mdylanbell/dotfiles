@@ -10,6 +10,7 @@ depends = [
   "update_package_managers",
   "update_nvim",
   "update_pipx",
+  "update_submodules",
 ]
 run = [
   "bat cache --build",
@@ -33,6 +34,10 @@ source "$ZINIT_HOME/zinit.git/zinit.zsh"
 zinit self-update
 zinit update --parallel --all
 '''
+
+[tasks.update_submodules]
+description = "Update git submodules in dotfiles repo"
+run = ["git -C $HOME/.dotfiles submodule foreach git pull"]
 
 [tasks.update_package_managers]
 description = "Update package managers (pip, npm, etc.)"
