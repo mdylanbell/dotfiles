@@ -6,3 +6,4 @@
 .ssh recurse
 Brewfile skip
 README.md skip
+doc skip
