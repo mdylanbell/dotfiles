@@ -5,9 +5,7 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 source "${ZINIT_HOME}/zinit.zsh"
 
 # hide username in prompt when local
-if (( $+commands[whoami] )); then
-  export DEFAULT_USER=$(whoami)
-fi
+export DEFAULT_USER=$USER
 
 # theme first, like origin/main (prompt_subst already set in 00-env)
 zinit light agnoster/agnoster-zsh-theme
