@@ -9,17 +9,11 @@ _zshrc_load() {
 
   load_tree() {
     local dir=$1 entry
-    local -A st
     [[ -d $dir ]] || return
     setopt localoptions numericglobsort nullglob extendedglob
     for entry in "$dir"/*(N); do
-      zstat -L -H st -- "$entry" 2>/dev/null || continue
-      if [[ -n ${st[mode]} ]] && (( st[mode] & 8#022 )); then
-        print -u2 "skip insecure: $entry"
-        continue
-      fi
-      if [[ -d $entry && ! -h $entry ]]; then
-        case ${entry:t} in os|host|local) continue ;; esac
+      if [[ -d $entry ]]; then
+        case ${entry:t} in os|host) continue ;; esac
         load_tree "$entry"
       elif [[ -f $entry ]]; then
         source "$entry"
@@ -33,10 +27,12 @@ _zshrc_load() {
   [[ -d $confdir/host/$host ]] && load_tree "$confdir/host/$host"
   short=${host%%.*}
   [[ -d $confdir/host/$short ]] && load_tree "$confdir/host/$short"
-  [[ -d $confdir/local ]] && load_tree "$confdir/local"
 
   unset -f load_tree
 }
 
 _zshrc_load
 unset -f _zshrc_load
+
+# optional host-local overrides
+[[ -r $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
