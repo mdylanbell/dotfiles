@@ -34,5 +34,5 @@ _zshrc_load() {
 _zshrc_load
 unset -f _zshrc_load
 
-# optional host-local overrides
-[[ -r $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
+# optional host-local overrides (ignore if missing)
+[[ -r $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh || true
