@@ -56,3 +56,6 @@ export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 
 # wget
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
+
+# zsh - completion dump to XDG cache
+export ZSH_COMPDUMP="$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
