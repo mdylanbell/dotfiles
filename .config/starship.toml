@@ -1,0 +1,166 @@
+#:schema "https://starship.rs/config-schema.json"
+
+# Starship configuration
+# Design:
+# - Single-line, left-to-right panels:
+#   [OS] [Identity?] [Directory] [Git?] [Tooling?] [Status wedge → terminal background]
+# - Solarized-dark–inspired palette with higher-contrast panels and dark foreground text
+# - Nerd Font–only glyphs for consistent rendering across platforms
+
+palette = "solarized_matt"
+
+format = """
+$os\
+$username$hostname\
+$directory\
+$git_branch$git_status\
+$python$nodejs$rust$golang$package\
+$status$character
+"""
+
+right_format = """$time"""
+add_newline = true
+
+# Palette: tuned for Solarized Dark backgrounds with bright but not oversaturated panels
+[palettes.solarized_matt]
+bg = "#002b36" # Base terminal background
+
+panel_os = "#f28f5e"   # OS panel
+panel_dir = "#2fa89a"  # Directory panel
+panel_git = "#d0a640"  # Git status panel
+panel_lang = "#3189c9" # Tooling / language panel
+panel_id = "#c078c8"   # Identity (SSH) panel
+
+text = "#002b36"  # Foreground for panel text/icons
+muted = "#073642" # Muted foreground for secondary information
+
+accent_dir = "#2aa198"  # Additional directory accent
+accent_git = "#b58900"  # Additional git accent
+accent_lang = "#268bd2" # Additional tooling accent
+
+success = "#859900"
+warn = "#cb4b16"
+error = "#dc322f"
+info = "#6c71c4"
+
+# OS panel: always present, uses Starship's built-in Nerd Font OS symbols
+[os]
+disabled = false
+style = "fg:text bg:panel_os"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Macos = ""
+Linux = ""
+Windows = ""
+
+# Identity panel: only shown on SSH sessions to minimize noise on local shells
+[username]
+style_user = "fg:text bg:panel_id"
+style_root = "fg:error bg:panel_id"
+format = "[ $user ]($style)"
+show_always = false
+disabled = false
+
+[hostname]
+ssh_only = true
+ssh_symbol = " "
+style = "fg:text bg:panel_id"
+format = "[ @ $ssh_symbol$hostname ]($style)"
+disabled = false
+
+# Directory panel: truncated path with read-only indicator
+[directory]
+style = "fg:text bg:panel_dir"
+format = "[ $path ]($style)"
+truncation_length = 5
+truncate_to_repo = true
+fish_style_pwd_dir_length = 2
+read_only = " 󰌾"
+read_only_style = "fg:warn bg:panel_dir"
+
+# Git panels: branch and status, with arrows into the tooling panel when active
+[git_branch]
+symbol = " "
+style = "fg:text bg:panel_git"
+format = "[](fg:panel_dir bg:panel_git)[ $symbol$branch ]($style)"
+
+[git_status]
+style = "fg:text bg:panel_git"
+format = "[$all_status$ahead_behind ]($style)[](fg:panel_git bg:panel_lang)"
+disabled = false
+
+conflicted = "󰦓"
+untracked = ""
+stashed = ""
+modified = ""
+staged = ""
+renamed = ""
+deleted = ""
+
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+
+# Tooling panel: language/runtime and package information
+[python]
+symbol = " "
+style = "fg:text bg:panel_lang"
+format = "[ $symbol$virtualenv ]($style)"
+python_binary = "python3"
+detect_extensions = ["py"]
+detect_files = ["pyproject.toml", "requirements.txt", "Pipfile", "poetry.lock"]
+detect_folders = [".venv", "venv", ".env", ".virtualenv"]
+
+[nodejs]
+symbol = " "
+style = "fg:text bg:panel_lang"
+format = "[ $symbol$version ]($style)"
+detect_files = ["package.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb"]
+disabled = false
+
+[rust]
+symbol = " "
+style = "fg:text bg:panel_lang"
+format = "[ $symbol$version ]($style)"
+detect_files = ["Cargo.toml", "rust-toolchain.toml", "rust-toolchain"]
+
+[golang]
+symbol = " "
+style = "fg:text bg:panel_lang"
+format = "[ $symbol$version ]($style)"
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum", "go.work"]
+
+[package]
+symbol = " "
+style = "fg:text bg:panel_lang"
+format = "[$symbol$version ]($style)"
+disabled = false
+
+# Status wedge:
+# - On success: single arrow from tooling panel into the terminal background
+# - On error: blue → amber wedge, then arrow into the terminal background
+# The final arrow uses bg:none to defer to the terminal's default background color.
+[status]
+style = ""
+symbol = "[](fg:panel_lang bg:warn)[](fg:warn bg:none)"
+success_symbol = "[](fg:panel_lang bg:none)"
+format = "$symbol"
+map_symbol = false
+disabled = false
+
+# Prompt character:
+# - Empty in insert/normal mode (prompt ends with the status wedge)
+# - Distinct glyph in vi command mode only
+[character]
+success_symbol = ""
+error_symbol = ""
+vicmd_symbol = "[](fg:accent_lang)"
+
+# Time: rendered on the right side in muted foreground color
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:muted"
+utc_time_offset = "local"
