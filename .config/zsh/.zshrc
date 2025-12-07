@@ -82,4 +82,4 @@ unset -f _zshrc_load
 #  Optional, unversioned machine-local configuration.
 # ======================================================================
 
-[[ -r "${ZDOTDIR:-$HOME}/local.zsh" ]] && source "${ZDOTDIR:-$HOME}/local.zsh"
+[[ -r "${ZDOTDIR:-$HOME}/local.zsh" ]] && source "${ZDOTDIR:-$HOME}/local.zsh" || true

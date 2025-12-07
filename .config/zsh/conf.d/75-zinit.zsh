@@ -4,52 +4,38 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [[ -d $ZINIT_HOME/.git ]] || git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 source "${ZINIT_HOME}/zinit.zsh"
 
-# Suppress username in agnoster prompt when it matches $USER
-export DEFAULT_USER=$USER
-
 # ----------------------------------------------------------------------
-# Prompt theme
+# compinit configuration (zinit-managed)
 #
-# Keep the theme early so the initial prompt looks correct from the start.
-# prompt_subst is configured in 00-env.zsh to support dynamic segments.
+# We let zinit run `compinit` via `zicompinit; zicdreplay`. The options
+# are configured once here:
+#   - Use `-i` to skip insecure-dir checks (assuming permissions are OK).
+#   - If $ZSH_COMPDUMP is set (50-xdg.zsh), also pass `-d $ZSH_COMPDUMP`
+#     so the dump file lives under XDG. Otherwise, fall back to zsh's
+#     default .zcompdump path.
 # ----------------------------------------------------------------------
-zinit light agnoster/agnoster-zsh-theme
+if [[ -n ${ZSH_COMPDUMP:-} ]]; then
+  ZINIT[COMPINIT_OPTS]="-i -d $ZSH_COMPDUMP"
+else
+  ZINIT[COMPINIT_OPTS]="-i"
+fi
 
 # ----------------------------------------------------------------------
-# Completion and fzf-tab configuration
-#
-# These styles should be set before 'compinit' runs. OMZ::lib/completion.zsh
-# will eventually call compinit, and zinit's 'wait' will ensure these
-# zstyles are already in place by then.
-# ----------------------------------------------------------------------
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' menu no
-
-# fzf-tab specific configuration; kept close to generic completion styles
-# so that all completion-related behavior is configured in one place.
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg:2 --bind=tab:accept
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-zstyle ':fzf-tab:*' switch-group '<' '>'
-
-# ----------------------------------------------------------------------
-# Phase 1: Core OMZ libraries and completion layer
+# Phase 1: Core OMZ libraries and completion definitions
 #
 # Responsibilities:
 #   - Load core OMZ libs (clipboard, history, key-bindings, etc.).
 #   - Install extra completion definitions (zsh-completions) onto $fpath.
-#   - Run compinit via OMZ::lib/completion.zsh, using $ZSH_COMPDUMP
-#     (configured in 50-xdg.zsh to point into $XDG_CACHE_HOME).
+#   - Load OMZ's completion library, which:
+#       * Tunes completion-related options and zstyles.
+#       * Configures completion caching and COMPLETION_WAITING_DOTS.
+#       * Enables bashcompinit for bash-style completions.
 #
-# Ordering notes:
-#   - zsh-users/zsh-completions appears before OMZ::lib/completion.zsh so
-#     that its functions are visible to compinit.
-#   - OMZ::lib/compfix.zsh is loaded before OMZ::lib/completion.zsh so the
-#     completion-fix logic is available.
+# Note:
+#   - OMZ::lib/completion.zsh does *not* call compinit; the actual
+#     compinit run is delegated to zinit in Phase 2.
 # ----------------------------------------------------------------------
-zinit wait lucid light-mode for \
+zinit lucid light-mode for \
   OMZ::lib/clipboard.zsh                           \
   OMZ::lib/compfix.zsh                             \
   OMZ::lib/correction.zsh                          \
@@ -66,34 +52,55 @@ zinit wait lucid light-mode for \
   OMZ::lib/completion.zsh
 
 # ----------------------------------------------------------------------
+# Completion and fzf-tab configuration
+#
+# These styles must be in place before compinit runs so that the
+# resulting completion behavior reflects these settings. OMZ's
+# completion library has already set its defaults; the styles below
+# layer on top / override where needed.
+# ----------------------------------------------------------------------
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' menu no
+
+# fzf-tab specific configuration; kept close to generic completion styles
+# so all completion-related behavior is configured in one place.
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg:2 --bind=tab:accept
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
+# ----------------------------------------------------------------------
 # Phase 2: Completion UI and interactive helpers
 #
 # Responsibilities:
-#   - fzf-tab: replaces the built-in completion menu with an fzf UI.
-#   - history-substring-search: incremental history search on the current
-#     line, with a highlighted match.
-#   - zsh-autosuggestions: ghost-text suggestions based on history.
+#   - fzf-tab: replaces the default completion menu with an fzf UI.
+#   - history-substring-search: incremental history search with highlight.
+#   - zsh-autosuggestions: inline ghost-text suggestions.
 #
-# Ordering notes (from fzf-tab documentation):
-#   - fzf-tab must be loaded after compinit but before widgets that wrap
-#     completion, such as zsh-autosuggestions.
-#   - fast-syntax-highlighting (another widget wrapper) is loaded in a
-#     separate "Phase 3" block after this one.
+# compinit:
+#   - zinit intercepts compdef calls from Phase 1 (OMZ libs, zsh-
+#     completions) and from the plugins below.
+#   - Via `atinit"zicompinit; zicdreplay"` on fzf-tab, zinit runs
+#       compinit $ZINIT[COMPINIT_OPTS]
+#     exactly once, then replays all recorded compdef calls.
 # ----------------------------------------------------------------------
-zinit wait lucid light-mode for \
-  Aloxaf/fzf-tab                                   \
+zinit lucid light-mode for \
+  atinit"zicompinit; zicdreplay"                    \
+    Aloxaf/fzf-tab                                  \
   atload"!export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'" \
-    zsh-users/zsh-history-substring-search        \
-  atload"_zsh_autosuggest_start"                   \
+    zsh-users/zsh-history-substring-search          \
+  atload"_zsh_autosuggest_start"                    \
     zsh-users/zsh-autosuggestions
 
 # ----------------------------------------------------------------------
 # Phase 3: Visual feedback (syntax highlighting)
 #
 # fast-syntax-highlighting decorates the command line with syntax-aware
-# colors. It wraps ZLE widgets, so it should be loaded after fzf-tab and
-# other completion-related wrappers. Using 'wait' defers its cost until
-# after the first prompt, improving perceived startup time.
+# colors. It wraps ZLE widgets, so it should load after the completion
+# system is in place. Using `wait` defers its cost until after the first
+# prompt, improving perceived startup latency.
 # ----------------------------------------------------------------------
 zinit wait lucid light-mode for \
   zdharma-continuum/fast-syntax-highlighting
@@ -102,8 +109,9 @@ zinit wait lucid light-mode for \
 # OMZ plugins
 #
 # Each of these plugins contributes aliases, functions, or keybindings
-# (e.g., OMZP::fzf for ^R/^T/Alt-C). They do not wrap completion widgets
-# in a way that conflicts with fzf-tab, so they can be deferred together.
+# (e.g., OMZP::fzf for ^R/^T/Alt-C). They do not own the completion
+# system, so we can safely defer them with `wait` for better startup
+# behavior.
 # ----------------------------------------------------------------------
 zinit wait lucid light-mode for \
   OMZP::1password \
