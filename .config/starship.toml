@@ -53,6 +53,7 @@ format = "[ $symbol ]($style)"
 Macos = ""
 Linux = ""
 Windows = ""
+Ubuntu = "󰕈"
 
 # Identity panel: only shown on SSH sessions to minimize noise on local shells
 [username]
@@ -78,6 +79,15 @@ truncate_to_repo = true
 fish_style_pwd_dir_length = 2
 read_only = " 󰌾"
 read_only_style = "fg:warn bg:panel_dir"
+# home_symbol = " "
+
+# [directory.substitutions]
+# "Documents" = "󰈙 "
+# "Downloads" = " "
+# "Music" = "󰝚 "
+# "Pictures" = " "
+# # " /code" = "󰲋 "
+# "code" = "󰲋 "
 
 # Git panels: branch and status, with arrows into the tooling panel when active
 [git_branch]
@@ -87,20 +97,20 @@ format = "[](fg:panel_dir bg:panel_git)[ $symbol$branch ]($style)"
 
 [git_status]
 style = "fg:text bg:panel_git"
-format = "[$all_status$ahead_behind ]($style)[](fg:panel_git bg:panel_lang)"
+format = "[$conflicted$staged$modified$renamed$deleted$untracked$stashed$ahead_behind ]($style)[](fg:panel_git bg:panel_lang)"
 disabled = false
 
-conflicted = "󰦓"
-untracked = ""
-stashed = ""
-modified = ""
-staged = ""
-renamed = ""
-deleted = ""
-
-ahead = "⇡"
-behind = "⇣"
-diverged = "⇕"
+# semantic, Set 3-based icons
+conflicted = ""
+staged = " "
+modified = " "
+renamed = " "
+deleted = " "
+untracked = " "
+stashed = " "
+ahead = "󰁝"
+behind = "󰁅"
+diverged = ""
 
 # Tooling panel: language/runtime and package information
 [python]
