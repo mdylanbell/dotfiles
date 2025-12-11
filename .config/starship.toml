@@ -139,7 +139,7 @@ format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 [python]
 symbol = " "
 style = "bg:green"
-format = '[[ $symbol( $pyenv_prefix $version) ](fg:crust bg:green)]($style)'
+format = '[[ $symbol( $virtualenv $version) ](fg:crust bg:green)]($style)'
 
 [conda]
 symbol = " "

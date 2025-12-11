@@ -1,0 +1,36 @@
+# Catppuccin Mocha for eza
+#
+# Source: https://github.com/catppuccin/eza (mocha palette)
+colors:
+  symlink: "#cdd6f4"
+  di: "#89b4fa"   # directory
+  ex: "#a6e3a1"   # executable
+  lc: "#94e2d5"   # hard link
+  pi: "#f9e2af"   # fifo
+  so: "#fab387"   # socket
+  bd: "#cba6f7"   # block device
+  cd: "#f38ba8"   # char device
+  su: "#f38ba8"   # setuid
+  sg: "#fab387"   # setgid
+  tw: "#f9e2af"   # sticky other writable
+  ow: "#f9e2af"   # other writable
+  st: "#f5e0dc"   # sticky
+  or: "#f38ba8"   # orphan
+  mi: "#f38ba8"   # missing
+  ca: "#cdd6f4"   # file changed indicator
+  cl: "#a6e3a1"   # file clean indicator
+  da: "#fab387"   # file date
+  in: "#cdd6f4"   # inode
+  nx: "#cdd6f4"   # number of links
+  sz: "#f9e2af"   # file size
+  fn: "#cdd6f4"   # file name
+  lp: "#94e2d5"   # symlink path
+  gm: "#cba6f7"   # git modified
+  gd: "#a6e3a1"   # git deleted
+  ga: "#a6e3a1"   # git added
+  gr: "#f38ba8"   # git renamed
+  gx: "#cdd6f4"   # git unknown
+  uu: "#f38ba8"   # unmerged (both modified)
+  un: "#f9e2af"   # unmerged (both added)
+  um: "#f5e0dc"   # unmerged (deleted/modified)
+  ur: "#f38ba8"   # unmerged (added/deleted)
