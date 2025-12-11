@@ -1,0 +1,5 @@
+gui:
+  theme:
+    lightTheme: false
+    themeFile: ~/.config/lazygit/themes/catppuccin-mocha.yml
+  nerdFontsVersion: "3"
