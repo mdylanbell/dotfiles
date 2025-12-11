@@ -1,11 +1,29 @@
-if (( $+commands[gdircolors] )); then
-  DIRCOLORS=gdircolors
-elif (( $+commands[dircolors] )); then
-  DIRCOLORS=dircolors
-fi
+# Theme selector: catppuccin (default) or solarized (set DOTFILES_COLORSCHEME=solarized)
+LS_COLORS_FILE=""
+DIRCOLORS_FILE=""
 
-if [[ -n $DIRCOLORS ]]; then
-  eval `$DIRCOLORS "$XDG_CONFIG_HOME"/dircolors`
+case "${DOTFILES_COLORSCHEME:-catppuccin}" in
+  catppuccin)
+    LS_COLORS_FILE="$XDG_CONFIG_HOME/lscolors/catppuccin-mocha.lscolors"
+    ;;
+  solarized)
+    DIRCOLORS_FILE="$XDG_CONFIG_HOME/dircolors.solarized"
+    ;;
+esac
+
+# Prefer LS_COLORS file when provided
+if [[ -n $LS_COLORS_FILE && -f $LS_COLORS_FILE ]]; then
+  export LS_COLORS=$(<"$LS_COLORS_FILE")
+# Otherwise fall back to dircolors if available
+elif [[ -n $DIRCOLORS_FILE && -f $DIRCOLORS_FILE ]]; then
+  if (( $+commands[gdircolors] )); then
+    DIRCOLORS_CMD=gdircolors
+  elif (( $+commands[dircolors] )); then
+    DIRCOLORS_CMD=dircolors
+  fi
+  if [[ -n $DIRCOLORS_CMD ]]; then
+    eval `$DIRCOLORS_CMD "$DIRCOLORS_FILE"`
+  fi
 fi
 
 # colorize help messages (-h and --help args) for commands (interactive shells only)
