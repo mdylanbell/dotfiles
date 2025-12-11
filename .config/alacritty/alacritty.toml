@@ -1,6 +1,6 @@
 [general]
-# import solarized_dark theme
-import = ["~/.config/alacritty/colors/solarized_dark.toml"]
+# import theme
+import = ["~/.config/alacritty/colors/catppuccin-mocha.toml"]
 
 [bell]
 animation = "EaseOutExpo"
