@@ -1,106 +1,89 @@
-#:schema "https://starship.rs/config-schema.json"
-
-# Starship configuration
-# Design:
-# - Single-line, left-to-right panels:
-#   [OS] [Identity?] [Directory] [Git?] [Tooling?] [Status wedge → terminal background]
-# - Solarized-dark–inspired palette with higher-contrast panels and dark foreground text
-# - Nerd Font–only glyphs for consistent rendering across platforms
-
-palette = "solarized_matt"
+"$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
+[](red)\
 $os\
-$username$hostname\
+$username\
+[](bg:peach fg:red)\
 $directory\
-$git_branch$git_status\
-$python$nodejs$rust$golang$package\
-$status$character
-"""
+[](bg:yellow fg:peach)\
+$git_branch\
+$git_status\
+[](fg:yellow bg:green)\
+$c\
+$rust\
+$golang\
+$nodejs\
+$php\
+$java\
+$kotlin\
+$haskell\
+$python\
+[](fg:green bg:sapphire)\
+$conda\
+[](fg:sapphire bg:lavender)\
+$time\
+[ ](fg:lavender)\
+$cmd_duration\
+$line_break\
+$character"""
 
-right_format = """$time"""
-add_newline = true
+palette = 'catppuccin_mocha'
 
-# Palette: tuned for Solarized Dark backgrounds with bright but not oversaturated panels
-[palettes.solarized_matt]
-bg = "#002b36" # Base terminal background
-
-panel_os = "#f28f5e"   # OS panel
-panel_dir = "#2fa89a"  # Directory panel
-panel_git = "#d0a640"  # Git status panel
-panel_lang = "#3189c9" # Tooling / language panel
-panel_id = "#c078c8"   # Identity (SSH) panel
-
-text = "#002b36"  # Foreground for panel text/icons
-muted = "#073642" # Muted foreground for secondary information
-
-accent_dir = "#2aa198"  # Additional directory accent
-accent_git = "#b58900"  # Additional git accent
-accent_lang = "#268bd2" # Additional tooling accent
-
-success = "#859900"
-warn = "#cb4b16"
-error = "#dc322f"
-info = "#6c71c4"
-
-# OS panel: always present, uses Starship's built-in Nerd Font OS symbols
 [os]
 disabled = false
-style = "fg:text bg:panel_os"
-format = "[ $symbol ]($style)"
+style = "bg:red fg:crust"
 
 [os.symbols]
-Macos = ""
-Linux = ""
-Windows = ""
+Windows = ""
 Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+AOSC = ""
+Arch = "󰣇"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
 
-# Identity panel: only shown on SSH sessions to minimize noise on local shells
 [username]
-style_user = "fg:text bg:panel_id"
-style_root = "fg:error bg:panel_id"
-format = "[ $user ]($style)"
-show_always = false
-disabled = false
+show_always = true
+style_user = "bg:red fg:crust"
+style_root = "bg:red fg:crust"
+format = '[ $user]($style)'
 
-[hostname]
-ssh_only = true
-ssh_symbol = " "
-style = "fg:text bg:panel_id"
-format = "[ @ $ssh_symbol$hostname ]($style)"
-disabled = false
-
-# Directory panel: truncated path with read-only indicator
 [directory]
-style = "fg:text bg:panel_dir"
+style = "bg:peach fg:crust"
 format = "[ $path ]($style)"
-truncation_length = 5
-truncate_to_repo = true
-fish_style_pwd_dir_length = 2
-read_only = " 󰌾"
-read_only_style = "fg:warn bg:panel_dir"
-# home_symbol = " "
+truncation_length = 3
+truncation_symbol = "…/"
 
-# [directory.substitutions]
-# "Documents" = "󰈙 "
-# "Downloads" = " "
-# "Music" = "󰝚 "
-# "Pictures" = " "
-# # " /code" = "󰲋 "
-# "code" = "󰲋 "
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Developer" = "󰲋 "
 
-# Git panels: branch and status, with arrows into the tooling panel when active
 [git_branch]
-symbol = " "
-style = "fg:text bg:panel_git"
-format = "[](fg:panel_dir bg:panel_git)[ $symbol$branch ]($style)"
+symbol = ""
+style = "bg:yellow"
+format = '[[ $symbol $branch ](fg:crust bg:yellow)]($style)'
 
 [git_status]
-style = "fg:text bg:panel_git"
-format = "[$conflicted$staged$modified$renamed$deleted$untracked$stashed$ahead_behind ]($style)[](fg:panel_git bg:panel_lang)"
-disabled = false
-
-# semantic, Set 3-based icons
+style = "bg:yellow"
+format = '[[($all_status$ahead_behind )](fg:crust bg:yellow)]($style)'
+# --- Custom git icons (MDB) ---
 conflicted = ""
 staged = " "
 modified = " "
@@ -111,66 +94,175 @@ stashed = " "
 ahead = "󰁝"
 behind = "󰁅"
 diverged = ""
-
-# Tooling panel: language/runtime and package information
-[python]
-symbol = " "
-style = "fg:text bg:panel_lang"
-format = "[ $symbol$virtualenv ]($style)"
-python_binary = "python3"
-detect_extensions = ["py"]
-detect_files = ["pyproject.toml", "requirements.txt", "Pipfile", "poetry.lock"]
-detect_folders = [".venv", "venv", ".env", ".virtualenv"]
+# --- End custom git icons (MDB) ---
 
 [nodejs]
-symbol = " "
-style = "fg:text bg:panel_lang"
-format = "[ $symbol$version ]($style)"
-detect_files = ["package.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb"]
-disabled = false
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[c]
+symbol = " "
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
 [rust]
-symbol = " "
-style = "fg:text bg:panel_lang"
-format = "[ $symbol$version ]($style)"
-detect_files = ["Cargo.toml", "rust-toolchain.toml", "rust-toolchain"]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
 [golang]
-symbol = " "
-style = "fg:text bg:panel_lang"
-format = "[ $symbol$version ]($style)"
-detect_extensions = ["go"]
-detect_files = ["go.mod", "go.sum", "go.work"]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
-[package]
-symbol = " "
-style = "fg:text bg:panel_lang"
-format = "[$symbol$version ]($style)"
-disabled = false
+[php]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
-# Status wedge:
-# - On success: single arrow from tooling panel into the terminal background
-# - On error: blue → amber wedge, then arrow into the terminal background
-# The final arrow uses bg:none to defer to the terminal's default background color.
-[status]
-style = ""
-symbol = "[](fg:panel_lang bg:warn)[](fg:warn bg:none)"
-success_symbol = "[](fg:panel_lang bg:none)"
-format = "$symbol"
-map_symbol = false
-disabled = false
+[java]
+symbol = " "
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
-# Prompt character:
-# - Empty in insert/normal mode (prompt ends with the status wedge)
-# - Distinct glyph in vi command mode only
-[character]
-success_symbol = ""
-error_symbol = ""
-vicmd_symbol = "[](fg:accent_lang)"
+[kotlin]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
-# Time: rendered on the right side in muted foreground color
+[haskell]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[python]
+symbol = " "
+style = "bg:green"
+format = '[[ $symbol( $pyenv_prefix $version) ](fg:crust bg:green)]($style)'
+
+[conda]
+symbol = " "
+style = "bg:sapphire"
+format = '[[ $symbol$environment ](fg:crust bg:sapphire)]($style)'
+
 [time]
-disabled = false
-format = "[$time]($style) "
-style = "fg:muted"
-utc_time_offset = "local"
+style = "fg:crust bg:lavender"
+format = '[[  $time ]($style)]($style)'
+time_format = "%R"
+
+[cmd_duration]
+min_time = 500
+format = "took [$duration](bold yellow)"
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+
+[palettes.catppuccin_macchiato]
+rosewater = "#f4dbd6"
+flamingo = "#f0c6c6"
+pink = "#f5bde6"
+mauve = "#c6a0f6"
+red = "#ed8796"
+maroon = "#ee99a0"
+peach = "#f5a97f"
+yellow = "#eed49f"
+green = "#a6da95"
+teal = "#8bd5ca"
+sky = "#91d7e3"
+sapphire = "#7dc4e4"
+blue = "#8aadf4"
+lavender = "#b7bdf8"
+text = "#cad3f5"
+subtext1 = "#b8c0e0"
+subtext0 = "#a5adcb"
+overlay2 = "#939ab7"
+overlay1 = "#8087a2"
+overlay0 = "#6e738d"
+surface2 = "#5b6078"
+surface1 = "#494d64"
+surface0 = "#363a4f"
+base = "#24273a"
+mantle = "#1e2030"
+crust = "#181926"
+
+[palettes.catppuccin_frappe]
+rosewater = "#f2d5cf"
+flamingo = "#eebebe"
+pink = "#f4b8e4"
+mauve = "#ca9ee6"
+red = "#e78284"
+maroon = "#ea999c"
+peach = "#ef9f76"
+yellow = "#e5c890"
+green = "#a6d189"
+teal = "#81c8be"
+sky = "#99d1db"
+sapphire = "#85c1dc"
+blue = "#8caaee"
+lavender = "#babbf1"
+text = "#c6d0f5"
+subtext1 = "#b5bfe2"
+subtext0 = "#a5adce"
+overlay2 = "#949cbb"
+overlay1 = "#838ba7"
+overlay0 = "#737994"
+surface2 = "#626880"
+surface1 = "#51576d"
+surface0 = "#414559"
+base = "#303446"
+mantle = "#292c3c"
+crust = "#232634"
+
+[palettes.catppuccin_latte]
+rosewater = "#dc8a78"
+flamingo = "#dd7878"
+pink = "#ea76cb"
+mauve = "#8839ef"
+red = "#d20f39"
+maroon = "#e64553"
+peach = "#fe640b"
+yellow = "#df8e1d"
+green = "#40a02b"
+teal = "#179299"
+sky = "#04a5e5"
+sapphire = "#209fb5"
+blue = "#1e66f5"
+lavender = "#7287fd"
+text = "#4c4f69"
+subtext1 = "#5c5f77"
+subtext0 = "#6c6f85"
+overlay2 = "#7c7f93"
+overlay1 = "#8c8fa1"
+overlay0 = "#9ca0b0"
+surface2 = "#acb0be"
+surface1 = "#bcc0cc"
+surface0 = "#ccd0da"
+base = "#eff1f5"
+mantle = "#e6e9ef"
+crust = "#dce0e8"
