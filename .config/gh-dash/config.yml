@@ -76,18 +76,19 @@ theme:
     compact: false
   colors:
     text:
-      primary: "#ffffff"
-      secondary: "#c6c6c6"
-      inverted: "#303030"
-      faint: "#8a8a8a"
-      warning: "#800000"
-      success: "#008000"
+      primary: "#cdd6f4"
+      secondary: "#b4befe"
+      inverted: "#11111b"
+      faint: "#bac2de"
+      warning: "#f9e2af"
+      success: "#a6e3a1"
+      error: "#f38ba8"
     background:
-      selected: "#808080"
+      selected: "#313244"
     border:
-      primary: "#808080"
-      secondary: "#c0c0c0"
-      faint: "#000000"
+      primary: "#b4befe"
+      secondary: "#45475a"
+      faint: "#313244"
     inline:
       icons:
         newcontributor: "077"
