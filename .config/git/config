@@ -84,9 +84,8 @@
 [interactive]
 	diffFilter = delta --color-only
 [delta]
-	navigate = true
-  dark = true
+  navigate = true
   side-by-side = true
-  syntax-theme = Catppuccin Mocha
+  features = catppuccin-mocha
   ; syntax-theme = mdb-custom-solarized
   ; syntax-theme = Visual Studio Dark+
