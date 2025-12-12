@@ -1,0 +1,4 @@
+session_name: deda
+start_directory: "~/code/work/deda"
+windows:
+  - window_name: root

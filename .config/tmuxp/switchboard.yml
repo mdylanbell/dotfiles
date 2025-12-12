@@ -1,27 +1,4 @@
 session_name: switchboard
-start_directory: '~'
+start_directory: "~/code/work/idsb/switchboard"
 windows:
-- window_name: sys
-  layout: main-vertical
-  options:
-    main-pane-width: 67%
-  panes:
-    - pane
-    - shell_command: cd .dotfiles && clear
-    - pane
-    # - shell_command: gotop
-- window_name: editor
-  start_directory: '~/code/work/idsb/switchboard/'
-  panes:
-    - pane
-  # panes:
-    # - shell_command: vi
-- window_name: work
-  start_directory: '~/code/work/idsb/switchboard/'
-  layout: main-vertical
-  options:
-    main-pane-width: 67%
-  panes:
-    - pane
-    - pane
-    - pane
+  - window_name: root
