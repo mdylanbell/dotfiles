@@ -1,0 +1,25 @@
+session_name: dotfiles
+start_directory: "~/.dotfiles/"
+windows:
+  - window_name: home
+    layout: main-vertical
+    start_directory: "~"
+    panes:
+      - pane
+      - pane
+      - pane
+  - window_name: ztnm
+    layout: tiled
+    panes:
+      - shell_command:
+          - cd .config/zsh
+          - nvim .
+      - shell_command:
+          - cd .config/tmux
+          - nvim .
+      - shell_command:
+          - cd .config/nvim
+          - nvim .
+      - shell_command:
+          - cd .config/mise
+          - nvim .
