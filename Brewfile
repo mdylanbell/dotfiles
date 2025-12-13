@@ -2,6 +2,7 @@
 brew "ast-grep"
 brew "bat"
 brew "bat-extras"
+brew "btop"
 brew "coreutils"
 brew "curl"
 brew "eza"
