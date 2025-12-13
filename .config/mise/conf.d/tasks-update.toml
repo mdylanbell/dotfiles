@@ -49,6 +49,7 @@ run = [
   "pip install --upgrade pynvim",
   "npm i -g neovim",
   "nvim --headless \"+Lazy! sync\" +qa",
+  "nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'",
 ]
 
 [tasks.update_pipx]
