@@ -4,7 +4,7 @@
 
 [tasks.clean_env]
 description = "Clean up old packages and caches"
-depends = ["clean_brew", "clean_mise"]
+depends = ["clean_brew", "clean_mise", "clean_zinit"]
 
 [tasks.clean_brew]
 description = "Cleanup Homebrew cache and old versions"
@@ -14,13 +14,14 @@ run = ["brew cleanup -s"]
 description = "Mise prune"
 run = ["mise prune"]
 
-# [tasks.clean_zinit]
-# description = "Clean zinit cache"
-# run = '''
-# #!/usr/bin/env zsh
-# # Source zinit explicitly so the function exists in this non-interactive shell
-# ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
-# source "$ZINIT_HOME/zinit.git/zinit.zsh"
-#
-# zinit delete --clean
-# '''
+[tasks.clean_zinit]
+description = "Clean zinit cache"
+run = '''
+#!/usr/bin/env zsh
+# Source zinit explicitly so the function exists in this non-interactive shell
+ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
+source "$ZINIT_HOME/zinit.git/zinit.zsh"
+
+zinit delete --clean
+zinit cclear
+'''
