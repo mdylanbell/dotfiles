@@ -23,7 +23,15 @@ return {
         treesitter = true,
         which_key = true,
       },
-      -- Theme-specific overrides belong here so they travel with the theme
+      custom_highlights = function(colors)
+        return {
+          LspSignatureActiveParameter = {
+            bg = colors.surface1,
+            bold = true,
+            underline = true,
+          },
+        }
+      end,
     },
   },
 
