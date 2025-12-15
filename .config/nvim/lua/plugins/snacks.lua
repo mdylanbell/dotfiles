@@ -51,8 +51,32 @@ return {
     local orig_projects = Snacks.dashboard.sections.projects
     Snacks.dashboard.sections.projects = function(user_opts)
       user_opts = user_opts or {}
-      user_opts.dirs = dirs_fn
-      -- user_opts.dirs = user_opts.dirs or dirs_fn
+      local user_dirs = user_opts.dirs
+
+      -- Prefer our root finder, but keep user dirs after (no duplicates)
+      -- prefer repo-aware roots first, then user dirs (deduped)
+      user_opts.dirs = function()
+        local seen, out = {}, {}
+        local function add(list)
+          if type(list) == "function" then
+            list = list()
+          end
+          if type(list) ~= "table" then
+            return
+          end
+          for _, dir in ipairs(list) do
+            if dir and not seen[dir] then
+              seen[dir] = true
+              table.insert(out, dir)
+            end
+          end
+        end
+
+        add(dirs_fn)   -- our mono‑repo aware roots first
+        add(user_dirs) -- user-provided roots after
+        return out
+      end
+
       -- keep other options (limit/pick/session/action) untouched if provided
       user_opts.limit = user_opts.limit or 10
       return orig_projects(user_opts)
