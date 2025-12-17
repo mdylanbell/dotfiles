@@ -4,10 +4,7 @@ python = "3.12"
 rust = "stable"
 go = "1.24"
 perl = "5.42"
+ruff = "latest"
 
 [settings]
 experimental = true
-
-[env]
-# automatically create a virtualenv in .cache/venv
-_.python.venv = { path = "{{env.XDG_CACHE_HOME}}/venv/default", create = true }
