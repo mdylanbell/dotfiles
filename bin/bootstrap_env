@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_SSH="git@github.com:mdylanbell/dotfiles.git"
 REPO_HTTPS="https://github.com/mdylanbell/dotfiles.git"
-REPO_BRANCH="personal"
+REPO_BRANCH="main"
 DOTDIR="${HOME}/.dotfiles"
 DFM="${DOTDIR}/bin/dfm"
 
