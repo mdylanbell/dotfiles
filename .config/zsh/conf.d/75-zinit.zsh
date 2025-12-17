@@ -102,8 +102,10 @@ zinit lucid light-mode for \
 # system is in place. Using `wait` defers its cost until after the first
 # prompt, improving perceived startup latency.
 # ----------------------------------------------------------------------
+# TODO: specify theme in colors.zsh
 zinit wait lucid light-mode for \
-  zdharma-continuum/fast-syntax-highlighting
+  atload"fast-theme XDG:catppuccin-mocha > /dev/null 2>&1" \
+    zdharma-continuum/fast-syntax-highlighting
 
 # ----------------------------------------------------------------------
 # OMZ plugins
