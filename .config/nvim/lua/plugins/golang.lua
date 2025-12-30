@@ -21,7 +21,6 @@ return {
           require("nvim-treesitter.parsers").go_tags = {
             install_info = {
               url = "https://github.com/DanWlker/tree-sitter-go_tags",
-              branch = "tree-sitter-1.25.5",
               queries = "queries",
             },
           }
