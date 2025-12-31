@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt pr <PR_NUMBER> [slug]
+
+Creates worktree under:
+  <container>/wt/pr-<num>-<slug>
+
+Prints resulting path.
+EOF
+}
+
+pr="${1:-}"
+slug="${2:-}"
+[[ -z "$pr" ]] && {
+  usage
+  exit 2
+}
+
+wt_dir="$(wt_wt)"
+mkdir -p "$wt_dir"
+
+if [[ -z "$slug" ]]; then
+  slug="pr-$pr"
+else
+  slug="$(wt_slugify "$slug")"
+fi
+
+dest="$wt_dir/pr-${pr}-${slug}"
+
+wt_git fetch origin main --quiet || true
+
+command -v gh >/dev/null 2>&1 || die "gh not found"
+# Requires: gh extension install eikster-dk/gh-worktree
+gh worktree pr "$pr" "$dest"
+
+echo "$dest"

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+git-wt - worktree helper toolkit
+
+Usage:
+  git-wt <command> [args...]
+
+Commands:
+  init      Initialize/upgrade a repo container (main/ + wt/)
+  pr        Create PR worktree (via gh-worktree)
+  new       Create worktree for an arbitrary branch (off origin/main)
+  done      Remove a worktree safely (optional branch delete)
+  prepare   Trusted-path direnv allow helper
+  env       PR helper: detect components (nearest pyproject.toml) and poetry install
+
+Run:
+  git-wt <command> --help
+EOF
+}
+
+cmd="${1:-}"
+shift || true
+
+if [[ -z "$cmd" || "$cmd" == "-h" || "$cmd" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+# Resolve libexec next to this script, regardless of how dfm links it.
+self_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+libexec="${self_dir}/../libexec/git-wt"
+libexec="$(cd "$libexec" && pwd)"
+
+sub="${libexec}/${cmd}"
+if [[ ! -x "$sub" ]]; then
+  echo "git-wt: unknown command: $cmd" >&2
+  echo >&2
+  usage >&2
+  exit 2
+fi
+
+exec "$sub" "$@"

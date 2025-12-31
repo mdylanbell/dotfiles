@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt done [path] [--delete-branch] [--force]
+
+Defaults:
+  path = current directory
+
+Notes:
+  - Removes worktree first, then (optionally) deletes its branch.
+EOF
+}
+
+target="${1:-$PWD}"
+shift || true
+
+delete_branch=false
+force=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --delete-branch) delete_branch=true ;;
+    --force) force=true ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *) die "Unknown flag: $1" ;;
+  esac
+  shift
+done
+
+target="$(cd "$target" && pwd)"
+
+branch="$(git -C "$target" branch --show-current 2>/dev/null || true)"
+
+rm_flags=()
+$force && rm_flags+=(--force)
+
+wt_git worktree remove "${rm_flags[@]}" "$target"
+
+if $delete_branch; then
+  if [[ -n "$branch" && "$branch" != "main" ]]; then
+    if wt_git show-ref --verify --quiet "refs/heads/$branch"; then
+      wt_git branch -D "$branch"
+    fi
+  fi
+fi

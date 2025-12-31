@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt init <container_path> [remote_url]
+
+Examples:
+  git-wt init ~/code/work/repoA git@github.com:ORG/repoA.git
+  git-wt init ~/code/work/repoA
+EOF
+}
+
+container="${1:-}"
+remote="${2:-}"
+
+[[ -z "$container" ]] && {
+  usage
+  exit 2
+}
+
+container="$(cd "$(dirname "$container")" && pwd)/$(basename "$container")"
+mkdir -p "$container"
+
+main="$container/main"
+wt="$container/wt"
+
+# Already initialized
+if [[ -d "$main/.git" || -f "$main/.git" ]]; then
+  mkdir -p "$wt"
+  echo "$container"
+  exit 0
+fi
+
+# Upgrade: container itself is currently a git checkout -> move it into main/
+if [[ -d "$container/.git" || -f "$container/.git" ]]; then
+  if git -C "$container" status --porcelain | grep -q .; then
+    echo "git-wt init: refusing to upgrade dirty repo at $container" >&2
+    exit 1
+  fi
+
+  mkdir -p "$main" "$wt"
+
+  tmp="$container/.git_wt_init_tmp.$$"
+  mkdir -p "$tmp"
+
+  shopt -s dotglob
+  for item in "$container"/* "$container"/.*; do
+    base="$(basename "$item")"
+    [[ "$base" == "." || "$base" == ".." ]] && continue
+    [[ "$base" == "main" || "$base" == "wt" || "$base" == ".git_wt_init_tmp.$$" ]] && continue
+    mv "$item" "$tmp/" 2>/dev/null || true
+  done
+  shopt -u dotglob
+
+  mv "$tmp"/* "$main/" 2>/dev/null || true
+  rmdir "$tmp" 2>/dev/null || true
+
+  echo "$container"
+  exit 0
+fi
+
+# Fresh clone into main/
+[[ -z "$remote" ]] && {
+  echo "git-wt init: remote_url required to clone new repo" >&2
+  usage
+  exit 2
+}
+
+mkdir -p "$main" "$wt"
+git clone "$remote" "$main"
+echo "$container"
