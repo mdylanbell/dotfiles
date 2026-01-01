@@ -1,6 +1,0 @@
-#!/bin/sh
-
-HN=`hostname -f`
-echo -ne "\033k$HN\033\\"
-
-tmux-sess -s home -f ~/.tmux.master $*

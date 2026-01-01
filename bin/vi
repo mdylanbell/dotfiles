@@ -1,23 +1,13 @@
 #!/bin/bash
 
+# Run vim or nvim; prefer nvim if installed
+
 BIN=vim
 if type nvim &>/dev/null; then
   BIN=nvim
 fi
 
-# if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
-#   source "$VIRTUAL_ENV/bin/activate"
-# fi
-
-CMD=$(basename $0)
+CMD=$(basename "$0")
 if [[ $CMD == 'vi' ]] || [[ $CMD == 'vim' ]]; then
-  exec $BIN $*
-elif [[ $CMD == 'viff' ]]; then
-  exec $BIN -c ":FZF" $*
-elif [[ $CMD == 'vifl' ]]; then
-  exec $BIN -c ":FZFMru" $*
+  exec $BIN "$@"
 fi
-
-# if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
-#   deactivate
-# fi

@@ -4,8 +4,8 @@
 # from: https://github.com/junegunn/fzf/issues/587
 
 git log --graph --color=always \
-    --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-fzf --ansi --no-sort --reverse --tiebreak=index \
+  --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" \
+  | fzf --ansi --no-sort --reverse --tiebreak=index \
     --bind=ctrl-s:toggle-sort \
     --bind=ctrl-d:preview-page-down \
     --bind=ctrl-u:preview-page-up \

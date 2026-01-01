@@ -1,3 +1,0 @@
-#!/bin/sh
-
-tmux-sess -s uber -f ~/.tmux.uber $*

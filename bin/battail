@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# colorize piped logs
+
 bat --paging=never -l log

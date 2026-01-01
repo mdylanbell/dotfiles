@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# tail and colorize logs
+
 tail -f "$@" | bat --paging=never -l log
