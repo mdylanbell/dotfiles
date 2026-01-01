@@ -43,9 +43,10 @@ export NVM_DIR="$XDG_DATA_HOME"/nvm
 export PYENV_ROOT="$XDG_DATA_HOME"/pyenv
 
 # python - history
-#   if >= 3.13.0a3 this just works
-export PYTHON_HISTORY="$XDG_CACHE_HOME"/python/history
-#   else -- also need a rc script
+#   3.13+ uses PYTHON_HISTORY; 3.12 and earlier use PYTHONHISTFILE via startup/readline.
+export PYTHON_HISTORY="$XDG_STATE_HOME"/python_history
+export PYTHONHISTFILE="$XDG_STATE_HOME"/python_history
+#   3.12 and earlier also need a rc script
 export PYTHONSTARTUP="$XDG_CONFIG_HOME"/python/pythonrc
 
 # inputrc

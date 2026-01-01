@@ -1,45 +1,73 @@
 #!/usr/bin/env python3
-# This entire thing is unnecessary post v3.13.0a3
-# https://github.com/python/cpython/issues/73965
+import atexit
+import os
+import readline
+import sys
+from pathlib import Path
 
 
 def is_vanilla() -> bool:
-    """:return: whether running "vanilla" Python <3.13"""
-    import sys
-
+    """Return True for the standard CPython REPL on <3.13."""
     return (
-        not hasattr(__builtins__, "__IPYTHON__")
+        sys.version_info < (3, 13)
+        and not hasattr(__builtins__, "__IPYTHON__")
         and "bpython" not in sys.argv[0]
-        and sys.version_info < (3, 13)
     )
 
 
-def setup_history():
-    """read and write history from state file"""
-    import os
-    import atexit
-    import readline
-    from pathlib import Path
-
-    # Check PYTHON_HISTORY for future-compatibility with Python 3.13
-    if history := os.environ.get("PYTHON_HISTORY"):
-        history = Path(history)
-    # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
-    elif state_home := os.environ.get("XDG_STATE_HOME"):
-        state_home = Path(state_home)
+def history_path() -> Path:
+    """Resolve the history file path using XDG state defaults."""
+    env = os.environ.get("PYTHON_HISTORY") or os.environ.get("PYTHONHISTFILE")
+    if env:
+        path = Path(env).expanduser()
     else:
-        state_home = Path.home() / ".local" / "state"
+        # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
+        state_home = Path(os.environ.get("XDG_STATE_HOME", "~/.local/state")).expanduser()
+        path = state_home / "python_history"
 
-    history: Path = history or state_home / "python_history"
+    if path.is_dir():
+        path = path / "python_history"
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def read_history_text(path: Path) -> None:
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.rstrip("\n")
+                if not line or line.startswith("_HiStOrY_"):
+                    continue
+                readline.add_history(line)
+    except FileNotFoundError:
+        pass
+
+
+def write_history_text(path: Path) -> None:
+    length = readline.get_current_history_length()
+    with path.open("w", encoding="utf-8") as f:
+        for i in range(1, length + 1):
+            item = readline.get_history_item(i)
+            if item:
+                f.write(item + "\n")
+
+
+def setup_history() -> None:
+    path = history_path()
 
     # https://github.com/python/cpython/issues/105694
-    if not history.is_file():
-        readline.write_history_file(
-            str(history)
-        )  # breaks on macos +python3 without this.
+    if not path.is_file():
+        # Breaks on macOS python without creating the file first.
+        readline.write_history_file(str(path))
 
-    readline.read_history_file(history)
-    atexit.register(readline.write_history_file, history)
+    try:
+        readline.read_history_file(str(path))
+        atexit.register(readline.write_history_file, str(path))
+    except (PermissionError, OSError):
+        # libedit on macOS can fail with EPERM/EINVAL; fall back to plain text.
+        read_history_text(path)
+        atexit.register(write_history_text, path)
 
 
 if is_vanilla():
