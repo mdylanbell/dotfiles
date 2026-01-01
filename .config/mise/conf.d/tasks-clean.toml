@@ -25,3 +25,7 @@ source "$ZINIT_HOME/zinit.git/zinit.zsh"
 # zinit delete --clean
 zinit cclear
 '''
+
+[tasks.clean_dfm]
+description = "Clean dfm created .backup folders"
+run = ["fd -H '^.backup$' --type dir ~ -X rmdir {}"]
