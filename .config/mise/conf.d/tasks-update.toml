@@ -11,6 +11,7 @@ depends = [
   "update_nvim",
   "update_pipx",
   "update_submodules",
+  "update_gh",
 ]
 run = [
   "bat cache --build",
@@ -60,3 +61,7 @@ run = ["pipx upgrade-all"]
 [tasks.python_rebuild]
 description = "Reinstall pipx apps against current mise Python"
 run = ["pipx reinstall-all --python $(mise which python)", "mise reshim"]
+
+[tasks.update_gh]
+description = "Update gh extensions"
+run = ["gh extensions upgrade --all"]
