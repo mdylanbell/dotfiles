@@ -55,3 +55,8 @@ run = [
 [tasks.update_pipx]
 description = "Update all pipx packages"
 run = ["pipx upgrade-all"]
+
+# Rebuild pipx shims after changing Python minor/patch
+[tasks.python_rebuild]
+description = "Reinstall pipx apps against current mise Python"
+run = ["pipx reinstall-all --python $(mise which python)", "mise reshim"]
