@@ -1,25 +1,15 @@
-style:
-  text: "#cdd6f4"
-  background: "#1e1e2e"
-  code_block:
-    background: "#313244"
-  link: "#89b4fa"
-  heading:
-    color: "#cba6f7"
-    bold: true
-  list:
-    color: "#f9e2af"
-  table:
-    color: "#94e2d5"
-  block_quote:
-    color: "#a6e3a1"
-    italic: true
-  paragraph:
-    color: "#cdd6f4"
-    margin: 1
-  code_inline:
-    color: "#fab387"
-  strikethrough:
-    color: "#f38ba8"
-  keyword:
-    color: "#f5c2e7"
+# style name or JSON path (default "auto")
+style: "auto"
+# style: "/home/matt/.config/glow/styles/catppuccin-mocha.json"
+# mouse wheel support (TUI-mode only)
+mouse: true
+# use pager to display markdown
+pager: true
+# at which column should we word wrap?
+width: 80
+# show all files, including hidden and ignored.
+all: false
+# show line numbers (TUI-mode only)
+showLineNumbers: false
+# preserve newlines in the output
+preserveNewLines: false
