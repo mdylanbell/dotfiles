@@ -22,6 +22,6 @@ run = '''
 ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
 source "$ZINIT_HOME/zinit.git/zinit.zsh"
 
-zinit delete --clean
+# zinit delete --clean
 zinit cclear
 '''
