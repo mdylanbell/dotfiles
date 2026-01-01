@@ -142,6 +142,10 @@ sub run_dfm {
         $repo_dir = $ENV{'DFM_REPO'};
         $repo_dir =~ s/$home\///;
     }
+    elsif ( my $repo_root = _find_repo_root($realbin) ) {
+        $repo_dir = $repo_root;
+        $repo_dir =~ s/$home\///;
+    }
     elsif ( -e "$realbin/t/02.updates_mergeandinstall.t" ) {
 
         # dfm is being invoked from its own repo, not a dotfiles repo; try and
@@ -691,6 +695,23 @@ sub _abs_repo_path {
     else {
         return $home . '/' . $repo;
     }
+}
+
+sub _find_repo_root {
+    my ($start_dir) = @_;
+
+    my $dir = realpath($start_dir);
+    return if !$dir;
+
+    while (1) {
+        return $dir if -e "$dir/.git";
+
+        my $parent = File::Basename::dirname($dir);
+        last if !$parent || $parent eq $dir;
+        $dir = $parent;
+    }
+
+    return;
 }
 
 # when symlinking from source_dir into target_dir, figure out if there's a
