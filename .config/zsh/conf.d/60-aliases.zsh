@@ -13,6 +13,6 @@ fi
 alias gitnp='git --no-pager'
 alias git-branch-cp="git --no-pager branch --show-current | tr -d '[:space:]' | pbcopy"
 alias pyclean="find . -name '*.pyc' -o -name '__pycache__' -exec rm -rf {} \;"
-alias nvimr='NVIM_REVIEW=1 nvim'
+alias nvimr='nvim -c "ReviewPR"'
 # Work around glow not supporting var expansion (https://github.com/charmbracelet/glow/issues/776)
 alias glow='glow -s $HOME/.config/glow/styles/catppuccin-mocha.json'
