@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hook_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$hook_dir/_lib.sh"
+
+command -v poetry >/dev/null 2>&1 || {
+  echo "git-wt hook: poetry not found" >&2
+  exit 1
+}
+
+mapfile -t changed < <(hook_changed_files)
+if [[ ${#changed[@]} -eq 0 ]]; then
+  echo "poetry-install-changed: no changes vs base"
+  exit 0
+fi
+
+direnv_allow="$(hook_config_bool "poetry-install-changed" "direnv_allow")"
+if [[ "$direnv_allow" == "true" ]]; then
+  command -v direnv >/dev/null 2>&1 || {
+    echo "git-wt hook: direnv not found" >&2
+    exit 1
+  }
+fi
+
+declare -A comps=()
+while IFS= read -r c; do
+  [[ -n "$c" ]] && comps["$c"]=1
+done < <(printf "%s\n" "${changed[@]}" | awk -F/ '/\\.pyi?$/ || /\/pyproject\\.toml$/ || /\/poetry\\.lock$/ || /\/poetry\\.toml$/ {print $0}' | hook_component_roots)
+
+if [[ ${#comps[@]} -eq 0 ]]; then
+  echo "poetry-install-changed: no pyproject.toml components detected for .py changes"
+  exit 0
+fi
+
+for comp in "${!comps[@]}"; do
+  echo "==> $comp"
+  if [[ "$direnv_allow" == "true" && -f "$comp/.envrc" ]]; then
+    (cd "$comp" && direnv allow)
+  fi
+  (cd "$comp" && poetry install)
+done
