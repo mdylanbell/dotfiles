@@ -5,6 +5,7 @@ rust = "stable"
 go = "1.24"
 perl = "5.42"
 ruff = "latest"
+shfmt = "latest"
 
 [settings]
 experimental = true
