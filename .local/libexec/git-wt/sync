@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt sync [--prune]
+
+Fetch origin and fast-forward main to origin/<default>.
+
+Options:
+  --prune   Prune stale remote-tracking refs after fetch
+EOF
+}
+
+prune=false
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --prune)
+      prune=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "Unknown flag: $1"
+      ;;
+  esac
+done
+
+default_branch="$(wt_default_branch)"
+fetch_args=()
+$prune && fetch_args+=(--prune)
+
+wt_git fetch origin "${fetch_args[@]}" "$default_branch"
+
+if git -C "$(wt_main)" status --porcelain | grep -q .; then
+  die "main worktree is dirty; refusing to fast-forward"
+fi
+
+wt_git checkout "$default_branch" >/dev/null 2>&1 || true
+wt_git merge --ff-only "origin/$default_branch"
+
+echo "$(wt_main)"

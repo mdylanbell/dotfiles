@@ -1,22 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
 
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt pr <PR_NUMBER> [slug]
+  git-wt new [--base <branch>] <branch-name>
 
 Creates worktree under:
-  <container>/wt/pr-<num>-<slug>
+  <container>/wt/<branch>
 
 Prints resulting path.
 EOF
 }
 
-pr="${1:-}"
-slug="${2:-}"
-[[ -z "$pr" ]] && {
+base=""
+branch=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --base)
+      base="${2:-}"
+      [[ -n "$base" ]] || die "--base requires a branch name"
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      branch="${1:-}"
+      shift
+      ;;
+  esac
+done
+
+[[ -z "$branch" ]] && {
   usage
   exit 2
 }
@@ -24,18 +44,25 @@ slug="${2:-}"
 wt_dir="$(wt_wt)"
 mkdir -p "$wt_dir"
 
-if [[ -z "$slug" ]]; then
-  slug="pr-$pr"
-else
-  slug="$(wt_slugify "$slug")"
+default_branch="$(wt_default_branch)"
+base="${base:-$default_branch}"
+base_ref="$base"
+if [[ "$base_ref" != origin/* ]]; then
+  base_ref="origin/$base_ref"
 fi
 
-dest="$wt_dir/pr-${pr}-${slug}"
+fetch_branch="${base_ref#origin/}"
+wt_git fetch origin "$fetch_branch" --quiet || die "failed to fetch origin/$fetch_branch"
 
-wt_git fetch origin main --quiet || true
+if wt_git show-ref --verify --quiet "refs/heads/$branch"; then
+  die "branch already exists: $branch"
+fi
 
-command -v gh >/dev/null 2>&1 || die "gh not found"
-# Requires: gh extension install eikster-dk/gh-worktree
-gh worktree pr "$pr" "$dest"
+dest="$wt_dir/$(wt_slugify "$branch")"
+if [[ -e "$dest" ]]; then
+  die "destination already exists: $dest"
+fi
+
+wt_git worktree add -b "$branch" "$dest" "$base_ref"
 
 echo "$dest"

@@ -10,11 +10,11 @@ Usage:
 
 Commands:
   init      Initialize/upgrade a repo container (main/ + wt/)
-  pr        Create PR worktree (via gh-worktree)
-  new       Create worktree for an arbitrary branch (off origin/main)
+  pr        Create PR worktree (via gh + worktree)
+  new       Create worktree for an arbitrary branch (off origin/<default>)
+  sync      Fetch origin and fast-forward main
+  clean     Remove merged worktrees safely
   done      Remove a worktree safely (optional branch delete)
-  prepare   Trusted-path direnv allow helper
-  env       PR helper: detect components (nearest pyproject.toml) and poetry install
 
 Run:
   git-wt <command> --help

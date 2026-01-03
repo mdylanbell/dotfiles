@@ -1,19 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+
+wt_require_git
 
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt init <container_path> [remote_url]
+  git-wt init [--no-protect-main] <container_path> [remote_url]
 
 Examples:
   git-wt init ~/code/work/repoA git@github.com:ORG/repoA.git
   git-wt init ~/code/work/repoA
+  git-wt init --no-protect-main ~/code/work/repoA
 EOF
 }
 
-container="${1:-}"
-remote="${2:-}"
+no_protect_main=false
+args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --no-protect-main)
+      no_protect_main=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+container="${args[0]:-}"
+remote="${args[1]:-}"
 
 [[ -z "$container" ]] && {
   usage
@@ -26,9 +49,50 @@ mkdir -p "$container"
 main="$container/main"
 wt="$container/wt"
 
+install_protect_hooks() {
+  local hooks_dir="$main/.git/hooks"
+  mkdir -p "$hooks_dir"
+
+  cat >"$hooks_dir/pre-commit" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+case "$branch" in
+  main|master|trunk)
+    echo "Refusing commit on protected branch: $branch" >&2
+    exit 1
+    ;;
+esac
+EOF
+  chmod +x "$hooks_dir/pre-commit"
+
+  cat >"$hooks_dir/pre-push" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+case "$branch" in
+  main|master|trunk)
+    echo "Refusing push on protected branch: $branch" >&2
+    exit 1
+    ;;
+esac
+EOF
+  chmod +x "$hooks_dir/pre-push"
+}
+
+maybe_protect_main() {
+  if $no_protect_main; then
+    return 0
+  fi
+  install_protect_hooks
+}
+
 # Already initialized
 if [[ -d "$main/.git" || -f "$main/.git" ]]; then
   mkdir -p "$wt"
+  maybe_protect_main
   echo "$container"
   exit 0
 fi
@@ -57,6 +121,7 @@ if [[ -d "$container/.git" || -f "$container/.git" ]]; then
   mv "$tmp"/* "$main/" 2>/dev/null || true
   rmdir "$tmp" 2>/dev/null || true
 
+  maybe_protect_main
   echo "$container"
   exit 0
 fi
@@ -70,4 +135,5 @@ fi
 
 mkdir -p "$main" "$wt"
 git clone "$remote" "$main"
+maybe_protect_main
 echo "$container"

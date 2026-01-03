@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+done_cmd="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/done"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt clean [--dry-run] [--verbose] [-i|--interactive]
+
+Remove worktrees whose branches are merged into origin/<default>.
+
+Options:
+  --dry-run     Report what would be removed
+  --verbose     Report reasons for skipped worktrees
+  -i, --interactive  Confirm each removal and optional branch delete
+EOF
+}
+
+dry_run=false
+verbose=false
+interactive=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
+      ;;
+    -i | --interactive)
+      interactive=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "Unknown flag: $1"
+      ;;
+  esac
+done
+
+default_branch="$(wt_default_branch)"
+wt_git fetch origin "$default_branch" --quiet || true
+base_ref="origin/$default_branch"
+
+pwd_resolved="$(pwd -P)"
+main_path="$(wt_main)"
+
+skip_reason() {
+  local wt_path="$1"
+  local branch="$2"
+
+  if [[ -z "$branch" ]]; then
+    echo "no branch"
+    return 0
+  fi
+  if [[ "$wt_path" == "$main_path" ]]; then
+    echo "main worktree"
+    return 0
+  fi
+  if [[ "$wt_path" == "$pwd_resolved" ]]; then
+    echo "current directory"
+    return 0
+  fi
+  if git -C "$wt_path" status --porcelain | grep -q .; then
+    echo "dirty"
+    return 0
+  fi
+  if ! wt_git show-ref --verify --quiet "refs/heads/$branch"; then
+    echo "branch missing"
+    return 0
+  fi
+  if ! wt_git merge-base --is-ancestor "refs/heads/$branch" "$base_ref"; then
+    echo "not merged"
+    return 0
+  fi
+  return 1
+}
+
+prompt_yes_no() {
+  local prompt="$1"
+  local default="$2"
+  local reply
+
+  while true; do
+    if [[ "$default" == "yes" ]]; then
+      printf "%s [Y/n]: " "$prompt"
+    else
+      printf "%s [y/N]: " "$prompt"
+    fi
+    read -r reply </dev/tty || return 1
+    reply="${reply:-$default}"
+    case "$reply" in
+      y | Y | yes | YES) return 0 ;;
+      n | N | no | NO) return 1 ;;
+    esac
+  done
+}
+
+worktrees=()
+branches=()
+
+current_path=""
+current_branch=""
+while IFS= read -r line; do
+  if [[ -z "$line" ]]; then
+    if [[ -n "$current_path" ]]; then
+      worktrees+=("$current_path")
+      branches+=("$current_branch")
+    fi
+    current_path=""
+    current_branch=""
+    continue
+  fi
+
+  case "$line" in
+    worktree\ *)
+      current_path="${line#worktree }"
+      ;;
+    branch\ refs/heads/*)
+      current_branch="${line#branch refs/heads/}"
+      ;;
+  esac
+done < <(wt_git worktree list --porcelain)
+
+if [[ -n "$current_path" ]]; then
+  worktrees+=("$current_path")
+  branches+=("$current_branch")
+fi
+
+for i in "${!worktrees[@]}"; do
+  wt_path="${worktrees[$i]}"
+  branch="${branches[$i]}"
+
+  reason="$(skip_reason "$wt_path" "$branch" || true)"
+  if [[ -n "$reason" ]]; then
+    if $dry_run || $verbose; then
+      echo "skip: $wt_path (branch: ${branch:-<none>}): $reason"
+    fi
+    continue
+  fi
+
+  if $dry_run; then
+    echo "would remove worktree: $wt_path (branch: $branch)"
+    continue
+  fi
+
+  if $interactive; then
+    if ! prompt_yes_no "Remove worktree $wt_path?" "yes"; then
+      continue
+    fi
+    if prompt_yes_no "Delete branch $branch?" "no"; then
+      "$done_cmd" "$wt_path" --delete-branch
+      continue
+    fi
+  fi
+
+  "$done_cmd" "$wt_path"
+done

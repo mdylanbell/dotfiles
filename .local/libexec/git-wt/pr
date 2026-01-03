@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+wt_require_gh
 
 usage() {
   cat <<'EOF'
@@ -8,7 +10,7 @@ Usage:
   git-wt pr <PR_NUMBER> [slug]
 
 Creates worktree under:
-  <container>/wt/pr-<num>-<slug>
+  <container>/wt/pr-<num>[-<slug>]
 
 Prints resulting path.
 EOF
@@ -24,18 +26,76 @@ slug="${2:-}"
 wt_dir="$(wt_wt)"
 mkdir -p "$wt_dir"
 
-if [[ -z "$slug" ]]; then
-  slug="pr-$pr"
-else
-  slug="$(wt_slugify "$slug")"
+suffix=""
+if [[ -n "$slug" ]]; then
+  clean_slug="$(wt_slugify "$slug")"
+  if [[ -n "$clean_slug" ]]; then
+    suffix="-$clean_slug"
+  fi
 fi
 
-dest="$wt_dir/pr-${pr}-${slug}"
+dest="$wt_dir/pr-${pr}${suffix}"
 
-wt_git fetch origin main --quiet || true
+default_branch="$(wt_default_branch)"
+wt_git fetch origin "$default_branch" --quiet || die "failed to fetch origin/$default_branch"
 
-command -v gh >/dev/null 2>&1 || die "gh not found"
-# Requires: gh extension install eikster-dk/gh-worktree
-gh worktree pr "$pr" "$dest"
+origin_url="$(wt_git remote get-url origin 2>/dev/null || true)"
+[[ -n "$origin_url" ]] || die "origin remote not found in main worktree"
+
+repo_slug="$(wt_repo_slug "$origin_url")"
+[[ -n "$repo_slug" ]] || die "could not determine repo from origin URL: $origin_url"
+repo_host="$(wt_repo_host "$origin_url")"
+[[ -n "$repo_host" ]] || die "could not determine host from origin URL: $origin_url"
+
+pr_info="$(
+  gh api --hostname "$repo_host" "repos/$repo_slug/pulls/$pr" --jq \
+    '[.head.ref, .head.repo.full_name, .head.repo.ssh_url, .head.repo.clone_url, .base.repo.full_name] | @tsv'
+)" || die "failed to fetch PR metadata from GitHub"
+[[ -n "$pr_info" ]] || die "empty PR metadata from GitHub"
+
+IFS=$'\t' read -r head_ref head_full head_ssh head_clone base_full <<<"$pr_info"
+[[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+  die "could not resolve PR metadata"
+}
+
+head_slug="$(wt_slugify "$head_ref")"
+local_branch="pr/${pr}-${head_slug}"
+
+if [[ -e "$dest" ]]; then
+  die "destination already exists: $dest"
+fi
+
+if [[ "$head_full" == "$base_full" ]]; then
+  wt_git fetch origin "$head_ref:refs/heads/$local_branch"
+else
+  remote_name="pr-$pr"
+  remote_url="$head_ssh"
+  if [[ -z "$remote_url" || "$remote_url" == "null" ]]; then
+    remote_url="$head_clone"
+  fi
+  [[ -z "$remote_url" || "$remote_url" == "null" ]] && {
+    die "could not resolve PR head repo URL"
+  }
+
+  if wt_git remote get-url "$remote_name" >/dev/null 2>&1; then
+    wt_git remote set-url "$remote_name" "$remote_url"
+  else
+    wt_git remote add "$remote_name" "$remote_url"
+  fi
+
+  wt_git fetch "$remote_name" "$head_ref:refs/heads/$local_branch"
+fi
+
+# TODO: Replace this implementation with gh-worktree once
+# https://github.com/eikster-dk/gh-worktree/pull/11 is released.
+wt_git worktree add "$dest" "$local_branch"
+set +e
+wt_run_pr_checkout_hooks "$dest"
+hook_rc=$?
+set -e
+if [[ $hook_rc -ne 0 ]]; then
+  wt_git worktree remove "$dest" >/dev/null 2>&1 || true
+  die "pr checkout hooks failed"
+fi
 
 echo "$dest"
