@@ -1,21 +1,18 @@
 return {
-  -- Work mode (default): keep LazyVim's gitsigns.
-  -- Review mode: disable it to avoid signcolumn conflicts.
-  {
-    "lewis6991/gitsigns.nvim",
-    cond = function()
-      return not vim.g.review_mode
-    end,
-  },
-
-  -- Review mode: show diff overlays in-buffer.
+  -- Review sessions: enable mini.diff overlays when requested.
   {
     "nvim-mini/mini.diff",
-    cond = function()
-      return vim.g.review_mode
+    event = "VeryLazy",
+  },
+
+  -- Review mode: always show bufferline so the tab bar is visible.
+  {
+    "akinsho/bufferline.nvim",
+    opts = function(_, opts)
+      opts = opts or {}
+      opts.options = opts.options or {}
+      opts.options.always_show_bufferline = vim.g.review_session == true
+      return opts
     end,
-    opts = {
-      view = { style = "overlay" },
-    },
   },
 }

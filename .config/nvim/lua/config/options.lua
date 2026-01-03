@@ -5,6 +5,6 @@
 -- Prefer pyright (standard) for Python LSP
 vim.g.lazyvim_python_lsp = "basedpyright"
 
--- Review mode is opt-in at startup:
---   NVIM_REVIEW=1 nvim
-vim.g.review_mode = vim.env.NVIM_REVIEW == "1"
+vim.api.nvim_create_user_command("ReviewPR", function()
+  require("config.review").review_pr_command()
+end, {})

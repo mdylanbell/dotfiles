@@ -4,7 +4,39 @@ return {
   -- keep LazyVim's merged opts; we just run setup, then patch the factory
   config = function(_, opts)
     local Snacks = require("snacks")
-    Snacks.setup(opts or {})
+    opts = opts or {}
+
+    opts.dashboard = opts.dashboard or {}
+    opts.dashboard.preset = opts.dashboard.preset or {}
+    do
+      local user_keys = opts.dashboard.preset.keys
+      opts.dashboard.preset.keys = function(items)
+        local keys = {}
+        if type(user_keys) == "function" then
+          keys = user_keys(items) or {}
+        elseif type(user_keys) == "table" then
+          keys = user_keys
+        elseif type(items) == "table" then
+          keys = items
+        end
+
+        local ok, review = pcall(require, "config.review")
+        if ok and review.container_root() then
+          table.insert(keys, {
+            icon = "󰈈 ",
+            key = "R",
+            desc = "Review PR",
+            action = function()
+              vim.cmd("ReviewPR")
+            end,
+          })
+        end
+
+        return keys
+      end
+    end
+
+    Snacks.setup(opts)
 
     -- Edit your root markers here
     local markers = { ".git", "pyproject.toml" }
