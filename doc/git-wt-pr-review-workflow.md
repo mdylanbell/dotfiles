@@ -37,7 +37,7 @@ Use `gh-dash` as the review inbox.
 From anywhere inside the container or `main/`:
 
 ```bash
-git-wt pr 1234 search
+git-wt pr checkout 1234 search
 ```
 
 This prints the created worktree path, for example:
@@ -103,13 +103,13 @@ Inside a git-wt container, the review group is available under:
 When a review is finished, remove the worktree:
 
 ```bash
-git-wt done wt/pr-1234-search
+git-wt remove wt/pr-1234-search
 ```
 
 If the branch should be deleted too:
 
 ```bash
-git-wt done wt/pr-1234-search --delete-branch
+git-wt remove wt/pr-1234-search --delete-branch
 ```
 
 ---
