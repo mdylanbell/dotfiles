@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt remove [path] [--container <path>] [--delete-branch] [--force]
+
+Defaults:
+  path = current directory
+
+Notes:
+  - Removes worktree first, then (optionally) deletes its branch.
+EOF
+}
+
+delete_branch=false
+force=false
+container=""
+target=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --delete-branch) delete_branch=true ;;
+    --force) force=true ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      if [[ -z "$target" ]]; then
+        target="$1"
+        shift
+        continue
+      fi
+      die "unknown flag: $1"
+      ;;
+  esac
+  shift
+done
+
+target="${target:-$PWD}"
+if [[ -e "$target" ]]; then
+  target="$(wt_abs_path "$target")"
+else
+  if [[ "$target" != /* ]]; then
+    target="$PWD/$target"
+  fi
+fi
+pwd_resolved="$(pwd -P)"
+
+if [[ "$target" == "$pwd_resolved" ]]; then
+  die "refusing to remove current worktree; run from another directory"
+fi
+
+if [[ -n "$container" ]]; then
+  container="$(wt_resolve_container "$container")"
+else
+  if [[ -e "$target" ]]; then
+    container="$(wt_resolve_container "$target")"
+  else
+    container="$(wt_resolve_container "$PWD")"
+  fi
+fi
+
+if [[ -e "$target" ]]; then
+  wt_remove_worktree "$container" "$target" "$delete_branch" "$force"
+  exit 0
+fi
+
+if ! $delete_branch; then
+  die "worktree path not found: $target"
+fi
+
+die "worktree path not found: $target. If you want to delete a branch, delete it manually."

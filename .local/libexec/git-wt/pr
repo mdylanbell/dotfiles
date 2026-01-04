@@ -5,71 +5,155 @@ wt_require_git
 wt_require_gh
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
-  git-wt pr <PR_NUMBER> [slug]
+  git-wt pr checkout [--container <path>] <PR_NUMBER> [slug]
+  git-wt pr update [--container <path>] <PR_NUMBER>
+  git-wt pr update [--container <path>] --all
+  git-wt pr reset [--container <path>] <PR_NUMBER> [--force]
+  git-wt pr recreate [--container <path>] <PR_NUMBER> [--force]
+  git-wt pr info [--container <path>] <PR_NUMBER> [--fetch]
+  git-wt pr info [--container <path>] --all [--fetch]
 
 Creates worktree under:
   <container>/wt/pr-<num>[-<slug>]
 
 Prints resulting path.
-EOF
+USAGE
 }
 
-pr="${1:-}"
-slug="${2:-}"
-[[ -z "$pr" ]] && {
-  usage
-  exit 2
-}
+container=""
+args=()
+action=""
+force_reset=false
+fetch_info=false
 
-wt_dir="$(wt_wt)"
-mkdir -p "$wt_dir"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    checkout|update|reset|recreate|info)
+      action="$1"
+      shift
+      ;;
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --force)
+      force_reset=true
+      shift
+      ;;
+    --fetch)
+      fetch_info=true
+      shift
+      ;;
+    --all)
+      args+=("$1")
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
 
-suffix=""
-if [[ -n "$slug" ]]; then
-  clean_slug="$(wt_slugify "$slug")"
-  if [[ -n "$clean_slug" ]]; then
-    suffix="-$clean_slug"
+[[ -n "$action" ]] || { usage; exit 2; }
+
+if $force_reset && [[ "$action" != "reset" && "$action" != "recreate" ]]; then
+  die "--force is only valid with pr reset or pr recreate"
+fi
+if $fetch_info && [[ "$action" != "info" ]]; then
+  die "--fetch is only valid with pr info"
+fi
+if [[ " ${args[*]} " == *" --all "* ]]; then
+  if [[ "$action" != "info" && "$action" != "update" ]]; then
+    die "--all is only valid with pr info or pr update"
   fi
 fi
 
-dest="$wt_dir/pr-${pr}${suffix}"
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+wt_dir="$(wt_wt_for "$container")"
 
-default_branch="$(wt_default_branch)"
-wt_git fetch origin "$default_branch" --quiet || die "failed to fetch origin/$default_branch"
+git_main() { git -C "$main_dir" "$@"; }
+mkdir -p "$wt_dir"
 
-origin_url="$(wt_git remote get-url origin 2>/dev/null || true)"
-[[ -n "$origin_url" ]] || die "origin remote not found in main worktree"
+pr_local_status() {
+  local pr_num="${1:?}"
+  local head_sha="${2:-}"
+  local local_branch="pr/${pr_num}"
 
-repo_slug="$(wt_repo_slug "$origin_url")"
-[[ -n "$repo_slug" ]] || die "could not determine repo from origin URL: $origin_url"
-repo_host="$(wt_repo_host "$origin_url")"
-[[ -n "$repo_host" ]] || die "could not determine host from origin URL: $origin_url"
+  if ! git_main show-ref --verify --quiet "refs/heads/$local_branch"; then
+    echo "missing"
+    return 0
+  fi
 
-pr_info="$(
-  gh api --hostname "$repo_host" "repos/$repo_slug/pulls/$pr" --jq \
-    '[.head.ref, .head.repo.full_name, .head.repo.ssh_url, .head.repo.clone_url, .base.repo.full_name] | @tsv'
-)" || die "failed to fetch PR metadata from GitHub"
-[[ -n "$pr_info" ]] || die "empty PR metadata from GitHub"
+  if [[ -z "$head_sha" ]]; then
+    echo "unknown"
+    return 0
+  fi
 
-IFS=$'\t' read -r head_ref head_full head_ssh head_clone base_full <<<"$pr_info"
-[[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
-  die "could not resolve PR metadata"
+  local local_sha
+  local_sha="$(git_main rev-parse "refs/heads/$local_branch" 2>/dev/null || true)"
+  if [[ -z "$local_sha" ]]; then
+    echo "unknown"
+    return 0
+  fi
+
+  if [[ "$local_sha" == "$head_sha" ]]; then
+    echo "up-to-date"
+    return 0
+  fi
+
+  if git_main cat-file -e "$head_sha^{commit}" >/dev/null 2>&1; then
+    echo "diverged"
+  else
+    echo "stale"
+  fi
 }
 
-head_slug="$(wt_slugify "$head_ref")"
-local_branch="pr/${pr}-${head_slug}"
+pr_fetch_info() {
+  local pr_num="${1:?}"
+  local origin_url
+  origin_url="$(git_main remote get-url origin 2>/dev/null || true)"
+  [[ -n "$origin_url" ]] || die "origin remote not found in main worktree"
 
-if [[ -e "$dest" ]]; then
-  die "destination already exists: $dest"
-fi
+  local repo_slug repo_host
+  repo_slug="$(wt_repo_slug "$origin_url")"
+  [[ -n "$repo_slug" ]] || die "could not determine repo from origin URL: $origin_url"
+  repo_host="$(wt_repo_host "$origin_url")"
+  [[ -n "$repo_host" ]] || die "could not determine host from origin URL: $origin_url"
 
-if [[ "$head_full" == "$base_full" ]]; then
-  wt_git fetch origin "$head_ref:refs/heads/$local_branch"
-else
-  remote_name="pr-$pr"
-  remote_url="$head_ssh"
+  local pr_info
+  pr_info="$(
+    gh api --hostname "$repo_host" "repos/$repo_slug/pulls/$pr_num" --jq \
+      '[.head.ref, .head.sha, .head.repo.full_name, .head.repo.ssh_url, .head.repo.clone_url, .base.repo.full_name, .title, .base.ref, .user.login] | @tsv'
+  )" || die "failed to fetch PR metadata from GitHub"
+  [[ -n "$pr_info" ]] || die "empty PR metadata from GitHub"
+
+  echo "$pr_info"
+}
+
+pr_setup_remote() {
+  local pr_num="${1:?}"
+  local head_ref="${2:?}"
+  local head_full="${3:?}"
+  local head_ssh="${4:-}"
+  local head_clone="${5:-}"
+  local base_full="${6:?}"
+
+  if [[ "$head_full" == "$base_full" ]]; then
+    git_main fetch origin "$head_ref" --quiet || die "failed to fetch origin/$head_ref"
+    echo "origin" "$head_ref"
+    return 0
+  fi
+
+  local remote_name="pr-$pr_num"
+  local remote_url="$head_ssh"
   if [[ -z "$remote_url" || "$remote_url" == "null" ]]; then
     remote_url="$head_clone"
   fi
@@ -77,25 +161,499 @@ else
     die "could not resolve PR head repo URL"
   }
 
-  if wt_git remote get-url "$remote_name" >/dev/null 2>&1; then
-    wt_git remote set-url "$remote_name" "$remote_url"
+  if git_main remote get-url "$remote_name" >/dev/null 2>&1; then
+    git_main remote set-url "$remote_name" "$remote_url"
   else
-    wt_git remote add "$remote_name" "$remote_url"
+    git_main remote add "$remote_name" "$remote_url"
   fi
 
-  wt_git fetch "$remote_name" "$head_ref:refs/heads/$local_branch"
-fi
+  git_main fetch "$remote_name" "$head_ref" --quiet || die "failed to fetch $remote_name/$head_ref"
+  echo "$remote_name" "$head_ref"
+}
 
-# TODO: Replace this implementation with gh-worktree once
-# https://github.com/eikster-dk/gh-worktree/pull/11 is released.
-wt_git worktree add "$dest" "$local_branch"
-set +e
-wt_run_pr_checkout_hooks "$dest"
-hook_rc=$?
-set -e
-if [[ $hook_rc -ne 0 ]]; then
-  wt_git worktree remove "$dest" >/dev/null 2>&1 || true
-  die "pr checkout hooks failed"
-fi
+pr_find_checked_out_path() {
+  local branch_name="${1:?}"
+  local current_path=""
+  local checked_out_path=""
+  while IFS= read -r line; do
+    case "$line" in
+      worktree\ *)
+        current_path="${line#worktree }"
+        ;;
+      branch\ refs/heads/"$branch_name")
+        if [[ -n "$checked_out_path" && "$checked_out_path" != "$current_path" ]]; then
+          die "multiple worktrees found for $branch_name"
+        fi
+        checked_out_path="$current_path"
+        ;;
+    esac
+  done < <(git_main worktree list --porcelain)
+  echo "$checked_out_path"
+}
 
-echo "$dest"
+pr_relative_path() {
+  local path="${1:-}"
+  if [[ -z "$path" ]]; then
+    echo ""
+    return 0
+  fi
+  case "$path" in
+    "$container"/*) echo "${path#"$container"/}" ;;
+    *) echo "$path" ;;
+  esac
+}
+
+pr_confirm_action() {
+  local wt_path="$1"
+  local head_ref="$2"
+  local base_ref="$3"
+  local head_repo="$4"
+  local dirty="$5"
+  shift 5
+  local warnings=()
+  local commands=()
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --warning)
+        warnings+=("$2")
+        shift 2
+        ;;
+      --cmd)
+        commands+=("$2")
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  local wt_display
+  wt_display="$(pr_relative_path "$wt_path")"
+  [[ -n "$wt_display" ]] || wt_display="$wt_path"
+  echo "About to perform PR action:"
+  echo "  worktree: $wt_display"
+  echo "  PR branch: $head_ref"
+  echo "  target branch: $base_ref"
+  if [[ -n "$head_repo" ]]; then
+    echo "  head repo: $head_repo"
+  fi
+  if [[ "$dirty" == "true" ]]; then
+    echo
+    echo "  WARNING:  worktree has local changes that will be discarded"
+  fi
+  for w in "${warnings[@]}"; do
+    echo "  WARNING:  $w"
+  done
+  echo
+  if [[ ${#commands[@]} -gt 0 ]]; then
+    echo "Will run:"
+    for c in "${commands[@]}"; do
+      echo "  $c"
+    done
+    echo
+  fi
+
+  printf "Proceed? [y/N]: "
+  local reply
+  read -r reply </dev/tty || die "aborted"
+  case "${reply:-}" in
+    y|Y|yes|YES) ;;
+    *) die "aborted" ;;
+  esac
+}
+
+pr_update_one() {
+  local pr_num="${1:?}"
+  local pr_info
+  pr_info="$(pr_fetch_info "$pr_num")"
+
+  local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
+  IFS=$'\t' read -r head_ref head_sha head_full head_ssh head_clone base_full title base_ref author <<<"$pr_info"
+  [[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+    die "could not resolve PR metadata"
+  }
+
+  local local_branch="pr/${pr_num}"
+  local wt_path
+  wt_path="$(pr_find_checked_out_path "$local_branch")"
+  [[ -n "$wt_path" ]] || die "no checked-out worktree found for PR $pr_num"
+
+  if git -C "$wt_path" status --porcelain | grep -q .; then
+    die "worktree is dirty; refusing to update: $wt_path"
+  fi
+
+  local remote_name remote_ref
+  read -r remote_name remote_ref <<<"$(pr_setup_remote "$pr_num" "$head_ref" "$head_full" "$head_ssh" "$head_clone" "$base_full")"
+
+  git -C "$wt_path" merge --ff-only "$remote_name/$remote_ref" || {
+    die "PR update is not fast-forwardable; resolve manually in $wt_path"
+  }
+  echo "$wt_path"
+}
+
+pr_reset_one() {
+  local pr_num="${1:?}"
+  local pr_info
+  pr_info="$(pr_fetch_info "$pr_num")"
+
+  local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
+  IFS=$'\t' read -r head_ref head_sha head_full head_ssh head_clone base_full title base_ref author <<<"$pr_info"
+  [[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+    die "could not resolve PR metadata"
+  }
+
+  local local_branch="pr/${pr_num}"
+  local wt_path
+  wt_path="$(pr_find_checked_out_path "$local_branch")"
+  [[ -n "$wt_path" ]] || die "no checked-out worktree found for PR $pr_num"
+
+  local dirty=false
+  if git -C "$wt_path" status --porcelain | grep -q .; then
+    dirty=true
+  fi
+  if $dirty && ! $force_reset; then
+    die "worktree is dirty; use --force to reset: $wt_path"
+  fi
+
+  local remote_name remote_ref
+  read -r remote_name remote_ref <<<"$(pr_setup_remote "$pr_num" "$head_ref" "$head_full" "$head_ssh" "$head_clone" "$base_full")"
+
+  local head_repo=""
+  if [[ "$head_full" != "$base_full" ]]; then
+    head_repo="$head_full"
+  fi
+
+  pr_confirm_action "$wt_path" "$head_ref" "$base_ref" "$head_repo" "$dirty" \
+    --cmd "git -C \"$wt_path\" reset --hard \"$remote_name/$remote_ref\""
+
+  git -C "$wt_path" reset --hard "$remote_name/$remote_ref"
+  echo "$wt_path"
+}
+
+pr_checkout_impl() {
+  local pr_num="${1:?}"
+  local slug="${2:-}"
+  local pr_info
+  pr_info="$(pr_fetch_info "$pr_num")"
+
+  local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
+  IFS=$'\t' read -r head_ref head_sha head_full head_ssh head_clone base_full title base_ref author <<<"$pr_info"
+  [[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+    die "could not resolve PR metadata"
+  }
+
+  local suffix=""
+  if [[ -n "$slug" ]]; then
+    local clean_slug
+    clean_slug="$(wt_slugify "$slug")"
+    if [[ -n "$clean_slug" ]]; then
+      suffix="-$clean_slug"
+    fi
+  fi
+
+  local dest
+  dest="$wt_dir/pr-${pr_num}${suffix}"
+
+  local default_branch
+  default_branch="$(wt_default_branch_for "$container")"
+  git_main fetch origin "$default_branch" --quiet || die "failed to fetch origin/$default_branch"
+
+  local local_branch="pr/${pr_num}"
+
+  if [[ -e "$dest" ]]; then
+    die "destination already exists: $dest (remove or rename it and retry)"
+  fi
+
+  local checked_out_path
+  checked_out_path="$(pr_find_checked_out_path "$local_branch")"
+  if [[ -n "$checked_out_path" ]]; then
+    die "PR branch is already checked out at $checked_out_path"
+  fi
+
+  if [[ "$head_full" == "$base_full" ]]; then
+    git_main fetch origin "$head_ref:refs/heads/$local_branch"
+  else
+    local remote_name="pr-$pr_num"
+    local remote_url="$head_ssh"
+    if [[ -z "$remote_url" || "$remote_url" == "null" ]]; then
+      remote_url="$head_clone"
+    fi
+    [[ -z "$remote_url" || "$remote_url" == "null" ]] && {
+      die "could not resolve PR head repo URL"
+    }
+
+    if git_main remote get-url "$remote_name" >/dev/null 2>&1; then
+      git_main remote set-url "$remote_name" "$remote_url"
+    else
+      git_main remote add "$remote_name" "$remote_url"
+    fi
+
+    git_main fetch "$remote_name" "$head_ref:refs/heads/$local_branch"
+  fi
+
+  # TODO: Replace this implementation with gh-worktree once
+  # https://github.com/eikster-dk/gh-worktree/pull/11 is released.
+  git_main worktree add "$dest" "$local_branch"
+  set +e
+  wt_run_pr_checkout_hooks "$dest" "$container"
+  hook_rc=$?
+  set -e
+  if [[ $hook_rc -ne 0 ]]; then
+    git_main worktree remove "$dest" >/dev/null 2>&1 || true
+    die "pr checkout hooks failed"
+  fi
+
+  echo "$dest"
+}
+
+pr_recreate_one() {
+  local pr_num="${1:?}"
+  local pr_info
+  pr_info="$(pr_fetch_info "$pr_num")"
+
+  local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
+  IFS=$'\t' read -r head_ref head_sha head_full head_ssh head_clone base_full title base_ref author <<<"$pr_info"
+  [[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+    die "could not resolve PR metadata"
+  }
+
+  local local_branch="pr/${pr_num}"
+  local wt_path
+  wt_path="$(pr_find_checked_out_path "$local_branch")"
+
+  local dirty=false
+  if [[ -n "$wt_path" ]] && git -C "$wt_path" status --porcelain | grep -q .; then
+    dirty=true
+  fi
+  if $dirty && ! $force_reset; then
+    die "worktree is dirty; use --force to recreate: $wt_path"
+  fi
+
+  local remote_name remote_ref
+  read -r remote_name remote_ref <<<"$(pr_setup_remote "$pr_num" "$head_ref" "$head_full" "$head_ssh" "$head_clone" "$base_full")"
+  local head_repo=""
+  if [[ "$head_full" != "$base_full" ]]; then
+    head_repo="$head_full"
+  fi
+
+  if [[ -n "$wt_path" ]]; then
+    local pwd_resolved
+    pwd_resolved="$(pwd -P)"
+    if [[ "$wt_path" == "$pwd_resolved" ]]; then
+      die "refusing to recreate from current worktree; run from another directory"
+    fi
+  fi
+
+  local slug=""
+  if [[ -n "$wt_path" ]]; then
+    local base_name
+    base_name="$(basename "$wt_path")"
+    case "$base_name" in
+      pr-"$pr_num"-*) slug="${base_name#pr-$pr_num-}" ;;
+      pr-"$pr_num") slug="" ;;
+      *) slug="" ;;
+    esac
+  fi
+
+  local dest_path="$wt_dir/pr-${pr_num}"
+  if [[ -n "$slug" ]]; then
+    dest_path="$dest_path-$slug"
+  fi
+
+  local commands=()
+  if [[ -n "$wt_path" ]]; then
+    commands+=("git -C \"$main_dir\" worktree remove \"$wt_path\"")
+  fi
+  commands+=("git -C \"$main_dir\" branch -D \"$local_branch\" (if it exists)")
+  commands+=("git -C \"$main_dir\" fetch \"$remote_name\" \"$remote_ref\"")
+  commands+=("git -C \"$main_dir\" worktree add \"$dest_path\" \"$local_branch\"")
+
+  local prompt_args=()
+  prompt_args+=(--warning "will remove existing worktree and delete the local PR branch")
+  for c in "${commands[@]}"; do
+    prompt_args+=(--cmd "$c")
+  done
+
+  pr_confirm_action "${wt_path:-<none>}" "$head_ref" "$base_ref" "$head_repo" "$dirty" "${prompt_args[@]}"
+
+  if [[ -n "$wt_path" ]]; then
+    wt_remove_worktree "$container" "$wt_path" true "$force_reset"
+  else
+    if git_main show-ref --verify --quiet "refs/heads/$local_branch"; then
+      git_main branch -D "$local_branch"
+    fi
+  fi
+
+  pr_checkout_impl "$pr_num" "$slug"
+}
+
+pr_info_one() {
+  local pr_num="${1:?}"
+  local pr_info
+  if ! pr_info="$(pr_fetch_info "$pr_num")"; then
+    echo "$pr_num: (metadata unavailable)"
+    return 0
+  fi
+
+  local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
+  IFS=$'\t' read -r head_ref head_sha head_full head_ssh head_clone base_full title base_ref author <<<"$pr_info"
+  [[ -z "$head_ref" || -z "$head_full" || -z "$base_full" ]] && {
+    echo "$pr_num: (metadata unavailable)"
+    return 0
+  }
+
+  if $fetch_info; then
+    pr_setup_remote "$pr_num" "$head_ref" "$head_full" "$head_ssh" "$head_clone" "$base_full" >/dev/null
+  fi
+
+  local local_branch="pr/${pr_num}"
+  local wt_path
+  wt_path="$(pr_find_checked_out_path "$local_branch")"
+  local status
+  status="$(pr_local_status "$pr_num" "$head_sha")"
+  local dirty_note=""
+  if [[ -n "$wt_path" ]]; then
+    if git -C "$wt_path" status --porcelain | grep -q .; then
+      dirty_note="dirty"
+    fi
+  fi
+
+  local default_branch
+  default_branch="$(wt_default_branch_for "$container")"
+  local into=""
+  if [[ "$base_ref" != "$default_branch" ]]; then
+    into=" (into $base_ref)"
+  fi
+  local from=""
+  if [[ "$head_full" != "$base_full" ]]; then
+    from=" from $head_full"
+  fi
+
+  if [[ "$action" == "info" && "${args[0]:-}" != "--all" ]]; then
+    echo "PR $pr_num: $title"
+    echo "Author: ${author:-unknown}"
+    echo "Head: $head_ref"
+    if [[ -n "$from" ]]; then
+      echo "Head repo: ${from# from }"
+    fi
+    echo "Base: $base_ref"
+    echo "Worktree: ${wt_path:-<none>}"
+    if [[ -n "$dirty_note" ]]; then
+      echo "Status: $status ($dirty_note)"
+    else
+      echo "Status: $status"
+    fi
+  else
+    local path_note
+    path_note="$(pr_relative_path "${wt_path:-}")"
+    if [[ -z "$path_note" ]]; then
+      path_note="<missing>"
+    fi
+    local status_note=""
+    if [[ "$status" != "up-to-date" && "$status" != "unknown" ]]; then
+      status_note="$status"
+    fi
+    if [[ -n "$dirty_note" ]]; then
+      if [[ -n "$status_note" ]]; then
+        status_note="$status_note, $dirty_note"
+      else
+        status_note="$dirty_note"
+      fi
+    fi
+    if [[ -n "$status_note" ]]; then
+      status_note=" ($status_note)"
+    fi
+    echo "$pr_num: $title (by ${author:-unknown})  [branch: $head_ref$from$into] @ $path_note$status_note"
+  fi
+}
+
+case "$action" in
+  checkout)
+    pr="${args[0]:-}"
+    slug="${args[1]:-}"
+    [[ -z "$pr" || ${#args[@]} -gt 2 ]] && { usage; exit 2; }
+    pr_checkout_impl "$pr" "$slug"
+    ;;
+  update)
+    if [[ "${args[0]:-}" == "--all" ]]; then
+      [[ ${#args[@]} -eq 1 ]] || die "--all does not accept extra arguments"
+      pr_nums=()
+      while IFS= read -r line; do
+        case "$line" in
+          branch\ refs/heads/pr/*)
+            pr_nums+=("${line#branch refs/heads/pr/}")
+            ;;
+        esac
+      done < <(git_main worktree list --porcelain)
+
+      unique_nums=()
+      declare -A seen=()
+      for entry in "${pr_nums[@]}"; do
+        num="$entry"
+        if [[ -n "$num" && -z "${seen[$num]:-}" ]]; then
+          seen["$num"]=1
+          unique_nums+=("$num")
+        fi
+      done
+
+      [[ ${#unique_nums[@]} -gt 0 ]] || die "no PR worktrees found"
+
+      for num in "${unique_nums[@]}"; do
+        pr_update_one "$num"
+      done
+    else
+      pr="${args[0]:-}"
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      pr_update_one "$pr"
+    fi
+    ;;
+  reset)
+    pr="${args[0]:-}"
+    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+    pr_reset_one "$pr"
+    ;;
+  recreate)
+    pr="${args[0]:-}"
+    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+    pr_recreate_one "$pr"
+    ;;
+  info)
+    if [[ "${args[0]:-}" == "--all" ]]; then
+      [[ ${#args[@]} -eq 1 ]] || die "--all does not accept extra arguments"
+      pr_nums=()
+      while IFS= read -r line; do
+        case "$line" in
+          branch\ refs/heads/pr/*)
+            pr_nums+=("${line#branch refs/heads/pr/}")
+            ;;
+        esac
+      done < <(git_main worktree list --porcelain)
+
+      unique_nums=()
+      declare -A seen=()
+      for entry in "${pr_nums[@]}"; do
+        num="$entry"
+        if [[ -n "$num" && -z "${seen[$num]:-}" ]]; then
+          seen["$num"]=1
+          unique_nums+=("$num")
+        fi
+      done
+
+      [[ ${#unique_nums[@]} -gt 0 ]] || die "no PR worktrees found"
+
+      for num in "${unique_nums[@]}"; do
+        pr_info_one "$num"
+      done
+    else
+      pr="${args[0]:-}"
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      pr_info_one "$pr"
+    fi
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac

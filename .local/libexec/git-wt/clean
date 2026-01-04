@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
-done_cmd="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/done"
+remove_cmd="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/remove"
 wt_require_git
 
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt clean [--dry-run] [--verbose] [-i|--interactive]
+  git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune] [--with-branches] [-i|--interactive]
 
 Remove worktrees whose branches are merged into origin/<default>.
 
 Options:
   --dry-run     Report what would be removed
   --verbose     Report reasons for skipped worktrees
+  --prune       Prune stale worktree entries before scanning
+  --with-branches  Delete merged branches (non-interactive)
   -i, --interactive  Confirm each removal and optional branch delete
 EOF
 }
@@ -21,6 +23,9 @@ EOF
 dry_run=false
 verbose=false
 interactive=false
+prune=false
+with_branches=false
+container=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -28,8 +33,20 @@ while [[ $# -gt 0 ]]; do
       dry_run=true
       shift
       ;;
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
     --verbose)
       verbose=true
+      shift
+      ;;
+    --prune)
+      prune=true
+      shift
+      ;;
+    --with-branches)
+      with_branches=true
       shift
       ;;
     -i | --interactive)
@@ -41,27 +58,36 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      die "Unknown flag: $1"
+      die "unknown flag: $1"
       ;;
   esac
 done
 
-default_branch="$(wt_default_branch)"
-wt_git fetch origin "$default_branch" --quiet || true
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+git_main() { git -C "$main_dir" "$@"; }
+
+default_branch="$(wt_default_branch_for "$container")"
+git_main fetch origin "$default_branch" --quiet || die "git fetch origin $default_branch failed"
 base_ref="origin/$default_branch"
 
+$prune && git_main worktree prune >/dev/null 2>&1 || true
+
 pwd_resolved="$(pwd -P)"
-main_path="$(wt_main)"
 
 skip_reason() {
   local wt_path="$1"
   local branch="$2"
 
+  if [[ ! -d "$wt_path" ]]; then
+    echo "missing path"
+    return 0
+  fi
   if [[ -z "$branch" ]]; then
     echo "no branch"
     return 0
   fi
-  if [[ "$wt_path" == "$main_path" ]]; then
+  if [[ "$wt_path" == "$main_dir" ]]; then
     echo "main worktree"
     return 0
   fi
@@ -69,15 +95,19 @@ skip_reason() {
     echo "current directory"
     return 0
   fi
+  if ! git -C "$wt_path" rev-parse --git-dir >/dev/null 2>&1; then
+    echo "not a git repo"
+    return 0
+  fi
   if git -C "$wt_path" status --porcelain | grep -q .; then
     echo "dirty"
     return 0
   fi
-  if ! wt_git show-ref --verify --quiet "refs/heads/$branch"; then
+  if ! git_main show-ref --verify --quiet "refs/heads/$branch"; then
     echo "branch missing"
     return 0
   fi
-  if ! wt_git merge-base --is-ancestor "refs/heads/$branch" "$base_ref"; then
+  if ! git_main merge-base --is-ancestor "refs/heads/$branch" "$base_ref"; then
     echo "not merged"
     return 0
   fi
@@ -128,7 +158,7 @@ while IFS= read -r line; do
       current_branch="${line#branch refs/heads/}"
       ;;
   esac
-done < <(wt_git worktree list --porcelain)
+done < <(git_main worktree list --porcelain)
 
 if [[ -n "$current_path" ]]; then
   worktrees+=("$current_path")
@@ -156,11 +186,77 @@ for i in "${!worktrees[@]}"; do
     if ! prompt_yes_no "Remove worktree $wt_path?" "yes"; then
       continue
     fi
-    if prompt_yes_no "Delete branch $branch?" "no"; then
-      "$done_cmd" "$wt_path" --delete-branch
-      continue
-    fi
   fi
 
-  "$done_cmd" "$wt_path"
+  wt_remove_worktree "$container" "$wt_path" false false
+  if $verbose; then
+    echo "remove: $wt_path (branch: $branch)"
+  fi
 done
+
+if $with_branches; then
+  checked_out=()
+  while IFS= read -r line; do
+    case "$line" in
+      branch\ refs/heads/*)
+        checked_out+=("${line#branch refs/heads/}")
+        ;;
+    esac
+  done < <(git_main worktree list --porcelain)
+
+  is_checked_out() {
+    local b="$1"
+    for cb in "${checked_out[@]}"; do
+      if [[ "$cb" == "$b" ]]; then
+        return 0
+      fi
+    done
+    return 1
+  }
+
+  while IFS= read -r b; do
+    case "$b" in
+      "$default_branch" | main | master | trunk)
+        if $verbose; then
+          echo "skip: branch $b: protected"
+        fi
+        continue
+        ;;
+    esac
+
+    if is_checked_out "$b"; then
+      if $verbose; then
+        echo "skip: branch $b: checked out"
+      fi
+      continue
+    fi
+
+    if ! git_main merge-base --is-ancestor "refs/heads/$b" "$base_ref"; then
+      if $verbose; then
+        echo "skip: branch $b: not merged"
+      fi
+      continue
+    fi
+
+    if $dry_run; then
+      echo "would delete branch: $b"
+      continue
+    fi
+
+    if $interactive; then
+      if ! prompt_yes_no "Delete merged branch $b?" "no"; then
+        continue
+      fi
+    fi
+
+    if git_main branch -D "$b" >/dev/null 2>&1; then
+      if $verbose; then
+        echo "delete: branch $b"
+      fi
+    else
+      if $verbose; then
+        echo "skip: branch $b: not deleted"
+      fi
+    fi
+  done < <(git_main for-each-ref --format='%(refname:short)' refs/heads)
+fi

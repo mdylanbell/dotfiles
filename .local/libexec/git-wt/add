@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt add [--container <path>] <branch>
+  git-wt add [--container <path>] -b <new-branch> [--base <branch>]
+
+Creates worktree under:
+  <container>/wt/<branch>
+
+Prints resulting path.
+EOF
+}
+
+base=""
+branch=""
+container=""
+create_branch=false
+positional_count=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    -b)
+      create_branch=true
+      branch="${2:-}"
+      [[ -n "$branch" ]] || die "-b requires a branch name"
+      shift 2
+      ;;
+    --base)
+      base="${2:-}"
+      [[ -n "$base" ]] || die "--base requires a branch name"
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      branch="${1:-}"
+      positional_count=$((positional_count + 1))
+      shift
+      ;;
+  esac
+done
+
+if $create_branch && [[ $positional_count -gt 0 ]]; then
+  die "unexpected positional branch with -b (use only -b <new-branch>)"
+fi
+if ! $create_branch && [[ $positional_count -gt 1 ]]; then
+  die "too many arguments"
+fi
+
+[[ -z "$branch" ]] && {
+  usage
+  exit 2
+}
+
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+wt_dir="$(wt_wt_for "$container")"
+
+git_main() { git -C "$main_dir" "$@"; }
+mkdir -p "$wt_dir"
+
+default_branch="$(wt_default_branch_for "$container")"
+if $create_branch; then
+  if [[ -n "$base" && "$base" == "$branch" ]]; then
+    die "--base must differ from new branch name"
+  fi
+  base="${base:-$default_branch}"
+  base_ref="$base"
+  if [[ "$base_ref" != origin/* ]]; then
+    base_ref="origin/$base_ref"
+  fi
+
+  fetch_branch="${base_ref#origin/}"
+  git_main fetch origin "$fetch_branch" --quiet || die "failed to fetch origin/$fetch_branch"
+
+  if git_main show-ref --verify --quiet "refs/heads/$branch"; then
+    die "branch already exists: $branch (use git-wt add <branch> without -b)"
+  fi
+else
+  if [[ -n "$base" ]]; then
+    die "--base requires -b"
+  fi
+  if ! git_main show-ref --verify --quiet "refs/heads/$branch"; then
+    die "branch not found: $branch (use git-wt add -b <branch> [--base <branch>] to create)"
+  fi
+fi
+
+slug="$(wt_slugify "$branch")"
+if [[ -z "$slug" ]]; then
+  die "branch name slugifies to empty: $branch"
+fi
+dest="$wt_dir/$slug"
+if [[ -e "$dest" ]]; then
+  die "destination already exists: $dest"
+fi
+
+if $create_branch; then
+  git_main worktree add -b "$branch" "$dest" "$base_ref"
+else
+  git_main worktree add "$dest" "$branch"
+fi
+
+echo "$dest"

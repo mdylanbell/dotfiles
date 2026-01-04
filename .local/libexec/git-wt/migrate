@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt migrate [--protect-default=chain|false] <repo_path>
+
+Examples:
+  git-wt migrate ~/code/work/repoA
+  git-wt migrate --protect-default=chain ~/code/work/repoA
+  git-wt migrate --protect-default=false ~/code/work/repoA
+EOF
+}
+
+protect_default=""
+args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --protect-default)
+      protect_default="$(wt_parse_protect_default_arg "${2:-}")"
+      shift 2
+      ;;
+    --protect-default=*)
+      protect_default="${1#*=}"
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+repo="${args[0]:-}"
+[[ -z "$repo" || ${#args[@]} -gt 1 ]] && {
+  usage
+  exit 2
+}
+
+repo="$(wt_abs_path "$repo")"
+
+if [[ ! -d "$repo" ]]; then
+  die "path does not exist or is not a directory: $repo"
+fi
+
+parent_container="$(wt_find_parent_container "$repo" || true)"
+if [[ -n "$parent_container" ]]; then
+  die "refusing to migrate into nested container; parent container: $parent_container"
+fi
+
+if [[ ! -e "$repo/.git" ]]; then
+  if wt_is_container_root "$repo"; then
+    die "already looks like a git-wt container: $repo"
+  fi
+  die "not a git repository: $repo"
+fi
+
+if [[ -f "$repo/.git" ]]; then
+  die "refusing to migrate linked worktree (has .git file): $repo"
+fi
+
+if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+  die "not a git repository or corrupt: $repo"
+fi
+
+if git -C "$repo" rev-parse --is-bare-repository 2>/dev/null | grep -q true; then
+  die "refusing to migrate bare repository: $repo"
+fi
+
+if git -C "$repo" status --porcelain | grep -q .; then
+  die "refusing to migrate dirty repo at $repo"
+fi
+
+main="$repo/main"
+wt="$repo/wt"
+
+parent="$(cd "$(dirname "$repo")" && pwd)"
+base="$(basename "$repo")"
+tmp="${parent}/.${base}.git-wt-migrate.$$"
+
+if [[ -e "$tmp" ]]; then
+  die "temporary path already exists: $tmp"
+fi
+
+mv "$repo" "$tmp"
+mkdir -p "$wt"
+mv "$tmp" "$main"
+
+wt_apply_protect_default "$main" "$protect_default"
+echo "$repo"

@@ -9,12 +9,13 @@ Usage:
   git-wt <command> [args...]
 
 Commands:
-  init      Initialize/upgrade a repo container (main/ + wt/)
-  pr        Create PR worktree (via gh + worktree)
-  new       Create worktree for an arbitrary branch (off origin/<default>)
+  init      Clone a repo into a container (main/ + wt/)
+  migrate   Convert an existing clean repo into a container
+  pr        PR worktree management (checkout/update)
+  add       Add a worktree for a branch (use -b to create)
   sync      Fetch origin and fast-forward main
   clean     Remove merged worktrees safely
-  done      Remove a worktree safely (optional branch delete)
+  remove    Remove a worktree safely (optional branch delete)
 
 Run:
   git-wt <command> --help

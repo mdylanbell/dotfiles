@@ -6,7 +6,7 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt sync [--prune]
+  git-wt sync [--container <path>] [--prune]
 
 Fetch origin and fast-forward main to origin/<default>.
 
@@ -16,8 +16,13 @@ EOF
 }
 
 prune=false
+container=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
     --prune)
       prune=true
       shift
@@ -27,22 +32,26 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      die "Unknown flag: $1"
+      die "unknown flag: $1"
       ;;
   esac
 done
 
-default_branch="$(wt_default_branch)"
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+git_main() { git -C "$main_dir" "$@"; }
+
+default_branch="$(wt_default_branch_for "$container")"
 fetch_args=()
 $prune && fetch_args+=(--prune)
 
-wt_git fetch origin "${fetch_args[@]}" "$default_branch"
+git_main fetch origin "${fetch_args[@]}" "$default_branch"
 
-if git -C "$(wt_main)" status --porcelain | grep -q .; then
+if git_main status --porcelain | grep -q .; then
   die "main worktree is dirty; refusing to fast-forward"
 fi
 
-wt_git checkout "$default_branch" >/dev/null 2>&1 || true
-wt_git merge --ff-only "origin/$default_branch"
+git_main checkout "$default_branch" || die "git checkout $default_branch failed"
+git_main merge --ff-only "origin/$default_branch"
 
-echo "$(wt_main)"
+echo "$main_dir"

@@ -7,21 +7,25 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt init [--no-protect-main] <container_path> [remote_url]
+  git-wt init [--protect-default=chain|false] <container_path> <remote_url>
 
 Examples:
   git-wt init ~/code/work/repoA git@github.com:ORG/repoA.git
-  git-wt init ~/code/work/repoA
-  git-wt init --no-protect-main ~/code/work/repoA
+  git-wt init --protect-default=chain ~/code/work/repoA git@github.com:ORG/repoA.git
+  git-wt init --protect-default=false ~/code/work/repoA git@github.com:ORG/repoA.git
 EOF
 }
 
-no_protect_main=false
+protect_default=""
 args=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --no-protect-main)
-      no_protect_main=true
+    --protect-default)
+      protect_default="$(wt_parse_protect_default_arg "${2:-}")"
+      shift 2
+      ;;
+    --protect-default=*)
+      protect_default="${1#*=}"
       shift
       ;;
     -h | --help)
@@ -38,102 +42,26 @@ done
 container="${args[0]:-}"
 remote="${args[1]:-}"
 
-[[ -z "$container" ]] && {
+[[ -z "$container" || -z "$remote" || ${#args[@]} -gt 2 ]] && {
   usage
   exit 2
 }
 
-container="$(cd "$(dirname "$container")" && pwd)/$(basename "$container")"
+container="$(wt_abs_path "$container")"
 mkdir -p "$container"
 
 main="$container/main"
 wt="$container/wt"
 
-install_protect_hooks() {
-  local hooks_dir="$main/.git/hooks"
-  mkdir -p "$hooks_dir"
-
-  cat >"$hooks_dir/pre-commit" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-
-branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-case "$branch" in
-  main|master|trunk)
-    echo "Refusing commit on protected branch: $branch" >&2
-    exit 1
-    ;;
-esac
-EOF
-  chmod +x "$hooks_dir/pre-commit"
-
-  cat >"$hooks_dir/pre-push" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-
-branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-case "$branch" in
-  main|master|trunk)
-    echo "Refusing push on protected branch: $branch" >&2
-    exit 1
-    ;;
-esac
-EOF
-  chmod +x "$hooks_dir/pre-push"
-}
-
-maybe_protect_main() {
-  if $no_protect_main; then
-    return 0
-  fi
-  install_protect_hooks
-}
-
-# Already initialized
-if [[ -d "$main/.git" || -f "$main/.git" ]]; then
-  mkdir -p "$wt"
-  maybe_protect_main
-  echo "$container"
-  exit 0
-fi
-
-# Upgrade: container itself is currently a git checkout -> move it into main/
 if [[ -d "$container/.git" || -f "$container/.git" ]]; then
-  if git -C "$container" status --porcelain | grep -q .; then
-    echo "git-wt init: refusing to upgrade dirty repo at $container" >&2
-    exit 1
-  fi
-
-  mkdir -p "$main" "$wt"
-
-  tmp="$container/.git_wt_init_tmp.$$"
-  mkdir -p "$tmp"
-
-  shopt -s dotglob
-  for item in "$container"/* "$container"/.*; do
-    base="$(basename "$item")"
-    [[ "$base" == "." || "$base" == ".." ]] && continue
-    [[ "$base" == "main" || "$base" == "wt" || "$base" == ".git_wt_init_tmp.$$" ]] && continue
-    mv "$item" "$tmp/" 2>/dev/null || true
-  done
-  shopt -u dotglob
-
-  mv "$tmp"/* "$main/" 2>/dev/null || true
-  rmdir "$tmp" 2>/dev/null || true
-
-  maybe_protect_main
-  echo "$container"
-  exit 0
+  die "path is a git repository; use git-wt migrate instead: $container"
 fi
 
-# Fresh clone into main/
-[[ -z "$remote" ]] && {
-  echo "git-wt init: remote_url required to clone new repo" >&2
-  usage
-  exit 2
-}
+if [[ -d "$main/.git" || -f "$main/.git" ]]; then
+  die "container already initialized: $container"
+fi
 
 mkdir -p "$main" "$wt"
 git clone "$remote" "$main"
-maybe_protect_main
+wt_apply_protect_default "$main" "$protect_default"
 echo "$container"
