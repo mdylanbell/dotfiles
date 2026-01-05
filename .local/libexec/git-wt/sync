@@ -6,7 +6,7 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt sync [--container <path>] [--prune]
+  git-wt sync [--container <path>] [--prune] [--dry-run] [--verbose]
 
 Fetch origin and fast-forward main to origin/<default>.
 
@@ -17,6 +17,8 @@ EOF
 
 prune=false
 container=""
+dry_run=false
+verbose=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --container)
@@ -25,6 +27,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --prune)
       prune=true
+      shift
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
       shift
       ;;
     -h | --help)
@@ -45,12 +55,20 @@ default_branch="$(wt_default_branch_for "$container")"
 fetch_args=()
 $prune && fetch_args+=(--prune)
 
+if $dry_run; then
+  echo "would fetch origin ${fetch_args[*]} $default_branch"
+  echo "would fast-forward main to origin/$default_branch"
+  exit 0
+fi
+
+$verbose && echo "fetching origin ${fetch_args[*]} $default_branch"
 git_main fetch origin "${fetch_args[@]}" "$default_branch"
 
 if git_main status --porcelain | grep -q .; then
   die "main worktree is dirty; refusing to fast-forward"
 fi
 
+$verbose && echo "fast-forwarding main to origin/$default_branch"
 git_main checkout "$default_branch" || die "git checkout $default_branch failed"
 git_main merge --ff-only "origin/$default_branch"
 

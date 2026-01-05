@@ -7,7 +7,7 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt migrate [--protect-default=chain|false] <repo_path>
+  git-wt migrate [--protect-default=chain|false] [--dry-run] [--verbose] <repo_path>
 
 Examples:
   git-wt migrate ~/code/work/repoA
@@ -17,6 +17,8 @@ EOF
 }
 
 protect_default=""
+dry_run=false
+verbose=false
 args=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -31,6 +33,14 @@ while [[ $# -gt 0 ]]; do
     -h | --help)
       usage
       exit 0
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
       ;;
     *)
       args+=("$1")
@@ -88,6 +98,27 @@ tmp="${parent}/.${base}.git-wt-migrate.$$"
 
 if [[ -e "$tmp" ]]; then
   die "temporary path already exists: $tmp"
+fi
+
+if $dry_run; then
+  echo "would migrate repo: $repo"
+  echo "would move to: $main"
+  if [[ -z "$protect_default" ]]; then
+    echo "would install protection hooks"
+  else
+    echo "would apply protect-default: $protect_default"
+  fi
+  exit 0
+fi
+
+if $verbose; then
+  echo "migrating repo: $repo"
+  echo "moving to: $main"
+  if [[ -z "$protect_default" ]]; then
+    echo "protect-default: install"
+  else
+    echo "protect-default: $protect_default"
+  fi
 fi
 
 mv "$repo" "$tmp"

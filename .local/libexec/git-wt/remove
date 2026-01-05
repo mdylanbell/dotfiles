@@ -6,7 +6,7 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt remove [path] [--container <path>] [--delete-branch] [--force]
+  git-wt remove [path] [--container <path>] [--delete-branch] [--force] [--dry-run] [--verbose]
 
 Defaults:
   path = current directory
@@ -20,6 +20,8 @@ delete_branch=false
 force=false
 container=""
 target=""
+dry_run=false
+verbose=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -29,6 +31,8 @@ while [[ $# -gt 0 ]]; do
       ;;
     --delete-branch) delete_branch=true ;;
     --force) force=true ;;
+    --dry-run) dry_run=true ;;
+    --verbose) verbose=true ;;
     -h | --help)
       usage
       exit 0
@@ -70,6 +74,15 @@ else
 fi
 
 if [[ -e "$target" ]]; then
+  if $dry_run; then
+    branch_note="$(wt_branch_for_worktree_path "$container" "$target")"
+    echo "would remove worktree: $target"
+    if $delete_branch && [[ -n "$branch_note" ]]; then
+      echo "would delete branch: $branch_note"
+    fi
+    exit 0
+  fi
+  $verbose && echo "removing worktree: $target"
   wt_remove_worktree "$container" "$target" "$delete_branch" "$force"
   exit 0
 fi

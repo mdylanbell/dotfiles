@@ -7,14 +7,14 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune] [--with-branches] [-i|--interactive]
+  git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune-metadata] [--with-branches] [-i|--interactive]
 
 Remove worktrees whose branches are merged into origin/<default>.
 
 Options:
   --dry-run     Report what would be removed
   --verbose     Report reasons for skipped worktrees
-  --prune       Prune stale worktree entries before scanning
+  --prune-metadata  Prune stale worktree entries before scanning
   --with-branches  Delete merged branches (non-interactive)
   -i, --interactive  Confirm each removal and optional branch delete
 EOF
@@ -23,7 +23,7 @@ EOF
 dry_run=false
 verbose=false
 interactive=false
-prune=false
+prune_metadata=false
 with_branches=false
 container=""
 
@@ -41,8 +41,8 @@ while [[ $# -gt 0 ]]; do
       verbose=true
       shift
       ;;
-    --prune)
-      prune=true
+    --prune-metadata)
+      prune_metadata=true
       shift
       ;;
     --with-branches)
@@ -68,10 +68,22 @@ main_dir="$(wt_main_for "$container")"
 git_main() { git -C "$main_dir" "$@"; }
 
 default_branch="$(wt_default_branch_for "$container")"
-git_main fetch origin "$default_branch" --quiet || die "git fetch origin $default_branch failed"
+if $dry_run; then
+  if $verbose; then
+    echo "would fetch origin/$default_branch"
+  fi
+else
+  git_main fetch origin "$default_branch" --quiet || die "git fetch origin $default_branch failed"
+fi
 base_ref="origin/$default_branch"
 
-$prune && git_main worktree prune >/dev/null 2>&1 || true
+if $prune_metadata; then
+  if $dry_run; then
+    $verbose && echo "would run: git worktree prune"
+  else
+    git_main worktree prune >/dev/null 2>&1 || true
+  fi
+fi
 
 pwd_resolved="$(pwd -P)"
 

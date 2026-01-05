@@ -7,13 +7,13 @@ wt_require_gh
 usage() {
   cat <<'USAGE'
 Usage:
-  git-wt pr checkout [--container <path>] <PR_NUMBER> [slug]
-  git-wt pr update [--container <path>] <PR_NUMBER>
-  git-wt pr update [--container <path>] --all
-  git-wt pr reset [--container <path>] <PR_NUMBER> [--force]
-  git-wt pr recreate [--container <path>] <PR_NUMBER> [--force]
-  git-wt pr info [--container <path>] <PR_NUMBER> [--fetch]
-  git-wt pr info [--container <path>] --all [--fetch]
+  git-wt pr checkout [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [slug]
+  git-wt pr update [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
+  git-wt pr update [--container <path>] [--dry-run] [--verbose] --all
+  git-wt pr reset [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
+  git-wt pr recreate [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
+  git-wt pr info [--container <path>] [--verbose] <PR_NUMBER> [--fetch]
+  git-wt pr info [--container <path>] [--verbose] --all [--fetch]
 
 Creates worktree under:
   <container>/wt/pr-<num>[-<slug>]
@@ -27,6 +27,8 @@ args=()
 action=""
 force_reset=false
 fetch_info=false
+dry_run=false
+verbose=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -44,6 +46,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --fetch)
       fetch_info=true
+      shift
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
       shift
       ;;
     --all)
@@ -80,6 +90,44 @@ main_dir="$(wt_main_for "$container")"
 wt_dir="$(wt_wt_for "$container")"
 
 git_main() { git -C "$main_dir" "$@"; }
+
+if $dry_run; then
+  case "$action" in
+    info)
+      die "--dry-run is not applicable to git-wt pr info"
+      ;;
+    checkout)
+      pr="${args[0]:-}"
+      slug="${args[1]:-}"
+      [[ -z "$pr" || ${#args[@]} -gt 2 ]] && { usage; exit 2; }
+      echo "would checkout PR $pr${slug:+ (slug $slug)}"
+      exit 0
+      ;;
+    update)
+      if [[ "${args[0]:-}" == "--all" ]]; then
+        echo "would update all PR worktrees"
+      else
+        pr="${args[0]:-}"
+        [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+        echo "would update PR $pr"
+      fi
+      exit 0
+      ;;
+    reset)
+      pr="${args[0]:-}"
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      echo "would reset PR $pr"
+      exit 0
+      ;;
+    recreate)
+      pr="${args[0]:-}"
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      echo "would recreate PR $pr"
+      exit 0
+      ;;
+  esac
+fi
+
 mkdir -p "$wt_dir"
 
 pr_local_status() {
@@ -267,6 +315,7 @@ pr_confirm_action() {
 pr_update_one() {
   local pr_num="${1:?}"
   local pr_info
+  $verbose && echo "fetching PR metadata for $pr_num"
   pr_info="$(pr_fetch_info "$pr_num")"
 
   local head_ref head_sha head_full head_ssh head_clone base_full title base_ref author
@@ -279,6 +328,8 @@ pr_update_one() {
   local wt_path
   wt_path="$(pr_find_checked_out_path "$local_branch")"
   [[ -n "$wt_path" ]] || die "no checked-out worktree found for PR $pr_num"
+
+  $verbose && echo "updating PR $pr_num at $wt_path"
 
   if git -C "$wt_path" status --porcelain | grep -q .; then
     die "worktree is dirty; refusing to update: $wt_path"
@@ -308,6 +359,8 @@ pr_reset_one() {
   local wt_path
   wt_path="$(pr_find_checked_out_path "$local_branch")"
   [[ -n "$wt_path" ]] || die "no checked-out worktree found for PR $pr_num"
+
+  $verbose && echo "resetting PR $pr_num at $wt_path"
 
   local dirty=false
   if git -C "$wt_path" status --porcelain | grep -q .; then
@@ -393,6 +446,8 @@ pr_checkout_impl() {
     git_main fetch "$remote_name" "$head_ref:refs/heads/$local_branch"
   fi
 
+  $verbose && echo "creating PR worktree: $dest (branch $local_branch)"
+
   # TODO: Replace this implementation with gh-worktree once
   # https://github.com/eikster-dk/gh-worktree/pull/11 is released.
   git_main worktree add "$dest" "$local_branch"
@@ -477,6 +532,8 @@ pr_recreate_one() {
   done
 
   pr_confirm_action "${wt_path:-<none>}" "$head_ref" "$base_ref" "$head_repo" "$dirty" "${prompt_args[@]}"
+
+  $verbose && echo "recreating PR $pr_num"
 
   if [[ -n "$wt_path" ]]; then
     wt_remove_worktree "$container" "$wt_path" true "$force_reset"

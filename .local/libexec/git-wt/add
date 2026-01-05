@@ -6,8 +6,8 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt add [--container <path>] <branch>
-  git-wt add [--container <path>] -b <new-branch> [--base <branch>]
+  git-wt add [--container <path>] [--dry-run] [--verbose] <branch>
+  git-wt add [--container <path>] [--dry-run] [--verbose] -b <new-branch> [--base <branch>]
 
 Creates worktree under:
   <container>/wt/<branch>
@@ -21,6 +21,8 @@ branch=""
 container=""
 create_branch=false
 positional_count=0
+dry_run=false
+verbose=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -42,6 +44,14 @@ while [[ $# -gt 0 ]]; do
     -h | --help)
       usage
       exit 0
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
       ;;
     *)
       branch="${1:-}"
@@ -82,7 +92,11 @@ if $create_branch; then
   fi
 
   fetch_branch="${base_ref#origin/}"
-  git_main fetch origin "$fetch_branch" --quiet || die "failed to fetch origin/$fetch_branch"
+  if $dry_run; then
+    :
+  else
+    git_main fetch origin "$fetch_branch" --quiet || die "failed to fetch origin/$fetch_branch"
+  fi
 
   if git_main show-ref --verify --quiet "refs/heads/$branch"; then
     die "branch already exists: $branch (use git-wt add <branch> without -b)"
@@ -101,13 +115,21 @@ if [[ -z "$slug" ]]; then
   die "branch name slugifies to empty: $branch"
 fi
 dest="$wt_dir/$slug"
-if [[ -e "$dest" ]]; then
-  die "destination already exists: $dest"
-fi
+dest="$(wt_worktree_path_with_collision_suffix "$dest" "$branch")"
 
 if $create_branch; then
+  if $dry_run; then
+    echo "would add worktree: $dest (new branch $branch from $base_ref)"
+    exit 0
+  fi
+  $verbose && echo "creating worktree: $dest (new branch $branch from $base_ref)"
   git_main worktree add -b "$branch" "$dest" "$base_ref"
 else
+  if $dry_run; then
+    echo "would add worktree: $dest (branch $branch)"
+    exit 0
+  fi
+  $verbose && echo "creating worktree: $dest (branch $branch)"
   git_main worktree add "$dest" "$branch"
 fi
 

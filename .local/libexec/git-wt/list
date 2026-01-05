@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt list [--container <path>] [--verbose]
+
+List worktrees in the container.
+EOF
+}
+
+container=""
+dry_run=false
+verbose=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown flag: $1"
+      ;;
+  esac
+done
+
+if $dry_run; then
+  die "--dry-run is not applicable to git-wt list"
+fi
+
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+git_main() { git -C "$main_dir" "$@"; }
+
+$verbose && echo "container: $container"
+
+current_path=""
+current_branch=""
+while IFS= read -r line; do
+  if [[ -z "$line" ]]; then
+    if [[ -n "$current_path" ]]; then
+      branch_note="${current_branch:-<detached>}"
+      if $verbose; then
+        if git -C "$current_path" status --porcelain | grep -q .; then
+          echo "$branch_note  $current_path  (dirty)"
+        else
+          echo "$branch_note  $current_path  (clean)"
+        fi
+      else
+        echo "$branch_note  $current_path"
+      fi
+    fi
+    current_path=""
+    current_branch=""
+    continue
+  fi
+  case "$line" in
+    worktree\ *)
+      current_path="${line#worktree }"
+      ;;
+    branch\ refs/heads/*)
+      current_branch="${line#branch refs/heads/}"
+      ;;
+  esac
+done < <(git_main worktree list --porcelain)
+
+if [[ -n "$current_path" ]]; then
+  branch_note="${current_branch:-<detached>}"
+  if $verbose; then
+    if git -C "$current_path" status --porcelain | grep -q .; then
+      echo "$branch_note  $current_path  (dirty)"
+    else
+      echo "$branch_note  $current_path  (clean)"
+    fi
+  else
+    echo "$branch_note  $current_path"
+  fi
+fi

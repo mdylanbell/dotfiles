@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt status [--container <path>] [--verbose]
+
+Summarize status across worktrees.
+EOF
+}
+
+container=""
+dry_run=false
+verbose=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown flag: $1"
+      ;;
+  esac
+done
+
+if $dry_run; then
+  die "--dry-run is not applicable to git-wt status"
+fi
+
+container="$(wt_resolve_container "${container:-$PWD}")"
+main_dir="$(wt_main_for "$container")"
+git_main() { git -C "$main_dir" "$@"; }
+
+$verbose && echo "container: $container"
+
+current_path=""
+current_branch=""
+emit_status() {
+  local wt_path="$1"
+  local branch="$2"
+  local dirty="clean"
+  if git -C "$wt_path" status --porcelain | grep -q .; then
+    dirty="dirty"
+  fi
+
+  local upstream=""
+  if [[ -n "$branch" ]]; then
+    upstream="$(git -C "$wt_path" rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null || true)"
+  fi
+
+  local ahead=0
+  local behind=0
+  if [[ -n "$upstream" ]]; then
+    read -r ahead behind <<<"$(git -C "$wt_path" rev-list --left-right --count HEAD..."$upstream" 2>/dev/null || echo "0 0")"
+  fi
+
+  local branch_note="${branch:-<detached>}"
+  if [[ -n "$upstream" ]]; then
+    echo "$branch_note  $wt_path  ($dirty, ahead $ahead, behind $behind)"
+  else
+    echo "$branch_note  $wt_path  ($dirty, no upstream)"
+  fi
+}
+
+while IFS= read -r line; do
+  if [[ -z "$line" ]]; then
+    if [[ -n "$current_path" ]]; then
+      emit_status "$current_path" "$current_branch"
+    fi
+    current_path=""
+    current_branch=""
+    continue
+  fi
+  case "$line" in
+    worktree\ *)
+      current_path="${line#worktree }"
+      ;;
+    branch\ refs/heads/*)
+      current_branch="${line#branch refs/heads/}"
+      ;;
+  esac
+done < <(git_main worktree list --porcelain)
+
+if [[ -n "$current_path" ]]; then
+  emit_status "$current_path" "$current_branch"
+fi

@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt config show [--container <path>]
+  git-wt config get [--container <path>] <key>
+  git-wt config set [--container <path>] <key> <value>
+
+Keys:
+  default_branch
+  open.cmd
+EOF
+}
+
+action=""
+container=""
+args=()
+dry_run=false
+verbose=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    show|get|set)
+      action="$1"
+      shift
+      ;;
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+[[ -n "$action" ]] || { usage; exit 2; }
+
+container="$(wt_resolve_container "${container:-$PWD}")"
+config_path="$(wt_config_path "$container")"
+
+case "$action" in
+  show)
+    if $dry_run; then
+      die "--dry-run is not applicable to git-wt config show"
+    fi
+    if [[ ! -f "$config_path" ]]; then
+      default_branch="$(wt_default_branch_for "$container")"
+      cat <<EOF
+# git-wt.toml not found; showing defaults
+default_branch = "${default_branch}"
+
+[open]
+cmd = ""
+EOF
+      exit 0
+    fi
+    $verbose && echo "config: $config_path" >&2
+    cat "$config_path"
+    ;;
+  get)
+    if $dry_run; then
+      die "--dry-run is not applicable to git-wt config get"
+    fi
+    command -v python3 >/dev/null 2>&1 || die "python3 required to read git-wt.toml"
+    key="${args[0]:-}"
+    [[ -n "$key" && ${#args[@]} -eq 1 ]] || { usage; exit 2; }
+    $verbose && echo "config: $config_path" >&2
+    case "$key" in
+      default_branch)
+        value="$(wt_config_get_string "$container" default_branch)"
+        [[ -n "$value" ]] && echo "$value"
+        ;;
+      open.cmd)
+        value="$(wt_config_get_string "$container" open cmd)"
+        [[ -n "$value" ]] && echo "$value"
+        ;;
+      *)
+        die "unknown config key: $key"
+        ;;
+    esac
+    ;;
+  set)
+    key="${args[0]:-}"
+    value="${args[@]:1}"
+    [[ -n "$key" && -n "$value" && ${#args[@]} -ge 2 ]] || { usage; exit 2; }
+
+    if $dry_run; then
+      echo "would set $key in $config_path"
+      exit 0
+    fi
+
+    mkdir -p "$(dirname "$config_path")"
+    tmp="${config_path}.tmp.$$"
+
+    case "$key" in
+      default_branch)
+        if [[ -f "$config_path" ]]; then
+          awk -v val="$value" '
+            BEGIN { updated=0 }
+            /^default_branch[[:space:]]*=/ {
+              print "default_branch = \"" val "\""
+              updated=1
+              next
+            }
+            { print }
+            END {
+              if (!updated) {
+                print ""
+                print "default_branch = \"" val "\""
+              }
+            }
+          ' "$config_path" >"$tmp"
+        else
+          cat <<EOF >"$tmp"
+default_branch = "$value"
+EOF
+        fi
+        ;;
+      open.cmd)
+        if [[ -f "$config_path" ]]; then
+          awk -v val="$value" '
+            BEGIN { in_open=0; updated=0; wrote_section=0 }
+            /^[[]/ {
+              if (in_open && !updated) {
+                print "cmd = \"" val "\""
+                updated=1
+              }
+              in_open=0
+            }
+            /^\[open\]/ {
+              in_open=1
+              wrote_section=1
+            }
+            in_open && /^cmd[[:space:]]*=/ {
+              print "cmd = \"" val "\""
+              updated=1
+              next
+            }
+            { print }
+            END {
+              if (!wrote_section) {
+                print ""
+                print "[open]"
+                print "cmd = \"" val "\""
+              } else if (in_open && !updated) {
+                print "cmd = \"" val "\""
+              }
+            }
+          ' "$config_path" >"$tmp"
+        else
+          cat <<EOF >"$tmp"
+[open]
+cmd = "$value"
+EOF
+        fi
+        ;;
+      *)
+        die "unknown config key: $key"
+        ;;
+    esac
+
+    mv "$tmp" "$config_path"
+    $verbose && echo "updated $config_path"
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac

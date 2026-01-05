@@ -7,7 +7,7 @@ wt_require_git
 usage() {
   cat <<'EOF'
 Usage:
-  git-wt init [--protect-default=chain|false] <container_path> <remote_url>
+  git-wt init [--protect-default=chain|false] [--dry-run] [--verbose] <container_path> <remote_url>
 
 Examples:
   git-wt init ~/code/work/repoA git@github.com:ORG/repoA.git
@@ -17,6 +17,8 @@ EOF
 }
 
 protect_default=""
+dry_run=false
+verbose=false
 args=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -31,6 +33,14 @@ while [[ $# -gt 0 ]]; do
     -h | --help)
       usage
       exit 0
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
       ;;
     *)
       args+=("$1")
@@ -48,7 +58,6 @@ remote="${args[1]:-}"
 }
 
 container="$(wt_abs_path "$container")"
-mkdir -p "$container"
 
 main="$container/main"
 wt="$container/wt"
@@ -61,7 +70,28 @@ if [[ -d "$main/.git" || -f "$main/.git" ]]; then
   die "container already initialized: $container"
 fi
 
-mkdir -p "$main" "$wt"
+if $dry_run; then
+  echo "would create container: $container"
+  echo "would clone: $remote -> $main"
+  if [[ -z "$protect_default" ]]; then
+    echo "would install protection hooks"
+  else
+    echo "would apply protect-default: $protect_default"
+  fi
+  exit 0
+fi
+
+if $verbose; then
+  echo "container: $container"
+  echo "cloning: $remote -> $main"
+  if [[ -z "$protect_default" ]]; then
+    echo "protect-default: install"
+  else
+    echo "protect-default: $protect_default"
+  fi
+fi
+
+mkdir -p "$container" "$main" "$wt"
 git clone "$remote" "$main"
 wt_apply_protect_default "$main" "$protect_default"
 echo "$container"

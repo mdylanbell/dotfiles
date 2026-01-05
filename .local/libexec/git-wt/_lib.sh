@@ -20,6 +20,28 @@ wt_libexec_dir() {
   echo "$dir"
 }
 
+wt_config_path() {
+  local container="${1:?}"
+  echo "$container/git-wt.toml"
+}
+
+wt_config_get_string() {
+  local container="${1:?}"
+  shift
+  local config
+  config="$(wt_config_path "$container")"
+  [[ -f "$config" ]] || return 0
+  command -v python3 >/dev/null 2>&1 || die "python3 is required to read git-wt.toml"
+  local helper
+  helper="$(wt_libexec_dir)/_read_toml.py"
+  local out rc
+  out="$(python3 "$helper" string "$config" "$@" 2>/dev/null)" || rc=$?
+  if [[ ${rc:-0} -eq 5 ]]; then
+    die "python3 with tomllib is required to read git-wt.toml"
+  fi
+  echo "$out"
+}
+
 wt_abs_path() {
   local path="${1:?}"
   echo "$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
@@ -62,8 +84,31 @@ wt_slugify() {
   echo "$s"
 }
 
+wt_worktree_path_with_collision_suffix() {
+  local base_path="${1:?}"
+  local seed="${2:?}"
+  if [[ ! -e "$base_path" ]]; then
+    echo "$base_path"
+    return 0
+  fi
+  local hash
+  hash="$(printf "%s" "$seed" | git hash-object --stdin 2>/dev/null | cut -c1-6)"
+  [[ -n "$hash" ]] || die "failed to compute hash for path collision"
+  local candidate="${base_path}.${hash}"
+  if [[ -e "$candidate" ]]; then
+    die "path collision for $base_path (existing $candidate)"
+  fi
+  echo "$candidate"
+}
+
 wt_default_branch_for() {
   local container="${1:?}"
+  local override
+  override="$(wt_config_get_string "$container" default_branch)"
+  if [[ -n "$override" ]]; then
+    echo "$override"
+    return 0
+  fi
   local ref
   ref="$(git -C "$(wt_main_for "$container")" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || true)"
   ref="${ref#origin/}"
@@ -303,6 +348,30 @@ wt_branch_for_worktree_path() {
     esac
   done < <(wt_git_for "$container" worktree list --porcelain)
   echo "$branch"
+}
+
+wt_worktree_path_for_branch() {
+  local container="${1:?}"
+  local branch="${2:?}"
+  local current_path=""
+  local found_path=""
+  while IFS= read -r line; do
+    case "$line" in
+      worktree\ *)
+        current_path="${line#worktree }"
+        ;;
+      branch\ refs/heads/"$branch")
+        if [[ -n "$found_path" && "$found_path" != "$current_path" ]]; then
+          die "multiple worktrees found for branch: $branch"
+        fi
+        found_path="$current_path"
+        ;;
+    esac
+  done < <(wt_git_for "$container" worktree list --porcelain)
+  if [[ -z "$found_path" ]]; then
+    die "no worktree found for branch: $branch"
+  fi
+  echo "$found_path"
 }
 
 wt_delete_branch_if_safe() {

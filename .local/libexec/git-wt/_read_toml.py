@@ -3,7 +3,7 @@ import sys
 try:
     import tomllib
 except Exception:
-    sys.exit(0)
+    sys.exit(5)
 
 if len(sys.argv) < 4:
     sys.exit(2)
@@ -41,6 +41,15 @@ if mode == "bool":
     if not isinstance(cur, bool):
         sys.exit(4)
     print("true" if cur else "false")
+    sys.exit(0)
+
+if mode == "string":
+    if cur is None:
+        sys.exit(0)
+    if not isinstance(cur, str):
+        sys.exit(4)
+    if cur:
+        print(cur)
     sys.exit(0)
 
 sys.exit(0)

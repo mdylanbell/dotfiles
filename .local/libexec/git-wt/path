@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
+wt_require_git
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-wt path [--container <path>] <branch>
+
+Prints the worktree path for a branch.
+EOF
+}
+
+container=""
+branch=""
+dry_run=false
+verbose=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --container)
+      container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
+      shift 2
+      ;;
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --verbose)
+      verbose=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      if [[ -z "$branch" ]]; then
+        branch="$1"
+        shift
+        continue
+      fi
+      die "unknown flag: $1"
+      ;;
+  esac
+done
+
+[[ -n "$branch" ]] || { usage; exit 2; }
+
+if $dry_run; then
+  die "--dry-run is not applicable to git-wt path"
+fi
+
+container="$(wt_resolve_container "${container:-$PWD}")"
+$verbose && echo "container: $container" >&2
+wt_worktree_path_for_branch "$container" "$branch"

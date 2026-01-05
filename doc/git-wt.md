@@ -21,14 +21,21 @@ Each repository lives in a **container directory** with two fixed subfolders:
 git-wt uses `origin/HEAD` to resolve the default branch. If `origin/HEAD` is not
 set, it falls back to `main`.
 
+You can override the default branch by setting `default_branch` in
+`git-wt.toml` at the container root.
+
 ---
 
 ## Commands
 
+Notes:
+- `--verbose` is supported by all commands.
+- `--dry-run` is supported only by mutating commands (read-only commands will error if used).
+
 ### `git-wt init`
 
 ```
-git-wt init [--protect-default=chain|false] <path> <remote>
+git-wt init [--protect-default=chain|false] [--dry-run] [--verbose] <path> <remote>
 ```
 
 - Initializes the container layout under `<path>`.
@@ -41,7 +48,7 @@ git-wt init [--protect-default=chain|false] <path> <remote>
 ### `git-wt migrate`
 
 ```
-git-wt migrate [--protect-default=chain|false] <repo_path>
+git-wt migrate [--protect-default=chain|false] [--dry-run] [--verbose] <repo_path>
 ```
 
 - Converts an existing **clean** repo into the container layout.
@@ -53,13 +60,13 @@ git-wt migrate [--protect-default=chain|false] <repo_path>
 ### `git-wt pr`
 
 ```
-git-wt pr checkout [--container <path>] <PR_NUMBER> [slug]
-git-wt pr update [--container <path>] <PR_NUMBER>
-git-wt pr update [--container <path>] --all
-git-wt pr reset [--container <path>] <PR_NUMBER> [--force]
-git-wt pr recreate [--container <path>] <PR_NUMBER> [--force]
-git-wt pr info [--container <path>] <PR_NUMBER> [--fetch]
-git-wt pr info [--container <path>] --all [--fetch]
+git-wt pr checkout [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [slug]
+git-wt pr update [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
+git-wt pr update [--container <path>] [--dry-run] [--verbose] --all
+git-wt pr reset [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
+git-wt pr recreate [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
+git-wt pr info [--container <path>] [--verbose] <PR_NUMBER> [--fetch]
+git-wt pr info [--container <path>] [--verbose] --all [--fetch]
 ```
 
 - `checkout` creates a PR worktree under `wt/` and prints the path.
@@ -157,29 +164,87 @@ Resolution:
 ### `git-wt add`
 
 ```
-git-wt add [--container <path>] <branch>
-git-wt add [--container <path>] -b <new-branch> [--base <branch>]
+git-wt add [--container <path>] [--dry-run] [--verbose] <branch>
+git-wt add [--container <path>] [--dry-run] [--verbose] -b <new-branch> [--base <branch>]
 ```
 
 - For existing branches, checks out the worktree under:
 
 ```
-wt/<branch-name-slug>
+wt/<branch-name-slug>[.<hash>]
 ```
 
 - With `-b`, creates a new branch from `origin/<default>` (or `--base`) and
   checks it out to a worktree under:
 
 ```
-wt/<branch-name-slug>
+wt/<branch-name-slug>[.<hash>]
 ```
 
 - Prints the resulting path.
 
+### `git-wt path`
+
+```
+git-wt path [--container <path>] [--verbose] <branch>
+```
+
+- Prints the worktree path for a branch.
+- Errors if no worktree is checked out for that branch.
+
+Shell helper (optional, documentation-only):
+
+```bash
+git-wt-switch() {
+  local path
+  path="$(git-wt path "$1")" || return 1
+  cd "$path" || return 1
+}
+```
+
+### `git-wt list`
+
+```
+git-wt list [--container <path>] [--verbose]
+```
+
+- Lists worktrees in the container.
+- With `--verbose`, also shows dirty/clean status.
+
+### `git-wt status`
+
+```
+git-wt status [--container <path>] [--verbose]
+```
+
+- Shows summary status across worktrees.
+- Reports dirty state and ahead/behind where upstreams exist.
+
+### `git-wt open`
+
+```
+git-wt open [--container <path>] [--dry-run] [--verbose] <branch>
+```
+
+- Opens a worktree using the command configured in `git-wt.toml` (`open.cmd`).
+- Errors if `open.cmd` is not set (use `git-wt config set open.cmd "<command>"`).
+
+### `git-wt config`
+
+```
+git-wt config show [--container <path>] [--verbose]
+git-wt config get [--container <path>] [--verbose] <key>
+git-wt config set [--container <path>] [--dry-run] [--verbose] <key> <value>
+```
+
+Keys:
+- `default_branch`
+- `open.cmd`
+
 ### `git-wt sync`
 
 ```
-git-wt sync [--container <path>] [--prune]
+git-wt sync [--container <path>] [--prune] [--dry-run] [--verbose]
 ```
 
 - Fetches `origin` and fast-forwards `main/` to `origin/<default>`.
@@ -189,7 +254,7 @@ git-wt sync [--container <path>] [--prune]
 ### `git-wt clean`
 
 ```
-git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune] [--with-branches] [-i|--interactive]
+git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune-metadata] [--with-branches] [-i|--interactive]
 ```
 
 - Removes worktrees whose branches are merged into `origin/<default>`.
@@ -197,7 +262,7 @@ git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune] [--with-bran
   not merged.
 - `--dry-run` shows what would be removed.
 - `--verbose` shows why each skipped worktree was skipped.
-- `--prune` runs `git worktree prune` before scanning.
+- `--prune-metadata` runs `git worktree prune` before scanning.
 - `--with-branches` deletes merged branches that are not checked out.
 - `-i/--interactive` prompts for each worktree removal, and for branch deletions
   when used with `--with-branches`.
@@ -205,17 +270,33 @@ git-wt clean [--container <path>] [--dry-run] [--verbose] [--prune] [--with-bran
 ### `git-wt remove`
 
 ```
-git-wt remove [path] [--container <path>] [--delete-branch] [--force]
+git-wt remove [path] [--container <path>] [--delete-branch] [--force] [--dry-run] [--verbose]
 ```
 
 - Removes the worktree at `path` (defaults to current directory).
 - `--container` lets you target a container even when invoked elsewhere.
 - If `--delete-branch` is set, deletes the branch after removing the worktree.
 - `--force` passes through to `git worktree remove --force`.
+- `--dry-run` reports what would be removed.
 - If the worktree path is missing, `remove` errors and does not infer a branch.
   Delete the branch manually if needed.
 
 ---
+
+## Config
+
+`git-wt.toml` lives at the container root and stores git-wt configuration.
+Reading the config requires `python3` with `tomllib` available.
+If the file does not exist, `git-wt config show` prints defaults with a header.
+
+Supported keys:
+
+```toml
+default_branch = "main"
+
+[open]
+cmd = "code ."
+```
 
 ## Hooks
 
