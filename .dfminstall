@@ -1,5 +1,6 @@
 .cache recurse
 .config recurse
+.git-blame-ignore-revs skip
 .gitignore skip
 .gitmodules skip
 .local recurse
