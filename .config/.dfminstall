@@ -1,3 +1,4 @@
+direnv recurse
 python recurse
 tmux recurse
 zsh recurse
