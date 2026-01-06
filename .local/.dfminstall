@@ -1,2 +1,3 @@
 share recurse
 state recurse
+bin recurse
