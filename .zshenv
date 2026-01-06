@@ -7,6 +7,15 @@ if [ -f $ZDOTDIR/.zshenv ]; then
   source $ZDOTDIR/.zshenv
 fi
 
+# XDG_RUNTIME_DIR fallback for mac
+if [ -z "${XDG_RUNTIME_DIR}" ]; then
+    export XDG_RUNTIME_DIR="$TMPDIR/runtime-$UID"
+    if [ ! -d "${XDG_RUNTIME_DIR}" ]; then
+        mkdir -p "${XDG_RUNTIME_DIR}"
+        chmod 0700 "${XDG_RUNTIME_DIR}"
+    fi
+fi
+
 # cargo / rust
 if [ -f "${XDG_DATA_HOME}/cargo/env" ]; then
   source "$XDG_DATA_HOME"/cargo/env
