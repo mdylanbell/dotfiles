@@ -4,7 +4,7 @@
 
 [tasks.setup]
 description = "Install/upgrade global CLIs by language/tool; then reshim"
-depends = ["setup_node", "setup_gh"]
+depends = ["setup_node"]
 run = ["bat cache --build", "mise reshim"]
 
 # Node (global CLIs)
@@ -12,7 +12,7 @@ run = ["bat cache --build", "mise reshim"]
 description = "Node globals via npm; enable Corepack for repo-declared managers"
 run = ["corepack enable || true", "npm i -g npm", "npm i -g prettier"]
 
-# gh (GitHub cli)
+# gh (GitHub cli) :: can't run in main setup since we need to auth to github (gh auth login)
 [tasks.setup_gh]
 description = "Install gh extensions"
 run = [

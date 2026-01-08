@@ -8,8 +8,8 @@ if [ -f $ZDOTDIR/.zshenv ]; then
 fi
 
 # XDG_RUNTIME_DIR fallback for mac
-if [ -z "${XDG_RUNTIME_DIR}" ]; then
-    export XDG_RUNTIME_DIR="$TMPDIR/runtime-$UID"
+if [ -z "${XDG_RUNTIME_DIR-}" ]; then
+    export XDG_RUNTIME_DIR="${TMPDIR-/tmp}/runtime-$UID"
     if [ ! -d "${XDG_RUNTIME_DIR}" ]; then
         mkdir -p "${XDG_RUNTIME_DIR}"
         chmod 0700 "${XDG_RUNTIME_DIR}"
