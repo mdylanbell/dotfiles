@@ -5,6 +5,7 @@
 .gitmodules skip
 .local recurse
 .ssh recurse
+Dockerfile.test.local skip
 Brewfile skip
 README.md skip
 doc skip

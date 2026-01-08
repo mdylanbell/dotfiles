@@ -1,0 +1,38 @@
+# Use the latest LTS Ubuntu
+FROM ubuntu:24.04
+
+# Set environment variables for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+# Install minimal system packages needed to bootstrap
+RUN apt-get update && apt-get install -y \
+  sudo \
+  build-essential \
+  libc6-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+# Enable skip-git mode for bootstrap script
+ENV DOTFILES_SKIP_GIT=1
+
+# Create a test user and add to sudo group
+RUN useradd -m -s /usr/bin/zsh tester
+RUN usermod -aG sudo tester
+
+# Allow the tester user to use sudo without a password (for easy testing)
+RUN echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-tester-sudo \
+  && echo "Defaults:tester !authenticate" > /etc/sudoers.d/91-tester-nopasswd \
+  && chmod 0440 /etc/sudoers.d/90-tester-sudo /etc/sudoers.d/91-tester-nopasswd
+
+# Prepare a mount point for the dotfiles repo
+RUN mkdir -p /home/tester/.dotfiles \
+  && chown -R tester:tester /home/tester/.dotfiles
+
+# Set the working directory to the mounted dotfiles
+WORKDIR /home/tester/
+
+# Switch to the test user for subsequent commands
+USER tester
+
+# Default command when the container runs: bootstrap the dotfiles
+CMD ["/bin/bash", "-lc", "/home/tester/.dotfiles/.local/bin/bootstrap_env"]
