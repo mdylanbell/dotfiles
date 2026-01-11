@@ -38,7 +38,7 @@ zinit update --parallel --all
 
 [tasks.update_submodules]
 description = "Update git submodules in dotfiles repo"
-run = ["git -C $HOME/.dotfiles submodule foreach git pull"]
+run = ["git -C $HOME/.dotfiles submodule update --remote"]
 
 [tasks.update_package_managers]
 description = "Update package managers (pip, npm, etc.)"
