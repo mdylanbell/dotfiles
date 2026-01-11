@@ -1,0 +1,7 @@
+echo "VIRTUAL_ENV: ${VIRTUAL_ENV}"
+
+if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
+  echo "VIRTUAL_ENV not set or dir doesn't exist"
+fi
+
+echo "python: $(which python) :: $(python --version) :: $(ls -al $(which python))"
