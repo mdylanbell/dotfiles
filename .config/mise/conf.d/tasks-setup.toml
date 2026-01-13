@@ -4,13 +4,18 @@
 
 [tasks.setup]
 description = "Install/upgrade global CLIs by language/tool; then reshim"
-depends = ["setup_node"]
+depends = ["setup_node", "setup_colors"]
 run = ["bat cache --build", "mise reshim"]
 
 # Node (global CLIs)
 [tasks.setup_node]
 description = "Node globals via npm; enable Corepack for repo-declared managers"
 run = ["corepack enable || true", "npm i -g npm", "npm i -g prettier"]
+
+# setup misc colors (fast-syntax-highlighting)
+[tasks.setup_colors]
+description = "Install misc colors"
+run = ["fast-theme XDG:catppuccin-mocha"]
 
 # gh (GitHub cli) :: can't run in main setup since we need to auth to github (gh auth login)
 [tasks.setup_gh]
