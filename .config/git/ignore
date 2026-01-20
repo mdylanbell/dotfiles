@@ -1,9 +1,2 @@
-.svn
 .DS_Store
-*.sw?
-.AppleDouble
-Build
-_build
-blib
-tags
-Session*.vim
+.markdownlint.yaml
