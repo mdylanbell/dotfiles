@@ -1,2 +1,9 @@
+# mac
 .DS_Store
-.markdownlint.yaml
+
+# mise local
+mise.local.toml
+mise.*.local.toml
+
+# claude
+**/.claude/settings.local.json
