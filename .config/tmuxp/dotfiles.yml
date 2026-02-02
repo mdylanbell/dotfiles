@@ -2,9 +2,11 @@ session_name: dotfiles
 windows:
   - window_name: home
     start_directory: "~"
-  - window_name: zsh
-    start_directory: "~/.dotfiles/.config/zsh"
   - window_name: nvim
     start_directory: "~/.dotfiles/.config/nvim"
   - window_name: mise
     start_directory: "~/.dotfiles/.config/mise"
+  - window_name: zsh
+    start_directory: "~/.dotfiles/.config/zsh"
+  - window_name: tmux
+    start_directory: "~/.dotfiles/.config/tmux"

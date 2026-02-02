@@ -1,4 +1,15 @@
 session_name: switchboard
-start_directory: "~/code/work/idsb/switchboard"
+start_directory: "~/code/work/idsb/"
 windows:
+  - window_name: overview
+    layout: main-vertical
+    options:
+      main-pane-width: 67%
+    panes:
+      - shell_command: gh dash
+      - shell_command: git-wt status
   - window_name: root
+  - window_name: main
+    start_directory: "main"
+  - window_name: wt0
+    start_directory: "wt"
