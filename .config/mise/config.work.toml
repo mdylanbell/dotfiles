@@ -4,3 +4,7 @@ terraform = "latest"
 helm = "latest"
 python = "3.11"
 poetry = "latest"
+
+[tasks.update_for_env]
+description = "Update tools for environment: work"
+run = ["claude update"]

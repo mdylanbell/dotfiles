@@ -9,16 +9,12 @@ depends = [
   "update_zinit",
   "update_package_managers",
   "update_nvim",
-  "update_pipx",
+  "update_python_tools",
   "update_submodules",
   "update_gh",
+  "update_for_env",
 ]
-run = [
-  "bat cache --build",
-  "pip install --upgrade tmuxp",
-  "npm i -g @openai/codex",
-  "echo Updates completed at $(date)",
-]
+run = ["bat cache --build", "echo Updates completed at $(date)"]
 
 [tasks.update_brew]
 description = "Update Homebrew and all installed formulae/casks"
@@ -53,9 +49,9 @@ run = [
   "nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'",
 ]
 
-[tasks.update_pipx]
+[tasks.update_python_tools]
 description = "Update all pipx packages"
-run = ["pipx upgrade-all"]
+run = ["pipx upgrade-all", "pip install --upgrade tmuxp"]
 
 # Rebuild pipx shims after changing Python minor/patch
 [tasks.python_rebuild]

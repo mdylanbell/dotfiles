@@ -1,3 +1,7 @@
 [env]
 # automatically create a virtualenv in .cache/venv
 _.python.venv = { path = "{{env.XDG_CACHE_HOME}}/venv/default", create = true }
+
+[tasks.update_for_env]
+description = "Update tools for environment: personal"
+run = ["npm i -g @openai/codex"]
