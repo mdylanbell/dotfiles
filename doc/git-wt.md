@@ -300,7 +300,7 @@ cmd = "code ."
 
 ## Hooks
 
-Hooks allow repo-specific automation after PR worktrees are created.
+Hooks allow repo-specific automation after worktrees are created.
 
 ### Configuration
 
@@ -309,21 +309,35 @@ Create `git-wt.toml` in the container root:
 ```toml
 [hooks]
 pr_checkout = ["poetry-install-changed"]
+add = ["poetry-install-changed"]
 
 [hooks.poetry-install-changed]
 direnv_allow = false
+
+[hooks.bootstrap]
+cmd = "make setup"
+# cmd can also be a list of strings, joined with newlines
+# cmd = ["echo 'bootstrapping...'", "direnv allow", "make setup"]
+# shell = "bash" (optional, defaults to bash)
 ```
 
 ### Behavior
 
-- Hooks run **serially** after a PR worktree is created.
+- Hooks run **serially** after the action completes.
+- `hooks.pr_checkout` runs after `git-wt pr checkout` creates a worktree (cwd = new worktree).
+- `hooks.add` runs after `git-wt add` creates a worktree (cwd = new worktree).
+- `hooks.remove` runs after `git-wt remove` removes a worktree (cwd = container root).
+- `hooks.sync` runs after `git-wt sync` fast-forwards the main worktree (cwd = main worktree).
+- `hooks.clean` runs after `git-wt clean` completes (cwd = container root).
 - Hooks must exist at:
 
 ```
 ~/.local/libexec/git-wt/hooks/<hook-name>
 ```
 
-- Missing or non-executable hooks cause `git-wt pr` to fail.
+- Missing or non-executable hooks (with no inline `cmd`) cause `git-wt pr checkout` or `git-wt add` to fail.
+- Missing or non-executable hooks (with no inline `cmd`) cause `git-wt remove`, `git-wt sync`, or `git-wt clean` to fail.
+- If `hooks.<name>.cmd` is set, the hook runs via `<shell> -lc <cmd>` inside the hook's working directory.
 - Hooks run with `cwd` set to the new worktree.
 - Hook failure removes the worktree and exits non-zero.
 

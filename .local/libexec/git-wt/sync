@@ -72,4 +72,12 @@ $verbose && echo "fast-forwarding main to origin/$default_branch"
 git_main checkout "$default_branch" || die "git checkout $default_branch failed"
 git_main merge --ff-only "origin/$default_branch"
 
+set +e
+wt_run_sync_hooks "$container" "$main_dir"
+hook_rc=$?
+set -e
+if [[ $hook_rc -ne 0 ]]; then
+  die "sync hooks failed"
+fi
+
 echo "$main_dir"

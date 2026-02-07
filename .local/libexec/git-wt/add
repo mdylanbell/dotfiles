@@ -133,4 +133,13 @@ else
   git_main worktree add "$dest" "$branch"
 fi
 
+set +e
+wt_run_add_hooks "$dest" "$container"
+hook_rc=$?
+set -e
+if [[ $hook_rc -ne 0 ]]; then
+  git_main worktree remove "$dest" >/dev/null 2>&1 || true
+  die "add hooks failed"
+fi
+
 echo "$dest"

@@ -223,30 +223,64 @@ wt_apply_protect_default() {
   wt_install_protect_hooks "$main_dir"
 }
 
-wt_hooks_pr_checkout() {
-  local container="${1:?}"
+wt_hooks() {
+  local kind="${1:?}"
+  local container="${2:?}"
   local config="$container/git-wt.toml"
   [[ -f "$config" ]] || return 0
   command -v python3 >/dev/null 2>&1 || die "python3 required to read $config"
   local helper
   helper="$(wt_libexec_dir)/_read_toml.py"
   local hooks_out
-  hooks_out="$(python3 "$helper" list "$config" hooks pr_checkout)" || {
-    die "invalid hooks.pr_checkout in $config"
+  hooks_out="$(python3 "$helper" list "$config" hooks "$kind")" || {
+    die "invalid hooks.$kind in $config"
   }
   [[ -n "$hooks_out" ]] || return 0
   printf "%s\n" "$hooks_out"
 }
 
-wt_run_pr_checkout_hooks() {
-  local dest="$1"
-  local container="${2:-}"
+wt_hook_cmd() {
+  local container="${1:?}"
+  local hook="${2:?}"
+  local config="$container/git-wt.toml"
+  [[ -f "$config" ]] || return 0
+  command -v python3 >/dev/null 2>&1 || die "python3 required to read $config"
+  local helper
+  helper="$(wt_libexec_dir)/_read_toml.py"
+  local cmd
+  cmd="$(python3 "$helper" string_or_list "$config" hooks "$hook" cmd)" || {
+    die "invalid hooks.$hook.cmd in $config"
+  }
+  [[ -n "$cmd" ]] || return 0
+  printf "%s\n" "$cmd"
+}
+
+wt_hook_shell() {
+  local container="${1:?}"
+  local hook="${2:?}"
+  local config="$container/git-wt.toml"
+  [[ -f "$config" ]] || return 0
+  command -v python3 >/dev/null 2>&1 || die "python3 required to read $config"
+  local helper
+  helper="$(wt_libexec_dir)/_read_toml.py"
+  local shell
+  shell="$(python3 "$helper" string "$config" hooks "$hook" shell)" || {
+    die "invalid hooks.$hook.shell in $config"
+  }
+  [[ -n "$shell" ]] || return 0
+  printf "%s\n" "$shell"
+}
+
+wt_run_hooks() {
+  local kind="${1:?}"
+  local container="${2:?}"
+  local workdir="${3:?}"
   local hooks_dir
   hooks_dir="$(wt_libexec_dir)/hooks"
   local hooks=()
   while IFS= read -r h; do
     [[ -n "$h" ]] && hooks+=("$h")
-  done < <(wt_hooks_pr_checkout "$container")
+  done < <(wt_hooks "$kind" "$container")
 
   if [[ ${#hooks[@]} -eq 0 ]]; then
     return 0
@@ -254,7 +288,9 @@ wt_run_pr_checkout_hooks() {
 
   for h in "${hooks[@]}"; do
     local hook_path="$hooks_dir/$h"
-    if [[ ! -x "$hook_path" ]]; then
+    local hook_cmd=""
+    hook_cmd="$(wt_hook_cmd "$container" "$h" || true)"
+    if [[ -z "$hook_cmd" && ! -x "$hook_path" ]]; then
       echo "git-wt: hook not found or not executable: $hook_path" >&2
       return 1
     fi
@@ -262,8 +298,45 @@ wt_run_pr_checkout_hooks() {
 
   for h in "${hooks[@]}"; do
     local hook_path="$hooks_dir/$h"
-    (cd "$dest" && "$hook_path")
+    local hook_cmd=""
+    hook_cmd="$(wt_hook_cmd "$container" "$h" || true)"
+    if [[ -n "$hook_cmd" ]]; then
+      local hook_shell=""
+      hook_shell="$(wt_hook_shell "$container" "$h" || true)"
+      hook_shell="${hook_shell:-bash}"
+      (cd "$workdir" && "$hook_shell" -lc "$hook_cmd")
+    else
+      (cd "$workdir" && "$hook_path")
+    fi
   done
+}
+
+wt_run_pr_checkout_hooks() {
+  local dest="$1"
+  local container="${2:-}"
+  wt_run_hooks "pr_checkout" "$container" "$dest"
+}
+
+wt_run_add_hooks() {
+  local dest="$1"
+  local container="${2:-}"
+  wt_run_hooks "add" "$container" "$dest"
+}
+
+wt_run_remove_hooks() {
+  local container="${1:?}"
+  wt_run_hooks "remove" "$container" "$container"
+}
+
+wt_run_sync_hooks() {
+  local container="${1:?}"
+  local workdir="${2:?}"
+  wt_run_hooks "sync" "$container" "$workdir"
+}
+
+wt_run_clean_hooks() {
+  local container="${1:?}"
+  wt_run_hooks "clean" "$container" "$container"
 }
 
 wt_repo_slug() {

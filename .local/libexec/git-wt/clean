@@ -272,3 +272,13 @@ if $with_branches; then
     fi
   done < <(git_main for-each-ref --format='%(refname:short)' refs/heads)
 fi
+
+if ! $dry_run; then
+  set +e
+  wt_run_clean_hooks "$container"
+  hook_rc=$?
+  set -e
+  if [[ $hook_rc -ne 0 ]]; then
+    die "clean hooks failed"
+  fi
+fi

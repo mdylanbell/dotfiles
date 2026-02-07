@@ -84,6 +84,13 @@ if [[ -e "$target" ]]; then
   fi
   $verbose && echo "removing worktree: $target"
   wt_remove_worktree "$container" "$target" "$delete_branch" "$force"
+  set +e
+  wt_run_remove_hooks "$container"
+  hook_rc=$?
+  set -e
+  if [[ $hook_rc -ne 0 ]]; then
+    die "remove hooks failed"
+  fi
   exit 0
 fi
 
