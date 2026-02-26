@@ -1,0 +1,18 @@
+# require main brewfile
+require_relative 'Brewfile' # make this work?
+
+tap "derailed/k9s"
+tap "petere/postgresql"
+brew "awscli"
+brew "direnv"
+brew "docker-credential-helper-ecr"
+brew "helmfile"
+brew "kubectx"
+brew "libpq"
+brew "sqlfluff"
+brew "trufflehog"
+brew "derailed/k9s/k9s"
+brew "petere/postgresql/postgresql-common"
+brew "petere/postgresql/postgresql@13"
+brew "petere/postgresql/postgresql@17"
+cask "openlens"

@@ -4,6 +4,7 @@ terraform = "latest"
 helm = "latest"
 python = "3.11"
 "pipx:poetry" = "latest"
+node = { version = "22", postinstall = "corepack enable" }
 
 [tasks.update_for_env]
 description = "Update tools for environment: work"
