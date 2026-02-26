@@ -1,3 +1,8 @@
+[tools]
+node = { version = "lts", postinstall = "corepack enable" }
+rust = "stable"
+go = "1.24"
+
 [env]
 # automatically create a virtualenv in .cache/venv
 _.python.venv = { path = "{{env.XDG_CACHE_HOME}}/venv/default", create = true }
