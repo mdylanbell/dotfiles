@@ -1,5 +1,6 @@
 [tools]
 node = { version = "lts", postinstall = "corepack enable" }
+pipx = "latest"
 python = "3.12"
 
 [settings]
