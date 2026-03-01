@@ -5,6 +5,9 @@
 -- Prefer pyright (standard) for Python LSP
 vim.g.lazyvim_python_lsp = "basedpyright"
 
+-- Prefer ruff over black
+vim.g.lazyvim_python_ruff = "ruff"
+
 vim.api.nvim_create_user_command("ReviewPR", function()
   require("config.review").review_pr_command()
 end, {})
