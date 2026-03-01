@@ -1,10 +1,15 @@
 return {
   "folke/snacks.nvim",
   optional = true,
-  -- keep LazyVim's merged opts; we just run setup, then patch the factory
+
+  --   keep LazyVim's merged opts; we just run setup, then patch the factory
   config = function(_, opts)
     local Snacks = require("snacks")
     opts = opts or {}
+
+    --
+    -- Add Review PR to dashboard
+    --
 
     opts.dashboard = opts.dashboard or {}
     opts.dashboard.preset = opts.dashboard.preset or {}
@@ -36,9 +41,23 @@ return {
       end
     end
 
+    -- Enable hidden files in picker by default
+
+    opts.picker = {
+      sources = {
+        explorer = {
+          hidden = true,
+        },
+      },
+    }
+
     Snacks.setup(opts)
 
-    -- Edit your root markers here
+    --
+    -- Update dashboard to support projects inside mono-repos
+    --
+
+    -- Root markers for mono-repo handling
     local markers = { ".git", "pyproject.toml" }
 
     -- Neovim 0.10+: prefer vim.fs.root; fall back to find+dirname if needed
@@ -104,7 +123,7 @@ return {
           end
         end
 
-        add(dirs_fn)   -- our mono‑repo aware roots first
+        add(dirs_fn) -- our mono‑repo aware roots first
         add(user_dirs) -- user-provided roots after
         return out
       end
