@@ -1,6 +1,7 @@
 # System utilities only (languages managed by mise)
 brew "gcc"  # gcc should be first!
 brew "ast-grep"
+brew "bash"
 brew "bat"
 brew "bat-extras"
 brew "btop"
