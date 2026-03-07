@@ -452,7 +452,6 @@ wt_delete_branch_if_safe() {
   local branch="${2:?}"
   local main_dir
   main_dir="$(wt_main_for "$container")"
-  local git_main
   git_main() { git -C "$main_dir" "$@"; }
 
   local default_branch
@@ -478,7 +477,6 @@ wt_remove_worktree() {
 
   local main_dir
   main_dir="$(wt_main_for "$container")"
-  local git_main
   git_main() { git -C "$main_dir" "$@"; }
 
   local branch default_branch pr_num

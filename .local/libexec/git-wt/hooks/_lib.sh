@@ -13,7 +13,8 @@ hook_default_branch() {
 }
 
 hook_changed_files() {
-  local base="origin/$(hook_default_branch)"
+  local base
+  base="origin/$(hook_default_branch)"
   git fetch origin "${base#origin/}" --quiet || true
   git diff --name-only "$base...HEAD"
 }

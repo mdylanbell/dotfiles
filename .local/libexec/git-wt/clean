@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
-remove_cmd="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/remove"
 wt_require_git
 
 usage() {

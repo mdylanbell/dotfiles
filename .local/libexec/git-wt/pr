@@ -506,7 +506,7 @@ pr_recreate_one() {
     local base_name
     base_name="$(basename "$wt_path")"
     case "$base_name" in
-      pr-"$pr_num"-*) slug="${base_name#pr-$pr_num-}" ;;
+      pr-"$pr_num"-*) slug="${base_name#pr-"$pr_num"-}" ;;
       pr-"$pr_num") slug="" ;;
       *) slug="" ;;
     esac

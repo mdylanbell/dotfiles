@@ -99,7 +99,7 @@ EOF
     ;;
   set)
     key="${args[0]:-}"
-    value="${args[@]:1}"
+    value="${args[*]:1}"
     [[ -n "$key" && -n "$value" && ${#args[@]} -ge 2 ]] || { usage; exit 2; }
 
     if $dry_run; then
