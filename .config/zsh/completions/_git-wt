@@ -1,0 +1,296 @@
+#compdef git-wt
+
+_git_wt_detect_container() {
+  local dir="$PWD"
+  while [[ "$dir" != "/" ]]; do
+    if [[ -d "$dir/main" && -d "$dir/wt" ]]; then
+      print -r -- "$dir"
+      return 0
+    fi
+    dir="${dir:h}"
+  done
+  return 1
+}
+
+_git_wt_container() {
+  if [[ -n "${opt_args[--container]:-}" ]]; then
+    print -r -- "${opt_args[--container]}"
+    return 0
+  fi
+  _git_wt_detect_container
+}
+
+_git_wt_main_dir() {
+  local container
+  container="$(_git_wt_container)" || return 1
+  [[ -d "$container/main" ]] || return 1
+  print -r -- "$container/main"
+}
+
+_git_wt_complete_branches() {
+  local main_dir
+  main_dir="$(_git_wt_main_dir)" || return 1
+
+  local -a branches
+  branches=("${(@f)$(git -C "$main_dir" for-each-ref --format='%(refname:short)' refs/heads 2>/dev/null)}")
+  (( ${#branches[@]} > 0 )) || return 1
+  _describe -t branches 'branch' branches
+}
+
+_git_wt_complete_pr_numbers() {
+  local main_dir
+  main_dir="$(_git_wt_main_dir)" || return 1
+
+  local -a refs prs
+  local ref
+  refs=("${(@f)$(git -C "$main_dir" for-each-ref --format='%(refname:short)' refs/heads/pr 2>/dev/null)}")
+  for ref in "${refs[@]}"; do
+    if [[ "$ref" == pr/<-> ]]; then
+      prs+=("${ref#pr/}")
+    fi
+  done
+  typeset -U prs
+  (( ${#prs[@]} > 0 )) || return 1
+  _describe -t prs 'pull request' prs
+}
+
+_git_wt_complete_config_keys() {
+  local -a keys
+  keys=(default_branch open.cmd)
+  _describe -t config-keys 'config key' keys
+}
+
+_git_wt_cmd_init() {
+  _arguments -s -S \
+    '--protect-default=[default-branch protection mode]:mode:(chain false)' \
+    '--protect-default==-:mode:(chain false)' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:container path:_files -/' \
+    '2:remote URL:_guard "^-" "remote URL"'
+}
+
+_git_wt_cmd_migrate() {
+  _arguments -s -S \
+    '--protect-default=[default-branch protection mode]:mode:(chain false)' \
+    '--protect-default==-:mode:(chain false)' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:repo path:_files -/'
+}
+
+_git_wt_cmd_add() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '-b[create a new branch]:new branch name:_guard "^-" "branch name"' \
+    '--base=[base branch for -b]:base branch:_git_wt_complete_branches' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '*:branch:_git_wt_complete_branches'
+}
+
+_git_wt_cmd_path() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--verbose[show container path in output]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:branch:_git_wt_complete_branches'
+}
+
+_git_wt_cmd_list() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--verbose[show dirty/clean state]' \
+    '-h[show help]' \
+    '--help[show help]'
+}
+
+_git_wt_cmd_status() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--verbose[show container path in output]' \
+    '-h[show help]' \
+    '--help[show help]'
+}
+
+_git_wt_cmd_open() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--dry-run[show command without running it]' \
+    '--verbose[show detailed execution]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:branch:_git_wt_complete_branches'
+}
+
+_git_wt_cmd_config() {
+  local curcontext="$curcontext" state
+  typeset -A opt_args
+
+  _arguments -C -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:action:(show get set)' \
+    '*::args:->config_args'
+
+  case "$state" in
+    config_args)
+      case "${words[2]:-}" in
+        get)
+          _arguments '1:key:_git_wt_complete_config_keys'
+          ;;
+        set)
+          if (( CURRENT == 3 )); then
+            _git_wt_complete_config_keys
+          elif (( CURRENT == 4 )); then
+            _message 'value'
+          fi
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_git_wt_cmd_sync() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--prune[prune stale remote-tracking refs]' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]'
+}
+
+_git_wt_cmd_clean() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--dry-run[show planned removals without changing anything]' \
+    '--verbose[show skipped reasons and removals]' \
+    '--prune-metadata[prune stale worktree metadata before scanning]' \
+    '--with-branches[delete merged local branches]' \
+    '-i[interactive confirmations]' \
+    '--interactive[interactive confirmations]' \
+    '-h[show help]' \
+    '--help[show help]'
+}
+
+_git_wt_cmd_remove() {
+  _arguments -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--delete-branch[delete branch after worktree removal]' \
+    '--force[force worktree removal]' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:worktree path:_files -/'
+}
+
+_git_wt_cmd_pr() {
+  local curcontext="$curcontext" state
+  typeset -A opt_args
+
+  _arguments -C -s -S \
+    '--container=[container path]:container path:_files -/' \
+    '--force[force reset/recreate even if dirty]' \
+    '--fetch[fetch metadata before showing info]' \
+    '--dry-run[show planned actions without changing anything]' \
+    '--verbose[show detailed progress]' \
+    '--all[apply action to all tracked PR worktrees]' \
+    '-h[show help]' \
+    '--help[show help]' \
+    '1:action:(checkout update reset recreate info)' \
+    '*::args:->pr_args'
+
+  case "$state" in
+    pr_args)
+      case "${words[2]:-}" in
+        checkout)
+          if (( CURRENT == 3 )); then
+            _message 'PR number'
+          elif (( CURRENT == 4 )); then
+            _message 'optional slug'
+          fi
+          ;;
+        update)
+          if (( CURRENT == 3 )) && [[ -z "${opt_args[--all]:-}" ]]; then
+            _git_wt_complete_pr_numbers || _message 'PR number'
+          fi
+          ;;
+        reset|recreate)
+          if (( CURRENT == 3 )); then
+            _git_wt_complete_pr_numbers || _message 'PR number'
+          fi
+          ;;
+        info)
+          if (( CURRENT == 3 )) && [[ -z "${opt_args[--all]:-}" ]]; then
+            _git_wt_complete_pr_numbers || _message 'PR number'
+          fi
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_git_wt() {
+  local curcontext="$curcontext" state
+  typeset -A opt_args
+
+  # Fast path: ensure action completion works at `git-wt pr <TAB>`.
+  if [[ "${words[2]:-}" == "pr" && CURRENT -eq 3 ]]; then
+    _values 'action' checkout update reset recreate info
+    return
+  fi
+
+  _arguments -C \
+    '1:command:(init migrate pr add path list status open config sync clean remove)' \
+    '*::arg:->subcommand'
+
+  case "$state" in
+    subcommand)
+      case "${words[2]}" in
+        init|migrate|pr|add|path|list|status|open|config|sync|clean|remove)
+          local -a original_words
+          local original_current
+          original_words=("${words[@]}")
+          original_current=$CURRENT
+
+          # Shift away the top-level command so subcommand parsers see
+          # their own argv shape (e.g. "pr <action> ...").
+          words=("${words[@]:1}")
+          (( CURRENT-- ))
+
+          case "${words[1]}" in
+            init) _git_wt_cmd_init ;;
+            migrate) _git_wt_cmd_migrate ;;
+            pr) _git_wt_cmd_pr ;;
+            add) _git_wt_cmd_add ;;
+            path) _git_wt_cmd_path ;;
+            list) _git_wt_cmd_list ;;
+            status) _git_wt_cmd_status ;;
+            open) _git_wt_cmd_open ;;
+            config) _git_wt_cmd_config ;;
+            sync) _git_wt_cmd_sync ;;
+            clean) _git_wt_cmd_clean ;;
+            remove) _git_wt_cmd_remove ;;
+          esac
+
+          words=("${original_words[@]}")
+          CURRENT=$original_current
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_git_wt "$@"
