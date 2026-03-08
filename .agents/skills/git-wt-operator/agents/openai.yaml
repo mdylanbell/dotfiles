@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git WT Operator"
+  short_description: "Bootstrap repos into git-wt containers and work in branch worktrees."
+  default_prompt: "Set up git-wt containers and execute coding tasks in the correct branch worktree."

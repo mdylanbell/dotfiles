@@ -10,3 +10,5 @@ Brewfile skip
 Brewfile.work skip
 README.md skip
 doc skip
+.codex recurse
+.claude recurse
