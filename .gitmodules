@@ -6,3 +6,6 @@
   path = .local/share/tmux/plugins/tpm
   url = https://github.com/tmux-plugins/tpm
   branch = master
+[submodule ".codex/superpowers"]
+	path = .codex/superpowers
+	url = https://github.com/obra/superpowers.git
