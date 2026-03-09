@@ -1,0 +1,33 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+web_search = "cached"
+
+[features]
+multi_agent = true
+shell_snapshot = true
+
+[sandbox_workspace_write]
+exclude_tmpdir_env_var = false
+exclude_slash_tmp = false
+# writable_roots = ["/Users/YOU/.pyenv/shims"]
+network_access = true
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+
+# local basic-memory
+# [mcp_servers.basicmemory]
+# command = "uvx"
+# args = ["basic-memory", "mcp"]
+
+[mcp_servers.basic-memory]
+url = "http://192.168.1.110:8091/mcp"
+startup_timeout_sec = 15
+tool_timeout_sec = 120
+
+[notice.model_migrations]
+"gpt-5.1-codex-max" = "gpt-5.2-codex"
+"gpt-5.2-codex" = "gpt-5.3-codex"
+"gpt-5.3-codex" = "gpt-5.4"

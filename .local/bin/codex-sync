@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# based on https://github.com/mattmorgis/.dotfiles/blob/main/scripts/codex-sync.sh
+
+codex_home="${CODEX_HOME:-$HOME/.codex}"
+base_config="${codex_home}/config.base.toml"
+dest_config="${codex_home}/config.toml"
+
+tmp_file="$(mktemp)"
+trap 'rm -f "${tmp_file}"' EXIT
+
+if [[ ! -f "${base_config}" ]]; then
+  echo "Base config not found: ${base_config}" >&2
+  exit 1
+fi
+
+sed "s|\$HOME|${HOME}|g" "${base_config}" >"${tmp_file}"
+
+if [[ -f "${dest_config}" ]]; then
+  preserved_projects="$(mktemp)"
+  trap 'rm -f "${tmp_file}" "${preserved_projects}"' EXIT
+
+  awk '
+    BEGIN { in_projects = 0 }
+    /^\[projects\./ { in_projects = 1; print; next }
+    /^\[/ { in_projects = 0 }
+    { if (in_projects) print }
+  ' "${dest_config}" >"${preserved_projects}"
+
+  if [[ -s "${preserved_projects}" ]]; then
+    printf "\n" >>"${tmp_file}"
+    cat "${preserved_projects}" >>"${tmp_file}"
+  fi
+fi
+
+mkdir -p "${codex_home}"
+mv "${tmp_file}" "${dest_config}"
+
+echo "Synced Codex config to ${dest_config}"
