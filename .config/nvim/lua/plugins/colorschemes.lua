@@ -13,16 +13,13 @@ return {
     opts = {
       flavour = "mocha",
       term_colors = true,
-      integrations = {
-        cmp = true,
-        gitsigns = true,
-        harpoon = true,
-        indent_blankline = { enabled = true },
-        native_lsp = { enabled = true },
-        notify = true,
-        treesitter = true,
-        which_key = true,
+      dim_inactive = {
+        enabled = true,
+        shade = "dark",
+        percentage = 0.15,
       },
+      -- auto enable integrations based on lazy installs
+      auto_integrations = true,
       custom_highlights = function(colors)
         return {
           LspSignatureActiveParameter = {
