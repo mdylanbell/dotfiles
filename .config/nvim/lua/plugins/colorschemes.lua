@@ -20,8 +20,15 @@ return {
       },
       -- auto enable integrations based on lazy installs
       auto_integrations = true,
+      -- integrations = {
+      --   native_lsp = { enabled = true },
+      --   window_splits = { enabled = true },
+      -- },
       custom_highlights = function(colors)
         return {
+          -- make split borders more visible
+          WinSeparator = { fg = colors.surface1, bg = colors.base },
+          -- better highlights for active parameter in functions
           LspSignatureActiveParameter = {
             bg = colors.surface1,
             bold = true,
