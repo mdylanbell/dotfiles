@@ -1,4 +1,4 @@
-local default_theme = "catppuccin"
+local default_theme = "catppuccin-nvim"
 
 return {
   -- Core theme: Catppuccin Mocha
