@@ -8,6 +8,8 @@
 Dockerfile.test.local skip
 Brewfile skip
 Brewfile.work skip
+Brewfile.mac skip
+Brewfile.mac.personal skip
 README.md skip
 doc skip
 .codex recurse

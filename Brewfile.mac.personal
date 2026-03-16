@@ -1,0 +1,9 @@
+# run after Brewfile.mac
+cask "chatgpt"
+cask "claude"
+cask "codex-app"
+cask "discord"
+cask "orbstack"
+cask "raindropio"
+cask "steam"
+cask "visual-studio-code"

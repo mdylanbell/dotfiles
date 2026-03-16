@@ -1,7 +1,6 @@
-# System utilities only (languages managed by mise)
+# System utilities only (languages managed by mise) for mac + Linux
 brew "gcc"  # gcc should be first!
 brew "ast-grep"
-brew "bash"
 brew "bat"
 brew "bat-extras"
 brew "btop"
@@ -37,8 +36,3 @@ brew "yq"
 
 # Runtime/version manager
 brew "mise"
-
-# Optional (macOS): fonts/apps you like
-# cask "font-meslo-lg-nerd-font"
-# cask "iterm2"
-cask "alacritty"

@@ -1,0 +1,26 @@
+tap "buo/ask-upgrade"
+tap "FelixKratz/formulae"
+brew "mas"  # mac app store
+brew "bash"
+brew "borders"  # from FelixxKratz/formulae
+brew "lua"
+brew "luarocks"
+mas install 937984704  # Amphetamine (gui for caffeinate)
+
+# terminal
+; cask "alacritty"  # cask install deprecated due to signing issues
+cask "ghostty"
+
+# cask "font-meslo-lg-nerd-font"
+# cask "iterm2"
+cask "1password"
+cask "alfred"
+cask "firefox"
+cask "google-chrome"
+cask "google-drive"
+cask "karabiner-elements"
+cask "obsidian"
+cask "scroll-reverser"
+cask "spotify"
+cask "todoist"
+cask "zoom"
