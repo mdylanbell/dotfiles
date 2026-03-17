@@ -1,7 +1,7 @@
 [tools]
 node = { version = "lts", postinstall = "corepack enable" }
 rust = "stable"
-go = "1.24"
+go = "latest"
 
 [env]
 # automatically create a virtualenv in .cache/venv
