@@ -31,6 +31,10 @@ require("lazy").setup({
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
   install = { colorscheme = { "catppuccin", "solarized", "tokyonight", "habamax" } },
+  -- round borders
+  ui = {
+    border = "rounded",
+  },
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update

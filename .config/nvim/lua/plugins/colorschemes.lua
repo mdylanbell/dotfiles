@@ -28,6 +28,11 @@ return {
         return {
           -- make split borders more visible
           WinSeparator = { fg = colors.surface1, bg = colors.base },
+          -- make completions look a little different from other floats
+          BlinkCmpMenu = { fg = colors.text, bg = colors.surface0 },
+          BlinkCmpDoc = { fg = colors.text, bg = colors.surface0 },
+          BlinkCmpMenuBorder = { fg = colors.lavender, bg = colors.surface0 },
+          BlinkCmpDocBorder = { fg = colors.sapphire, bg = colors.surface0 },
           -- better highlights for active parameter in functions
           LspSignatureActiveParameter = {
             bg = colors.surface1,
