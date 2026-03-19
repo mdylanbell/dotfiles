@@ -1,8 +1,16 @@
 [tools]
-node = { version = "lts", postinstall = "corepack enable" }
+node = { version = "lts" }
+"npm:@mermaid-js/mermaid-cli" = "latest"
 pipx = "latest"
-python = "3.12"
+pnpm = "latest"
 uv = "latest"
+python = { version = "3.12", postinstall = "uv venv --clear ${nvim_virtualenv}" }
 
 [settings]
 experimental = true
+npm.package_manager = "pnpm"
+python.uv_venv_auto = "create|source"
+
+[env]
+UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
+nvim_virtualenv = "{{xdg_cache_home}}/venvs/nvim"

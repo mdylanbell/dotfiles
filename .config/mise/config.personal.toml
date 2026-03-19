@@ -1,12 +1,12 @@
 [tools]
-node = { version = "lts", postinstall = "corepack enable" }
+node = { version = "lts" }
 rust = "stable"
 go = "latest"
+bun = "latest"
 
-[env]
-# automatically create a virtualenv in .cache/venv
-_.python.venv = { path = "{{env.XDG_CACHE_HOME}}/venv/default", create = true }
+[settings]
+npm.package_manager = "bun"
 
-[tasks.update_for_env]
+[tasks."update:for_env"]
 description = "Update tools for environment: personal"
 run = ["npm i -g @openai/codex"]

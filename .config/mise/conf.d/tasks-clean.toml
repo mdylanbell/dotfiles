@@ -1,21 +1,18 @@
-# -------------------------
-# Tasks :: clean
-# -------------------------
-
-[tasks.clean_env]
+[tasks."clean"]
 description = "Clean up old packages and caches"
-depends = ["clean_brew", "clean_mise", "clean_zinit"]
+run = { tasks = ["clean:brew", "clean:mise", "clean:zinit", "clean:dfm"] }
 
-[tasks.clean_brew]
+[tasks."clean:brew"]
 description = "Cleanup Homebrew cache and old versions"
 run = ["brew cleanup -s"]
 
-[tasks.clean_mise]
+[tasks."clean:mise"]
 description = "Mise prune"
 run = ["mise prune"]
 
-[tasks.clean_zinit]
+[tasks."clean:zinit"]
 description = "Clean zinit cache"
+quiet = true
 run = '''
 #!/usr/bin/env zsh
 # Source zinit explicitly so the function exists in this non-interactive shell
@@ -26,6 +23,6 @@ source "$ZINIT_HOME/zinit.git/zinit.zsh"
 zinit cclear
 '''
 
-[tasks.clean_dfm]
+[tasks."clean:dfm"]
 description = "Clean dfm created .backup folders"
 run = ["fd -H '^.backup$' --type dir ~ -X rmdir {}"]

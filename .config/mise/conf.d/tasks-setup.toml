@@ -1,15 +1,22 @@
-# -------------------------
-# Tasks :: setup
-# -------------------------
-
-[tasks.setup]
+[tasks."setup"]
 description = "Perform initial setup; should be one-time things"
-run = ["bat cache --build", "mise reshim"]
+run = [{ tasks = ["update:bat_cache"] }, { tasks = ["setup:gh:extensions"] }]
 
-# gh (GitHub cli) :: can't run in main setup since we need to auth to github (gh auth login)
-[tasks.setup_gh]
+[tasks."setup:gh:auth"]
+description = "setup gh auth"
+confirm = "Run interactive gh auth login if not authed?"
+raw = true
+run = "if ! gh auth status >/dev/null 2>&1; then gh auth login; fi"
+
+[tasks."setup:gh:extensions"]
+run = '''
+if gh auth status >/dev/null 2>&1; then
+  echo "Installing gh extensions..."
+  gh extension install dlvhdr/gh-dash
+  gh extension install eikster-dk/gh-worktree
+else
+  echo "gh not authenticated, skipping extension install."
+fi
+'''
 description = "Install gh extensions"
-run = [
-  "gh extension install dlvhdr/gh-dash",
-  "gh extension install eikster-dk/gh-worktree",
-]
+depends = ["setup:gh:auth"]

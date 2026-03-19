@@ -1,26 +1,27 @@
-# -------------------------
-# Tasks :: update
-# -------------------------
-
-[tasks.update]
+[tasks."update"]
 description = "Update all tools and global CLIs"
-depends = [
-  "update_brew",
-  "update_zinit",
-  "update_package_managers",
-  "update_nvim",
-  "update_python_tools",
-  "update_submodules",
-  "update_gh",
-  "update_for_env",
+run = [
+  { tasks = [
+    "update:brew",
+  ] },
+  { tasks = [
+    "update:submodules",
+    "update:package_managers",
+  ] },
+  { tasks = [
+    "update:zinit",
+    "update:nvim",
+    "update:gh",
+    "update:for_env",
+  ] },
+  "echo Updates completed at $(date)",
 ]
-run = ["bat cache --build", "echo Updates completed at $(date)"]
 
-[tasks.update_brew]
+[tasks."update:brew"]
 description = "Update Homebrew and all installed formulae/casks"
 run = ["brew update", "brew upgrade"]
 
-[tasks.update_zinit]
+[tasks."update:zinit"]
 description = "Update zinit and plugins"
 run = '''
 #!/usr/bin/env zsh
@@ -32,32 +33,44 @@ zinit self-update
 zinit update --parallel --all
 '''
 
-[tasks.update_submodules]
+[tasks."update:bat_cache"]
+description = "update bat cache"
+sources = ["{{ xdg_config_home }}/bat/**"]
+outputs = { auto = true }
+run = "bat cache --build"
+
+[tasks."update:submodules"]
 description = "Update git submodules in dotfiles repo"
 run = ["git -C $HOME/.dotfiles submodule update --remote"]
 
-[tasks.update_package_managers]
+[tasks."update:package_managers"]
 description = "Update package managers (pip, npm, etc.)"
-run = ["pip install --upgrade pip", "npm i -g npm"]
+run = ["npm i -g npm"]
 
-[tasks.update_nvim]
+[tasks."create_nvim_venv"]
+description = "create a virtualenvironment for nvim if it doesn't exist"
+run = "[ -d ${nvim_virtualenv} ] || uv venv ${nvim_virtualenv}"
+
+[tasks."install_nvim_python_deps"]
+description = "install nvim dependencies"
+depends = ["create_nvim_venv"]
+run = "uv pip install -p ${nvim_virtualenv}/bin/python pynvim"
+
+[tasks."update:nvim"]
 description = "Update Neovim and plugins"
+depends = ["update:package_managers", "install_nvim_python_deps"]
 run = [
-  "pip install --upgrade pynvim",
-  "npm i -g neovim",
   "nvim --headless \"+Lazy! sync\" +qa",
   "nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'",
 ]
 
-[tasks.update_python_tools]
-description = "Update all pipx packages"
-run = ["pipx upgrade-all", "pip install --upgrade tmuxp"]
-
-# Rebuild pipx shims after changing Python minor/patch
-[tasks.python_rebuild]
-description = "Reinstall pipx apps against current mise Python"
-run = ["pipx reinstall-all --python $(mise which python)", "mise reshim"]
-
-[tasks.update_gh]
-description = "Update gh extensions"
-run = ["gh extensions upgrade --all"]
+[tasks."update:gh"]
+description = "Update gh extensions if gh installed and auth'd"
+run = """
+if gh auth status >/dev/null 2>&1; then
+  echo "Updating gh extensions..."
+  gh extension upgrade --all
+else
+  echo "gh not authenticated, skipping extension update."
+fi
+"""

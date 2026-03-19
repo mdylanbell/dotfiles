@@ -1,11 +1,11 @@
-# Loaded when MISE_ENV=work is exported in your shell
+# Loaded when MISE_ENV=work is set
 [tools]
 terraform = "latest"
 helm = "latest"
 python = "3.11"
 "pipx:poetry" = "latest"
-node = { version = "22", postinstall = "corepack enable" }
+node = { version = "22" }
 
-[tasks.update_for_env]
+[tasks."update:for_env"]
 description = "Update tools for environment: work"
 run = ["claude update"]
