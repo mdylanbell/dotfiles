@@ -8,6 +8,9 @@ vim.g.lazyvim_python_lsp = "basedpyright"
 -- Prefer ruff over black
 vim.g.lazyvim_python_ruff = "ruff"
 
+-- Disable Perl provider
+vim.g.loaded_perl_provider = 0
+
 vim.api.nvim_create_user_command("ReviewPR", function()
   require("config.review").review_pr_command()
 end, {})
