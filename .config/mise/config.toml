@@ -12,5 +12,5 @@ npm.package_manager = "pnpm"
 python.uv_venv_auto = "create|source"
 
 [env]
-UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
+# UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
 nvim_virtualenv = "{{xdg_cache_home}}/venvs/nvim"
