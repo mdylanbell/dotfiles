@@ -23,6 +23,7 @@ run = ["brew update", "brew upgrade"]
 
 [tasks."update:zinit"]
 description = "Update zinit and plugins"
+silent = true
 run = '''
 #!/usr/bin/env zsh
 # Source zinit explicitly so the function exists in this non-interactive shell
