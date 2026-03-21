@@ -143,3 +143,8 @@ zinit wait lucid light-mode for \
   # OMZP::go \
   # OMZP::jira \
   # OMZP::brew  # ??
+
+# add wezterm integration (check against lowercase TERM_PROGRAM)
+if [[ ${(L)TERM_PROGRAM} == "wezterm" ]]; then
+  zinit snippet https://github.com/wezterm/wezterm/blob/main/assets/shell-integration/wezterm.sh
+fi
