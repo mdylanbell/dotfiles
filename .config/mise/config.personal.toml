@@ -1,6 +1,7 @@
 [tools]
 node = { version = "lts" }
 rust = "stable"
+cargo-binstall = "latest"
 go = "latest"
 bun = "latest"
 
