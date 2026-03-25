@@ -136,10 +136,10 @@ zinit wait lucid light-mode for \
   OMZP::python \
   OMZP::rust \
   OMZP::ssh \
-  OMZP::ssh-agent \
   OMZP::urltools \
   OMZP::web-search
   # OMZP::httpie \  # not downloading 12/6/2025 for some reason
+  # OMZP::ssh-agent \
   # OMZP::go \
   # OMZP::jira \
   # OMZP::brew  # ??

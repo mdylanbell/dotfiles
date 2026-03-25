@@ -5,6 +5,7 @@ pipx = "latest"
 pnpm = "latest"
 uv = "latest"
 python = { version = "3.12", postinstall = "uv venv --clear ${nvim_virtualenv}" }
+1password-cli = "latest"
 
 [settings]
 experimental = true
