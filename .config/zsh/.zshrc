@@ -25,8 +25,10 @@ setopt prompt_subst
 #  - Aliases, functions, and `export` remain global as usual.
 # ======================================================================
 
+local zsh_conf_root="${ZDOTDIR:-$HOME/.config/zsh}"
+
 _zshrc_load() {
-  local confdir=${ZDOTDIR:-$HOME/.config/zsh}/conf.d
+  local confdir="${zsh_conf_root}/conf.d"
 
   load_tree() {
     local dir=$1 entry rel
@@ -49,6 +51,9 @@ _zshrc_load() {
       source "$entry"
     done
   }
+
+  # initialize env
+  [[ -r "${ZDOTDIR:-$zsh_conf_root}/env.zsh" ]] && source "${ZDOTDIR:-$zsh_conf_root}/env.zsh" || true
 
   # Base configuration (conf.d, excluding os/ and host/ subtrees)
   load_tree "$confdir"
@@ -74,6 +79,7 @@ _zshrc_load() {
 
 _zshrc_load
 unset -f _zshrc_load
+unset zsh_conf_root
 
 
 # ======================================================================
@@ -82,4 +88,4 @@ unset -f _zshrc_load
 #  Optional, unversioned machine-local configuration.
 # ======================================================================
 
-[[ -r "${ZDOTDIR:-$HOME}/local.zsh" ]] && source "${ZDOTDIR:-$HOME}/local.zsh" || true
+[[ -r "${ZDOTDIR:-$zsh_conf_root}/local.zsh" ]] && source "${ZDOTDIR:-$zsh_conf_root}/local.zsh" || true
