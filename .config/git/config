@@ -87,3 +87,5 @@
   features = catppuccin-mocha
   ; syntax-theme = mdb-custom-solarized
   ; syntax-theme = Visual Studio Dark+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
