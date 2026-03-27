@@ -23,9 +23,57 @@ return {
   {
     "folke/sidekick.nvim",
     event = "VeryLazy",
+    dependencies = {
+      {
+        "folke/snacks.nvim",
+        optional = true,
+        opts = {
+          picker = {
+            sources = {
+              select = {
+                kinds = {
+                  sidekick_cli = {
+                    actions = {
+                      sidekick_resume = function(picker, item)
+                        require("config.sidekick_cli_extension").picker_action("resume")(picker, item)
+                      end,
+                      sidekick_continue = function(picker, item)
+                        require("config.sidekick_cli_extension").picker_action("continue")(picker, item)
+                      end,
+                    },
+                    win = {
+                      input = {
+                        footer_keys = { "<CR>", "<M-r>", "<M-c>" },
+                        keys = {
+                          ["<CR>"] = { "confirm", mode = { "i", "n" }, desc = "Attach or New" },
+                          ["<M-r>"] = { "sidekick_resume", mode = { "i", "n" }, desc = "Resume Session" },
+                          ["<M-c>"] = { "sidekick_continue", mode = { "i", "n" }, desc = "Continue Last" },
+                        },
+                      },
+                      list = {
+                        footer_keys = { "<CR>", "<M-r>", "<M-c>" },
+                        keys = {
+                          ["<M-r>"] = { "sidekick_resume", desc = "Resume Session" },
+                          ["<M-c>"] = { "sidekick_continue", desc = "Continue Last" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     ---@type sidekick.Config
     opts = {
       cli = {
+        win = {
+          wo = {
+            winhighlight = "Normal:Normal,NormalNC:NormalNC,EndOfBuffer:EndOfBuffer,SignColumn:SignColumn",
+          },
+        },
         mux = {
           backend = "tmux",
           enabled = true,
