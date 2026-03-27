@@ -4,6 +4,7 @@ rust = "stable"
 cargo-binstall = "latest"
 go = "latest"
 bun = "latest"
+"npm:@github/copilot" = "latest"
 
 [settings]
 npm.package_manager = "bun"
