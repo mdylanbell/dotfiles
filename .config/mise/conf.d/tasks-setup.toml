@@ -13,6 +13,7 @@ run = '''
 if gh auth status >/dev/null 2>&1; then
   echo "Installing gh extensions..."
   gh extension install dlvhdr/gh-dash
+  gh extension install dlvhdr/gh-enhance
   gh extension install eikster-dk/gh-worktree
 else
   echo "gh not authenticated, skipping extension install."
