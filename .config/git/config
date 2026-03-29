@@ -61,7 +61,7 @@
 [gitlab]
 	user = sa-mbell
 [include]
-	path = ~/.gitconfig.local
+	path = config.local
 [credential "https://github.com"]
 	username = mdylanbell
 [credential]
