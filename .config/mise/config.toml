@@ -4,7 +4,7 @@ node = { version = "lts" }
 pipx = "latest"
 pnpm = "latest"
 uv = "latest"
-python = { version = "3.12", postinstall = "uv venv --clear ${nvim_virtualenv}" }
+python = { version = "3.12", postinstall = "uv venv --clear ${nvim_virtualenv} && uv pip install -p ${nvim_virtualenv}/bin/python pynvim" }
 1password-cli = "latest"
 
 [settings]
