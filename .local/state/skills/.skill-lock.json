@@ -1,0 +1,224 @@
+{
+  "version": 3,
+  "skills": {
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "skillFolderHash": "f260c775073816860fef8a37c032ac77e2ff5821",
+      "installedAt": "2026-03-18T04:07:58.452Z",
+      "updatedAt": "2026-03-29T07:04:01.161Z"
+    },
+    "dispatching-parallel-agents": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
+      "skillFolderHash": "ebd0490e6b0bccfdb9f9c0cc9dd6a066036c8d89",
+      "installedAt": "2026-03-18T04:07:58.880Z",
+      "updatedAt": "2026-03-18T04:07:58.880Z"
+    },
+    "executing-plans": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/executing-plans/SKILL.md",
+      "skillFolderHash": "20087d25fb28f5f54578d873dc198ab24b34f967",
+      "installedAt": "2026-03-18T04:07:59.357Z",
+      "updatedAt": "2026-03-18T04:07:59.357Z"
+    },
+    "finishing-a-development-branch": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/finishing-a-development-branch/SKILL.md",
+      "skillFolderHash": "7656b8ebe0c9659ea548ba2981b078b333d1846e",
+      "installedAt": "2026-03-18T04:07:59.770Z",
+      "updatedAt": "2026-03-18T04:07:59.770Z"
+    },
+    "receiving-code-review": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/receiving-code-review/SKILL.md",
+      "skillFolderHash": "7750c56fddb8b2f1cbdb1550a6e3e40d2eeac5f1",
+      "installedAt": "2026-03-18T04:08:00.226Z",
+      "updatedAt": "2026-03-18T04:08:00.226Z"
+    },
+    "requesting-code-review": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/requesting-code-review/SKILL.md",
+      "skillFolderHash": "ed265b1a03114cc400d5524afc5c961a4aa9ea8b",
+      "installedAt": "2026-03-18T04:08:00.709Z",
+      "updatedAt": "2026-03-18T04:08:00.709Z"
+    },
+    "subagent-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/subagent-driven-development/SKILL.md",
+      "skillFolderHash": "fbcd94ffcf589754a8ecfa59861cc8843313590e",
+      "installedAt": "2026-03-18T04:08:01.292Z",
+      "updatedAt": "2026-03-18T04:08:01.292Z"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "skillFolderHash": "828c239ac986cc1fc7edd10292f66e4a3640e9c0",
+      "installedAt": "2026-03-18T04:08:01.715Z",
+      "updatedAt": "2026-03-18T04:08:01.715Z"
+    },
+    "test-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "skillFolderHash": "98904a7d8e0e04b9bd46220b9b17298f45fe0b72",
+      "installedAt": "2026-03-18T04:08:02.098Z",
+      "updatedAt": "2026-03-18T04:08:02.098Z"
+    },
+    "using-git-worktrees": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/using-git-worktrees/SKILL.md",
+      "skillFolderHash": "a5b3f5965f321175a7f07dcadff0bb79adb9e9f7",
+      "installedAt": "2026-03-18T04:08:02.496Z",
+      "updatedAt": "2026-03-18T04:08:02.496Z"
+    },
+    "using-superpowers": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/using-superpowers/SKILL.md",
+      "skillFolderHash": "53bdaa7bc95ff9bebdfdde4093a2b7ef34f54c15",
+      "installedAt": "2026-03-18T04:08:02.888Z",
+      "updatedAt": "2026-03-29T07:04:01.256Z"
+    },
+    "verification-before-completion": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "skillFolderHash": "ceb2f1f67f4cadb29b32a06e54d3d0be832071f5",
+      "installedAt": "2026-03-18T04:08:03.476Z",
+      "updatedAt": "2026-03-18T04:08:03.476Z"
+    },
+    "writing-plans": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/writing-plans/SKILL.md",
+      "skillFolderHash": "704e240d4b281baf8a339e1418baa249860197f7",
+      "installedAt": "2026-03-18T04:08:04.051Z",
+      "updatedAt": "2026-03-29T07:04:03.073Z"
+    },
+    "writing-skills": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/writing-skills/SKILL.md",
+      "skillFolderHash": "80e8c7d3be99d55d5d76c9516cc45a1e7f48f281",
+      "installedAt": "2026-03-18T04:08:04.506Z",
+      "updatedAt": "2026-03-29T07:04:04.941Z"
+    },
+    "memory-defrag": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-defrag/SKILL.md",
+      "skillFolderHash": "029c27cd215e8feb2e3ef093c35cb31262a340ba",
+      "installedAt": "2026-03-18T04:09:19.100Z",
+      "updatedAt": "2026-03-18T04:09:19.100Z"
+    },
+    "memory-ingest": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-ingest/SKILL.md",
+      "skillFolderHash": "f549204538f0c5024eee06a165920151f7e493ab",
+      "installedAt": "2026-03-18T04:09:19.529Z",
+      "updatedAt": "2026-03-18T04:09:19.529Z"
+    },
+    "memory-lifecycle": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-lifecycle/SKILL.md",
+      "skillFolderHash": "3e3456bad0979df2056eca40d00f49d91f22d9e9",
+      "installedAt": "2026-03-18T04:09:20.020Z",
+      "updatedAt": "2026-03-18T04:09:20.020Z"
+    },
+    "memory-literary-analysis": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-literary-analysis/SKILL.md",
+      "skillFolderHash": "52b710274f9f25bfc2fce49322b0081f36a8d7a4",
+      "installedAt": "2026-03-18T04:09:20.417Z",
+      "updatedAt": "2026-03-18T04:09:20.417Z"
+    },
+    "memory-metadata-search": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-metadata-search/SKILL.md",
+      "skillFolderHash": "74b6542dc1d4c8c03956cd8c3dcd9dac6ec1d7e6",
+      "installedAt": "2026-03-18T04:09:20.892Z",
+      "updatedAt": "2026-03-18T04:09:20.892Z"
+    },
+    "memory-notes": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-notes/SKILL.md",
+      "skillFolderHash": "3569339da99497e6fe6564542286fe670dce78bf",
+      "installedAt": "2026-03-18T04:09:21.390Z",
+      "updatedAt": "2026-03-18T04:09:21.390Z"
+    },
+    "memory-reflect": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-reflect/SKILL.md",
+      "skillFolderHash": "8aa83d50c0113e1d86928e19ec8a0bf3d272b355",
+      "installedAt": "2026-03-18T04:09:21.989Z",
+      "updatedAt": "2026-03-18T04:09:21.989Z"
+    },
+    "memory-research": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-research/SKILL.md",
+      "skillFolderHash": "651c6a5ed7fe7a6a790b3179d7fe47baa7565259",
+      "installedAt": "2026-03-18T04:09:22.444Z",
+      "updatedAt": "2026-03-18T04:09:22.444Z"
+    },
+    "memory-schema": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-schema/SKILL.md",
+      "skillFolderHash": "033e8eb4f1211faceacbbb22f77ee9f1264e7030",
+      "installedAt": "2026-03-18T04:09:22.858Z",
+      "updatedAt": "2026-03-18T04:09:22.858Z"
+    },
+    "memory-tasks": {
+      "source": "basicmachines-co/basic-memory-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/basicmachines-co/basic-memory-skills.git",
+      "skillPath": "memory-tasks/SKILL.md",
+      "skillFolderHash": "6fd3d3bb44b028ad84506e67a5ff536bacb10dc4",
+      "installedAt": "2026-03-18T04:09:23.267Z",
+      "updatedAt": "2026-03-18T04:09:23.267Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  }
+}
