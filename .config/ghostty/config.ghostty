@@ -1,0 +1,27 @@
+theme = Catppuccin Mocha
+
+font-thicken = true
+copy-on-select = clipboard
+
+# font-family = Maple Mono
+font-family = Maple Mono Normal
+# font-feature = cv32
+# Maple features - https://font.subf.dev/en/playground/
+
+### other fonts I like
+# font-family = MesloLGMDZ Nerd Font
+
+## features needed for monaspace ligatures
+# font-family = Monaspace Neon NF
+# font-feature = calt, liga, dlig, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10
+
+# font-family = FiraCode Nerd Font
+# font-family = GeistMono Nerd Font
+# font-family = Maple Mono
+# font-family = Input Nerd Font Mono
+# font-family = 0xProto
+# font-family = Victor Mono
+
+## fallback fonts - https://github.com/ghostty-org/ghostty/discussions/3501
+# font-family = Symbols Nerd Font
+# font-codepoint-map = U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0C8,U+E0CA,U+E0CC-U+E0D7,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6B7,U+E700-U+E8EF,U+EA60-U+EC1E,U+ED00-U+F2FF,U+EE00-U+EE0B,U+F300-U+F381,U+F400-U+F533,U+F0001-U+F1AF0=Symbols Nerd Font
