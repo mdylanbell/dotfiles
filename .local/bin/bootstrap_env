@@ -17,7 +17,7 @@ is_cmd() { command -v "$1" >/dev/null 2>&1; }
 
 load_xdg_conf() {
   if [[ -f "$DOTDIR/.zshenv" ]]; then
-    # shellcheck disable=SC1090
+    # shellcheck source=~/.dotfiles/.zshenv disable=SC1090
     source "$DOTDIR/.zshenv"
   fi
 
