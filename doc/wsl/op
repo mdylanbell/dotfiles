@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#### from: https://github.com/Swage590/1Password-CLI-WSL-Integration/tree/main
+# summary
+# 1. make sure 1password-cli is not installed in linux
+# 2. install 1passwrod-cli in windows: powershell.exe -NoProfile -Command "winget install --id AgileBits.1Password.CLI --silent --accept-package-agreements --accept-source-agreements"
+# 3. copy this script to /usr/local/bin/op
+
+# use wslpath to get user folder which may not match %USERPATH%
+WIN_USER_PATH=$(wslpath "$(wslvar USERPROFILE)")
+
+# Find base folder for 1Password CLI in current user's Windows WinGet Packages
+WIN_OP_BASE="${WIN_USER_PATH}/AppData/Local/Microsoft/WinGet/Packages"
+
+# Find the latest folder matching the pattern (AgileBits.1Password.CLI*)
+# OP_DIR=$(ls -td "$WIN_OP_BASE"/AgileBits.1Password.CLI* 2>/dev/null | head -n1)
+OP_DIR=$(find "$WIN_OP_BASE" -type d -name 'AgileBits.1Password.CLI*' -print -quit 2>/dev/null)
+
+if [ -z "$OP_DIR" ]; then
+  echo "[ERROR] Could not find 1Password CLI folder in $WIN_OP_BASE" >&2
+  exit 1
+fi
+
+mapfile -d '' op_env_vars < <(env -0 | grep -z ^OP_ | cut -z -d= -f1)
+
+WSLENV="${WSLENV:-}:$(
+  IFS=:
+  echo "${op_env_vars[*]}"
+)"
+export WSLENV
+exec "$OP_DIR"/op.exe "$@"
