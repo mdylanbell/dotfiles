@@ -11,6 +11,8 @@ Brewfile.work skip
 Brewfile.mac skip
 Brewfile.mac.personal skip
 README.md skip
+AGENTS.md skip
+tests skip
 doc skip
 .codex recurse
 .claude recurse
