@@ -21,6 +21,7 @@ assert_contains ".config/git/ignore" 'mise.*.local.toml'
 assert_file ".config/mise/conf.d/tasks-setup.toml"
 assert_contains ".config/mise/conf.d/tasks-setup.toml" '[tasks."setup"]'
 assert_contains ".config/mise/conf.d/tasks-setup.toml" 'update:bat_cache'
+assert_contains ".config/mise/conf.d/tasks-setup.toml" 'nvim:python:ensure'
 assert_contains ".config/mise/conf.d/tasks-setup.toml" 'setup:gh:extensions'
 
 assert_file ".config/mise/conf.d/tasks-update.toml"

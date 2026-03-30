@@ -16,6 +16,14 @@ assert_contains() {
   grep -Fq "$pattern" "$path" || fail "expected $path to contain: $pattern"
 }
 
+assert_not_contains() {
+  local path="$1"
+  local pattern="$2"
+  if grep -Fq "$pattern" "$path"; then
+    fail "expected $path to not contain: $pattern"
+  fi
+}
+
 assert_order() {
   local path="$1"
   local first="$2"

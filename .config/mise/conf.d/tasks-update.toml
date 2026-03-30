@@ -48,18 +48,25 @@ run = ["git -C $HOME/.dotfiles submodule update --remote"]
 description = "Update package managers (pip, npm, etc.)"
 run = ["npm i -g npm"]
 
-[tasks."create_nvim_venv"]
-description = "create a virtualenvironment for nvim if it doesn't exist"
-run = "[ -d ${nvim_virtualenv} ] || uv venv ${nvim_virtualenv}"
+[tasks."nvim:python:ensure"]
+description = "Ensure the Neovim Python virtual environment exists"
+run = '''
+if [ ! -d "${nvim_virtualenv}" ]; then
+  uv venv --python python "${nvim_virtualenv}"
+fi
+uv pip install --upgrade -p "${nvim_virtualenv}/bin/python" pynvim
+'''
 
-[tasks."install_nvim_python_deps"]
-description = "install nvim dependencies"
-depends = ["create_nvim_venv"]
-run = "uv pip install -p ${nvim_virtualenv}/bin/python pynvim"
+[tasks."nvim:python:rebuild"]
+description = "Rebuild the Neovim Python virtual environment against active mise python"
+run = '''
+uv venv --clear --python python "${nvim_virtualenv}"
+uv pip install -p "${nvim_virtualenv}/bin/python" pynvim
+'''
 
 [tasks."update:nvim"]
 description = "Update Neovim and plugins"
-depends = ["update:package_managers", "install_nvim_python_deps"]
+depends = ["update:package_managers", "nvim:python:ensure"]
 run = [
   "nvim --headless \"+Lazy! sync\" +qa",
   "nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'",

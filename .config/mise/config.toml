@@ -4,13 +4,20 @@ node = { version = "lts" }
 pipx = "latest"
 pnpm = "latest"
 uv = "latest"
-python = { version = "3.12", postinstall = "uv venv --clear ${nvim_virtualenv} && uv pip install -p ${nvim_virtualenv}/bin/python pynvim" }
+python = "3.12"
 1password-cli = "latest"
 
 [settings]
 experimental = true
 npm.package_manager = "pnpm"
 python.uv_venv_auto = "create|source"
+
+[hooks]
+postinstall = '''
+if printf '%s\n' "${MISE_INSTALLED_TOOLS:-}" | grep -q '^python@'; then
+  mise run nvim:python:rebuild
+fi
+'''
 
 [env]
 # UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }

@@ -1,6 +1,10 @@
 [tasks."setup"]
 description = "Perform initial setup; should be one-time things"
-run = [{ tasks = ["update:bat_cache"] }, { tasks = ["setup:gh:extensions"] }]
+run = [
+  { tasks = ["update:bat_cache"] },
+  { tasks = ["nvim:python:ensure"] },
+  { tasks = ["setup:gh:extensions"] },
+]
 
 [tasks."setup:gh:auth"]
 description = "setup gh auth"
