@@ -4,7 +4,7 @@ set -euo pipefail
 REPO_SSH="git@github.com:mdylanbell/dotfiles.git"
 REPO_HTTPS="https://github.com/mdylanbell/dotfiles.git"
 REPO_BRANCH="main"
-DOTDIR="${HOME}/.dotfiles"
+DOTDIR="${DOTFILES_ROOT:-${HOME}/.dotfiles}"
 DFM="${DOTDIR}/.local/bin/dfm"
 
 log() { printf "\033[1;32m==>\033[0m %s\n" "$*"; }
@@ -134,6 +134,13 @@ mise_setup() {
   if mise tasks | grep -qE '^\s*setup(\s|$)'; then
     log "mise run setup"
     mise run setup
+  fi
+
+  if mise tasks | grep -qE '^\s*secrets:render(\s|$)'; then
+    log "mise run secrets:render"
+    if ! mise run secrets:render; then
+      warn "Secret config rendering failed; continuing without generated secret files."
+    fi
   fi
 }
 
