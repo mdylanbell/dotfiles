@@ -1,4 +1,5 @@
 direnv recurse
+todoist recurse
 python recurse
 tmux recurse
 zsh recurse
