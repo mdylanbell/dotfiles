@@ -9,4 +9,4 @@ mise.*.local.toml
 **/.claude/settings.local.json
 
 # python
-__pycache__
+__pycache__/
