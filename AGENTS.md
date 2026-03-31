@@ -43,9 +43,11 @@ At a high level it:
 4. clones or updates the dotfiles repo
 5. runs `dfm install`
 6. runs `brew bundle`
-7. runs `mise install`, `mise run setup`, and `mise run secrets:render`
+7. runs `mise run bootstrap` after ensuring `mise` itself is available
 
-There is also a containerized bootstrap harness in `Dockerfile.test.local`. It may lag slightly behind day-to-day bootstrap behavior, but it is the repo’s explicit bootstrap test artifact and worth keeping in mind before large bootstrap changes.
+There is a containerized bootstrap harness in `Dockerfile.test.local`. It is the
+preferred cached bootstrap test image and worth keeping in mind before large
+bootstrap changes.
 
 ## Important Tools
 

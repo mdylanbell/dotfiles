@@ -32,6 +32,3 @@ brew "urlview"
 brew "unzip"
 brew "wget"
 brew "yq"
-
-# Runtime/version manager
-brew "mise"

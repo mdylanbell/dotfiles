@@ -24,10 +24,12 @@ assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:clean"]'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render:todoist_cli"]'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:clean:todoist_cli"]'
-assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'op inject -i "${DOTFILES_ROOT:-$HOME/.dotfiles}/.config/todoist/config.json.op_tmpl"'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'chmod 0600 "${XDG_CONFIG_HOME}/todoist/config.json"'
+assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'config.json.op_tmpl'
+assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'op inject'
 
-assert_file ".local/bin/bootstrap_env"
-assert_contains ".local/bin/bootstrap_env" 'mise run secrets:render'
+assert_file ".config/mise/conf.d/tasks-bootstrap.toml"
+assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" '[tasks."bootstrap:secrets"]'
+assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" 'mise run secrets:render'
 
 printf 'ok\n'

@@ -1,11 +1,11 @@
 [tools]
-node = { version = "lts" }
-"npm:@mermaid-js/mermaid-cli" = "latest"
+node = "lts"
 pipx = "latest"
 pnpm = "latest"
 uv = "latest"
 python = "3.12"
 1password-cli = "latest"
+"npm:@mermaid-js/mermaid-cli" = "latest"
 
 [settings]
 experimental = true

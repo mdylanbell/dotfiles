@@ -1,0 +1,127 @@
+[tasks."bootstrap"]
+description = "Perform first-time environment bootstrap"
+run = [
+  'MISE_TASK_RUN_AUTO_INSTALL=0 MISE_AUTO_INSTALL=0 mise run bootstrap:install',
+  'MISE_TASK_RUN_AUTO_INSTALL=0 MISE_AUTO_INSTALL=0 mise run bootstrap:configure',
+]
+
+[tasks."bootstrap:install"]
+description = "Install bootstrap dependencies via Homebrew and mise"
+run = [
+  { tasks = [
+    "bootstrap:brew:install",
+    "bootstrap:mise:install",
+    "bootstrap:zinit",
+  ] },
+]
+# NOTE:
+# `bootstrap:prereqs` is intentionally not active here. `mise run bootstrap`
+# resolves npm-backed tool metadata before task execution, so installing node as
+# a task dependency is too late to suppress the npm resolution warnings.
+# `gpg` is also needed before the main `mise install` if we want signature
+# verification available. Both prereqs therefore live in `.local/bin/bootstrap_env`.
+#
+# [tasks."bootstrap:prereqs"]
+# description = "Install prereqs required before the main bootstrap install fanout"
+# run = [
+#   "brew install gpg",
+#   "mise install node",
+# ]
+
+[tasks."bootstrap:brew:install"]
+description = "Install Homebrew packages from Brewfile"
+run = '''
+if [ -f "${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile" ]; then
+  brew bundle --file="${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile"
+else
+  echo "No Brewfile found at ${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile."
+fi
+'''
+
+[tasks."bootstrap:mise:install"]
+description = "Install all configured mise tools"
+run = ["mise install", "mise reshim"]
+
+[tasks."bootstrap:configure"]
+description = "Configure the environment after bootstrap installs complete"
+run = [
+  { tasks = [
+    "bootstrap:brew:zsh_permissions",
+  ] },
+  { tasks = [
+    "bootstrap:bat_cache",
+    "bootstrap:gh:extensions",
+    "bootstrap:secrets",
+    "bootstrap:for_env",
+  ] },
+  { tasks = [
+    "bootstrap:checks",
+  ] },
+]
+
+[tasks."bootstrap:zinit"]
+description = "Install zinit if missing"
+run = '''
+if [ -d "${HOME}/.local/share/zinit" ] || [ -d "${HOME}/.zinit" ]; then
+  echo "zinit present"
+else
+  NO_EDIT=1 NO_TUTORIAL=1 \
+    bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+fi
+'''
+
+[tasks."bootstrap:bat_cache"]
+description = "Build bat cache after Homebrew install"
+run = [{ tasks = ["update:bat_cache"] }]
+
+[tasks."bootstrap:brew:zsh_permissions"]
+description = "Fix Homebrew zsh completion permissions for compinit on Linux/WSL"
+run = '''
+if [ "$(uname -s)" = "Linux" ]; then
+  site_functions="$(brew --prefix)/share/zsh/site-functions"
+  if [ -d "$site_functions" ]; then
+    chmod -R go-w "$site_functions"
+  fi
+fi
+'''
+
+[tasks."bootstrap:gh:extensions"]
+description = "Install gh extensions if gh is installed and authenticated"
+run = '''
+if gh auth status >/dev/null 2>&1; then
+  echo "Installing gh extensions..."
+  gh extension install dlvhdr/gh-dash
+  gh extension install dlvhdr/gh-enhance
+  gh extension install eikster-dk/gh-worktree
+else
+  echo "gh not authenticated, skipping extension install."
+fi
+'''
+
+[tasks."bootstrap:secrets"]
+description = "Render secret-backed config files if supported in this environment"
+run = '''
+if mise tasks | grep -qE '^\s*secrets:render(\s|$)'; then
+  if ! mise run secrets:render; then
+    echo "Secret config rendering failed; continuing without generated secret files."
+  fi
+fi
+'''
+
+[tasks."bootstrap:checks"]
+description = "Print quick bootstrap sanity checks"
+run = '''
+printf "  brew: %s\n" "$(brew --version | head -n1 || echo 'missing')"
+printf "  mise: %s\n" "$(mise --version || echo 'missing')"
+printf "  nvim: %s\n" "$(nvim --version | head -n1 || echo 'missing')"
+'''
+
+[tasks."bootstrap:for_env"]
+description = "No-op hook for environment-specific bootstrap additions"
+run = ":"
+
+[tasks."gh:auth"]
+description = "Run interactive gh auth login if not authenticated"
+confirm = "Run interactive gh auth login if not authed?"
+raw = true
+run = "if ! gh auth status >/dev/null 2>&1; then gh auth login; fi"
