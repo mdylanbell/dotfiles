@@ -10,3 +10,34 @@ mise.*.local.toml
 
 # python
 __pycache__/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.venv/
+.python-version
+
+# local env / direnv
+.envrc
+.direnv/
+.cache/
+
+# terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# js / frontend caches
+.eslintcache
+.next/
+.turbo/
+node_modules/
+dist/
+build/
+
+# editor project files
+.idea/
+.vscode/
