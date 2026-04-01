@@ -120,7 +120,6 @@ zinit wait lucid light-mode for \
   OMZP::aliases \
   OMZP::aws \
   OMZP::colored-man-pages \
-  OMZP::docker \
   OMZP::fzf \
   OMZP::gem \
   OMZP::gh \
