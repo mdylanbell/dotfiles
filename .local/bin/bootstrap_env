@@ -117,6 +117,7 @@ ensure_linux_deps() {
           zsh \
           build-essential \
           libc6-dev \
+          libncurses-dev \
           file
       elif is_cmd dnf; then
         sudo dnf install -y git curl ca-certificates
