@@ -1,0 +1,80 @@
+[tasks."install:terminal"]
+description = "Install terminal Brewfiles for the current environment"
+run = [
+  { tasks = [
+    "install:terminal:required",
+    "install:terminal:common",
+    "install:terminal:for_env",
+  ] },
+]
+
+[tasks."install:terminal:required"]
+description = "Install the required terminal Brewfile"
+run = '''
+set -eu
+
+brewfiles_dir="$DOTFILES_ROOT/brewfiles"
+
+run_brewfile() {
+  local file="$1"
+  if [ -f "$file" ]; then
+    echo "Installing Homebrew bundle from $file"
+    brew bundle --file="$file"
+  fi
+}
+
+run_brewfile "$brewfiles_dir/terminal.required"
+'''
+
+[tasks."install:terminal:common"]
+description = "Install the common terminal Brewfile"
+run = '''
+set -eu
+
+brewfiles_dir="$DOTFILES_ROOT/brewfiles"
+
+run_brewfile() {
+  local file="$1"
+  if [ -f "$file" ]; then
+    echo "Installing Homebrew bundle from $file"
+    brew bundle --file="$file"
+  fi
+}
+
+run_brewfile "$brewfiles_dir/terminal.common"
+'''
+
+[tasks."install:terminal:for_env"]
+description = "No-op hook for environment-specific terminal Brewfiles"
+run = ":"
+
+[tasks."install:gui"]
+description = "Install GUI Brewfiles for the current environment"
+run = [
+  { tasks = [
+    "install:gui:common",
+    "install:gui:for_env",
+  ] },
+]
+
+[tasks."install:gui:common"]
+description = "Install the common GUI Brewfile"
+run = '''
+set -eu
+
+brewfiles_dir="$DOTFILES_ROOT/brewfiles"
+
+run_brewfile() {
+  local file="$1"
+  if [ -f "$file" ]; then
+    echo "Installing Homebrew bundle from $file"
+    brew bundle --file="$file"
+  fi
+}
+
+run_brewfile "$brewfiles_dir/gui.common"
+'''
+
+[tasks."install:gui:for_env"]
+description = "No-op hook for environment-specific GUI Brewfiles"
+run = ":"

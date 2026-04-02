@@ -12,3 +12,23 @@ npm.package_manager = "bun"
 [tasks."update:for_env"]
 description = "Update tools for environment: personal"
 run = ["npm i -g @openai/codex"]
+
+[tasks."install:terminal:for_env"]
+description = "Install the personal terminal Brewfile"
+run = '''
+brewfile="$DOTFILES_ROOT/brewfiles/terminal.env.personal"
+if [ -f "$brewfile" ]; then
+  echo "Installing Homebrew bundle from $brewfile"
+  brew bundle --file="$brewfile"
+fi
+'''
+
+[tasks."install:gui:for_env"]
+description = "Install the personal GUI Brewfile"
+run = '''
+brewfile="$DOTFILES_ROOT/brewfiles/gui.env.personal"
+if [ -f "$brewfile" ]; then
+  echo "Installing Homebrew bundle from $brewfile"
+  brew bundle --file="$brewfile"
+fi
+'''

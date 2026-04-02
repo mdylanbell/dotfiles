@@ -20,5 +20,6 @@ fi
 '''
 
 [env]
+DOTFILES_ROOT = "{{ config_root }}"
 # UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
 nvim_virtualenv = "{{xdg_cache_home}}/venvs/nvim"
