@@ -1,0 +1,24 @@
+[tasks."purge:zinit"]
+description = "Remove obsolete zinit data and cache directories after migrating to antidote"
+run = '''
+data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/zinit"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zinit"
+
+purged=false
+
+if [ -d "$data_dir" ]; then
+  rm -rf "$data_dir"
+  echo "Removed $data_dir"
+  purged=true
+fi
+
+if [ -d "$cache_dir" ]; then
+  rm -rf "$cache_dir"
+  echo "Removed $cache_dir"
+  purged=true
+fi
+
+if [ "$purged" = false ]; then
+  echo "No zinit directories found."
+fi
+'''

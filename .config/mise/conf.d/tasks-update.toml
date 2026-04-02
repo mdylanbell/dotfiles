@@ -1,3 +1,9 @@
+[vars]
+antidote_home = "{{ xdg_data_home }}/antidote"
+zsh_plugin_list_file = "{{ config_root }}/.config/zsh/.zsh_plugins.txt"
+zsh_plugin_static_file = "{{ xdg_cache_home }}/zsh/antidote/.zsh_plugins.zsh"
+wezterm_shell_integration_file = "{{ xdg_data_home }}/wezterm/wezterm.sh"
+
 [tasks."update"]
 description = "Update all tools and global CLIs"
 run = [
@@ -9,7 +15,8 @@ run = [
     "update:package_managers",
   ] },
   { tasks = [
-    "update:zinit",
+    "update:antidote",
+    "update:wezterm_shell_integration",
     "update:nvim",
     "update:gh",
     "update:for_env",
@@ -21,17 +28,56 @@ run = [
 description = "Update Homebrew and all installed formulae/casks"
 run = ["brew update", "brew upgrade"]
 
-[tasks."update:zinit"]
-description = "Update zinit and plugins"
-silent = true
+[tasks."update:antidote"]
+description = "Update antidote and bundles"
 run = '''
 #!/usr/bin/env zsh
-# Source zinit explicitly so the function exists in this non-interactive shell
-ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
-source "$ZINIT_HOME/zinit.git/zinit.zsh"
+if [ ! -d "{{ vars.antidote_home }}/.git" ]; then
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "{{ vars.antidote_home }}"
+fi
 
-zinit self-update
-zinit update --parallel --all
+source "{{ vars.antidote_home }}/antidote.zsh"
+mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
+antidote update --self --bundles
+antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
+'''
+
+[tasks."update:wezterm_shell_integration"]
+description = "Refresh the cached WezTerm shell integration script when upstream changes"
+run = '''
+dest="{{ vars.wezterm_shell_integration_file }}"
+mkdir -p "$(dirname "$dest")"
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "curl not found; skipping WezTerm shell integration refresh."
+  exit 0
+fi
+
+tmp="${dest}.tmp"
+url="https://raw.githubusercontent.com/wezterm/wezterm/main/assets/shell-integration/wezterm.sh"
+
+if [ -f "$dest" ]; then
+  if curl -fsSL -z "$dest" -o "$tmp" "$url"; then
+    if [ -s "$tmp" ]; then
+      mv "$tmp" "$dest"
+      echo "Updated WezTerm shell integration."
+    else
+      rm -f "$tmp"
+      echo "WezTerm shell integration already current."
+    fi
+  else
+    rm -f "$tmp"
+    echo "Failed to refresh WezTerm shell integration; continuing."
+  fi
+else
+  if curl -fsSL -o "$tmp" "$url"; then
+    mv "$tmp" "$dest"
+    echo "Downloaded WezTerm shell integration."
+  else
+    rm -f "$tmp"
+    echo "Failed to download WezTerm shell integration; continuing."
+  fi
+fi
 '''
 
 [tasks."update:bat_cache"]

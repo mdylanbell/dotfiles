@@ -1,9 +1,12 @@
+[vars]
+antidote_home = "{{ xdg_data_home }}/antidote"
+zsh_plugin_list_file = "{{ config_root }}/.config/zsh/.zsh_plugins.txt"
+zsh_plugin_static_file = "{{ xdg_cache_home }}/zsh/antidote/.zsh_plugins.zsh"
+
 [tasks."bootstrap"]
 description = "Perform first-time environment bootstrap"
-run = [
-  'MISE_TASK_RUN_AUTO_INSTALL=0 MISE_AUTO_INSTALL=0 mise run bootstrap:install',
-  'MISE_TASK_RUN_AUTO_INSTALL=0 MISE_AUTO_INSTALL=0 mise run bootstrap:configure',
-]
+env = { MISE_TASK_RUN_AUTO_INSTALL = "0", MISE_AUTO_INSTALL = "0" }
+run = ["mise run bootstrap:install", "mise run bootstrap:configure"]
 
 [tasks."bootstrap:install"]
 description = "Install bootstrap dependencies via Homebrew and mise"
@@ -11,7 +14,7 @@ run = [
   { tasks = [
     "bootstrap:brew:install",
     "bootstrap:mise:install",
-    "bootstrap:zinit",
+    "bootstrap:antidote",
   ] },
 ]
 # NOTE:
@@ -59,15 +62,19 @@ run = [
   ] },
 ]
 
-[tasks."bootstrap:zinit"]
-description = "Install zinit if missing"
+[tasks."bootstrap:antidote"]
+description = "Install antidote and prebuild zsh plugin bundles"
 run = '''
-if [ -d "${HOME}/.local/share/zinit" ] || [ -d "${HOME}/.zinit" ]; then
-  echo "zinit present"
+if [ -d "{{ vars.antidote_home }}/.git" ]; then
+  echo "antidote present"
 else
-  NO_EDIT=1 NO_TUTORIAL=1 \
-    bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "{{ vars.antidote_home }}"
 fi
+
+source "{{ vars.antidote_home }}/antidote.zsh"
+mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
+antidote update --bundles
+antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
 '''
 
 [tasks."bootstrap:bat_cache"]

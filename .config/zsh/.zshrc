@@ -8,12 +8,11 @@ zmodload zsh/stat
 # Allow prompt strings to perform parameter and command substitution
 setopt prompt_subst
 
-
 # ======================================================================
 #  Hierarchical Configuration Loader
 #
 #  Layout:
-#    ${ZDOTDIR:-$HOME}/.config/zsh/conf.d/
+#    ${ZDOTDIR:-$HOME/.config/zsh}/conf.d/
 #      ├─ *.zsh                # base config (always loaded)
 #      ├─ os/$ZSH_OS/*.zsh     # OS-specific config (optional)
 #      └─ host/$HOST/*.zsh     # host-specific config (optional)
@@ -25,7 +24,8 @@ setopt prompt_subst
 #  - Aliases, functions, and `export` remain global as usual.
 # ======================================================================
 
-local zsh_conf_root="${ZDOTDIR:-$HOME/.config/zsh}"
+typeset zsh_conf_root="${ZDOTDIR:-$HOME/.config/zsh}"
+typeset zsh_local_override="${zsh_conf_root}/local.zsh"
 
 _zshrc_load() {
   local confdir="${zsh_conf_root}/conf.d"
@@ -44,7 +44,7 @@ _zshrc_load() {
       if [[ $dir == "$confdir" ]]; then
         rel=${entry#$confdir/}
         case $rel in
-          os/*|host/*) continue ;;
+          os/* | host/*) continue ;;
         esac
       fi
 
@@ -81,11 +81,11 @@ _zshrc_load
 unset -f _zshrc_load
 unset zsh_conf_root
 
-
 # ======================================================================
 #  Local Overrides
 #
 #  Optional, unversioned machine-local configuration.
 # ======================================================================
 
-[[ -r "${ZDOTDIR:-$zsh_conf_root}/local.zsh" ]] && source "${ZDOTDIR:-$zsh_conf_root}/local.zsh" || true
+[[ -r "$zsh_local_override" ]] && source "$zsh_local_override" || true
+unset zsh_local_override

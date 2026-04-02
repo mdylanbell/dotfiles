@@ -1,6 +1,9 @@
+[vars]
+zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote"
+
 [tasks."clean"]
 description = "Clean up old packages and caches"
-run = { tasks = ["clean:brew", "clean:mise", "clean:zinit", "clean:dfm"] }
+run = { tasks = ["clean:brew", "clean:mise", "clean:antidote", "clean:dfm"] }
 
 [tasks."clean:brew"]
 description = "Cleanup Homebrew cache and old versions"
@@ -10,17 +13,13 @@ run = ["brew cleanup -s"]
 description = "Mise prune"
 run = ["mise prune"]
 
-[tasks."clean:zinit"]
-description = "Clean zinit cache"
+[tasks."clean:antidote"]
+description = "Clean antidote-generated zsh cache"
 quiet = true
 run = '''
-#!/usr/bin/env zsh
-# Source zinit explicitly so the function exists in this non-interactive shell
-ZINIT_HOME="${ZINIT_HOME:-$HOME/.local/share/zinit}"
-source "$ZINIT_HOME/zinit.git/zinit.zsh"
-
-# zinit delete --clean
-zinit cclear
+if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
+  rm -rf "{{ vars.zsh_plugin_static_dir }}"
+fi
 '''
 
 [tasks."clean:dfm"]

@@ -11,6 +11,8 @@ export CARGO_HOME="$XDG_DATA_HOME"/cargo
 # perl - cpanm
 export PERL_CPANM_HOME="$XDG_CACHE_HOME"/cpanm
 export PERLTIDY="$XDG_CONFIG_HOME"/perltidy/perltidyrc
+export PERL5LIB="$XDG_DATA_HOME"/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}
+export PERL_LOCAL_LIB_ROOT="$XDG_DATA_HOME"/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}
 
 # psql
 export PSQL_HISTORY="$XDG_DATA_HOME"/psql_history

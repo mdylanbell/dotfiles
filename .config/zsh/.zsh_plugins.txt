@@ -1,0 +1,7 @@
+mattmc3/ez-compinit
+zsh-users/zsh-completions kind:fpath path:src
+Aloxaf/fzf-tab
+zsh-users/zsh-autosuggestions
+zdharma-continuum/fast-syntax-highlighting
+getantidote/use-omz
+ohmyzsh/ohmyzsh path:plugins/urltools

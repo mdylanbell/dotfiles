@@ -40,8 +40,8 @@ unsetopt autocd
 # Append history to $HISTFILE, don’t overwrite
 setopt appendhistory
 
-# Write each command to history as it is entered
-setopt inc_append_history
+# Write each command to history after it finishes so durations are accurate
+setopt inc_append_history_time
 
 # Ignore commands starting with a space in history
 setopt histignorespace
@@ -49,8 +49,23 @@ setopt histignorespace
 # Ignore consecutive duplicate commands
 setopt histignoredups
 
+# Trim duplicate entries before unique entries when history is pruned
+setopt hist_expire_dups_first
+
+# Skip duplicate matches when searching through history
+setopt histfindnodups
+
+# Collapse unnecessary internal whitespace before saving commands
+setopt histreduceblanks
+
+# Do not store the history command itself
+setopt histnostore
+
 # Store timestamps and durations with history entries
 setopt extendedhistory
+
+# Expand !-style history references onto the command line before execution
+setopt histverify
 
 # Do not merge history between interactive shells
 unsetopt sharehistory
