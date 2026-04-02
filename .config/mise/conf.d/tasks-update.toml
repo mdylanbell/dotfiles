@@ -88,7 +88,7 @@ run = "bat cache --build"
 
 [tasks."update:submodules"]
 description = "Update git submodules in dotfiles repo"
-run = ["git -C $HOME/.dotfiles submodule update --remote"]
+run = ["git -C $DOTFILES_ROOT submodule update --remote"]
 
 [tasks."update:package_managers"]
 description = "Update package managers (pip, npm, etc.)"

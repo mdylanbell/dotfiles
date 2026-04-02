@@ -4,7 +4,7 @@ source "${ANTIDOTE_HOME}/antidote.zsh"
 
 _zsh_plugins_file="${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt"
 if [[ ! -r "$_zsh_plugins_file" ]]; then
-  _zsh_plugins_file="${DOTFILES_ROOT:-$HOME/.dotfiles}/.config/zsh/.zsh_plugins.txt"
+  _zsh_plugins_file="${DOTFILES_ROOT}/.config/zsh/.zsh_plugins.txt"
 fi
 
 _zsh_plugins_static_dir="${ZSH_CACHE_DIR}/antidote"
