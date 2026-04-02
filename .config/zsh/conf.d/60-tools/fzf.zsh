@@ -35,10 +35,4 @@ if (($+commands[fzf])) && [[ -o interactive ]] && [[ -t 0 ]] && [[ -t 1 ]]; then
   fi
 fi
 
-# Keep fzf's history/file/cd bindings, but leave Tab owned by the standard
-# completion system so fzf-tab wraps `complete-word` instead of `fzf-completion`.
-if [[ -o interactive ]] && (($+widgets[complete-word])); then
-  bindkey '^I' complete-word
-fi
-
 # TODO: Also define solarized colors and make FZF_DEFAULT_OPTS = selected scheme
