@@ -32,12 +32,12 @@ run = [
 # ]
 
 [tasks."bootstrap:brew:install"]
-description = "Install Homebrew packages from Brewfile"
+description = "Install Homebrew packages from brewfiles/terminal.required"
 run = '''
-if [ -f "${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile" ]; then
-  brew bundle --file="${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile"
+if [ -f "${DOTFILES_ROOT:-$HOME/.dotfiles}/brewfiles/terminal.required" ]; then
+  brew bundle --file="${DOTFILES_ROOT:-$HOME/.dotfiles}/brewfiles/terminal.required"
 else
-  echo "No Brewfile found at ${DOTFILES_ROOT:-$HOME/.dotfiles}/Brewfile."
+  echo "No Brewfile found at ${DOTFILES_ROOT:-$HOME/.dotfiles}/brewfiles/terminal.required."
 fi
 '''
 

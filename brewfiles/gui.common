@@ -1,0 +1,22 @@
+# Shared GUI apps and desktop integrations; currently macOS-only via OS guard.
+if OS.mac?
+  tap "FelixKratz/formulae"
+
+  brew "mas"  # Mac App Store CLI
+  brew "borders"
+
+  mas install 937984704  # Amphetamine (GUI for caffeinate)
+
+  cask "ghostty"
+  cask "1password"
+  cask "alfred"
+  cask "firefox"
+  cask "google-chrome"
+  cask "google-drive"
+  cask "karabiner-elements"
+  cask "obsidian"
+  cask "scroll-reverser"
+  cask "spotify"
+  cask "todoist"
+  cask "zoom"
+end

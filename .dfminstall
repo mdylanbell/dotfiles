@@ -6,10 +6,7 @@
 .local recurse
 .ssh recurse
 Dockerfile.test.local skip
-Brewfile skip
-Brewfile.work skip
-Brewfile.mac skip
-Brewfile.mac.personal skip
+brewfiles skip
 README.md skip
 AGENTS.md skip
 tests skip
