@@ -3,7 +3,7 @@ zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote"
 
 [tasks."clean"]
 description = "Clean up old packages and caches"
-run = { tasks = ["clean:brew", "clean:mise", "clean:antidote", "clean:dfm"] }
+run = { tasks = ["clean:brew", "clean:mise", "clean:dfm"] }
 
 [tasks."clean:brew"]
 description = "Cleanup Homebrew cache and old versions"
@@ -12,15 +12,6 @@ run = ["brew cleanup -s"]
 [tasks."clean:mise"]
 description = "Mise prune"
 run = ["mise prune"]
-
-[tasks."clean:antidote"]
-description = "Clean antidote-generated zsh cache"
-quiet = true
-run = '''
-if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
-  rm -rf "{{ vars.zsh_plugin_static_dir }}"
-fi
-'''
 
 [tasks."clean:dfm"]
 description = "Clean dfm created .backup folders"

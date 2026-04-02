@@ -1,3 +1,6 @@
+[vars]
+zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote"
+
 [tasks."purge:zinit"]
 description = "Remove obsolete zinit data and cache directories after migrating to antidote"
 run = '''
@@ -20,5 +23,13 @@ fi
 
 if [ "$purged" = false ]; then
   echo "No zinit directories found."
+fi
+'''
+
+[tasks."purge:antidote"]
+description = "Remove antidote-generated zsh cache so it can be rebuilt explicitly"
+run = '''
+if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
+  rm -rf "{{ vars.zsh_plugin_static_dir }}"
 fi
 '''
