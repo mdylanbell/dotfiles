@@ -1,8 +1,6 @@
 # Normalize and expose the shared zsh cache directory.
 _zsh_cache_dir_init() {
-  local cache_root="${XDG_CACHE_HOME:-$HOME/.cache}"
-  typeset -g ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$cache_root/zsh}"
-  [[ $ZSH_CACHE_DIR == "$cache_root/zinit" ]] && typeset -g ZSH_CACHE_DIR="$cache_root/zsh"
+  typeset -g ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh}"
 }
 
 # Cache native zsh completions under $ZSH_CACHE_DIR/completions.

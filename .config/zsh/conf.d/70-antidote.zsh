@@ -7,7 +7,6 @@ if [[ ! -r "$_zsh_plugins_file" ]]; then
   _zsh_plugins_file="${DOTFILES_ROOT:-$HOME/.dotfiles}/.config/zsh/.zsh_plugins.txt"
 fi
 
-typeset -g ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh}"
 _zsh_plugins_static_dir="${ZSH_CACHE_DIR}/antidote"
 _zsh_plugins_static="${_zsh_plugins_static_dir}/.zsh_plugins.zsh"
 mkdir -p "$_zsh_plugins_static_dir"
