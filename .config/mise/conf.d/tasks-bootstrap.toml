@@ -52,10 +52,12 @@ run = [
     "bootstrap:brew:zsh_permissions",
   ] },
   { tasks = [
+    "bootstrap:for_env",
+  ] },
+  { tasks = [
     "bootstrap:bat_cache",
     "bootstrap:gh:extensions",
     "bootstrap:secrets",
-    "bootstrap:for_env",
   ] },
   { tasks = [
     "bootstrap:checks",

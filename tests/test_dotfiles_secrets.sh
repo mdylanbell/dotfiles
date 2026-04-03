@@ -26,7 +26,7 @@ assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:clean:todoist_cli"]'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'chmod 0600 "${XDG_CONFIG_HOME}/todoist/config.json"'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'config.json.op_tmpl'
-assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'op inject'
+assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render"]'
 
 assert_file ".config/mise/conf.d/tasks-bootstrap.toml"
 assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" '[tasks."bootstrap:secrets"]'

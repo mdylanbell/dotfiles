@@ -1,2 +1,14 @@
 [settings]
 disable_tools = ["1password-cli"]
+
+[env]
+OP_COMMAND = "op.exe"
+
+[tasks."bootstrap:for_env"]
+description = "Prepare WSL-specific environment for bootstrap tasks"
+run = '''
+op_env_vars="$(env | awk -F= '/^OP_/ {print $1}' | paste -sd: - || true)"
+if [ -n "${op_env_vars}" ]; then
+  export WSLENV="${WSLENV:+${WSLENV}:}${op_env_vars}"
+fi
+'''
