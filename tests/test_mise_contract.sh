@@ -27,6 +27,7 @@ assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" '[tasks."bootstrap:co
 assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" '[tasks."bootstrap:secrets"]'
 assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" 'bootstrap:prereqs'
 assert_contains ".config/mise/conf.d/tasks-bootstrap.toml" 'intentionally not active'
+assert_order ".config/mise/conf.d/tasks-bootstrap.toml" '"bootstrap:for_env"' '"bootstrap:secrets"'
 
 assert_file ".config/mise/conf.d/tasks-update.toml"
 assert_contains ".config/mise/conf.d/tasks-update.toml" '[tasks."update"]'

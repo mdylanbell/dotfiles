@@ -30,7 +30,7 @@ run = ["brew update", "brew upgrade"]
 
 [tasks."update:antidote"]
 description = "Update antidote and bundles"
-run = '''
+run = """
 #!/usr/bin/env zsh
 if [ ! -d "{{ vars.antidote_home }}/.git" ]; then
   git clone --depth=1 https://github.com/mattmc3/antidote.git "{{ vars.antidote_home }}"
@@ -40,11 +40,11 @@ source "{{ vars.antidote_home }}/antidote.zsh"
 mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
 antidote update --self --bundles
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
-'''
+"""
 
 [tasks."update:wezterm_shell_integration"]
 description = "Refresh the cached WezTerm shell integration script when upstream changes"
-run = '''
+run = """
 dest="{{ vars.wezterm_shell_integration_file }}"
 mkdir -p "$(dirname "$dest")"
 
@@ -78,7 +78,7 @@ else
     echo "Failed to download WezTerm shell integration; continuing."
   fi
 fi
-'''
+"""
 
 [tasks."update:bat_cache"]
 description = "update bat cache"

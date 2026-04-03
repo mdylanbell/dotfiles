@@ -28,8 +28,8 @@ fi
 
 [tasks."purge:antidote"]
 description = "Remove antidote-generated zsh cache so it can be rebuilt explicitly"
-run = '''
+run = """
 if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
   rm -rf "{{ vars.zsh_plugin_static_dir }}"
 fi
-'''
+"""
