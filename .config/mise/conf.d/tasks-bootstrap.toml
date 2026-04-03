@@ -64,7 +64,8 @@ run = [
 
 [tasks."bootstrap:antidote"]
 description = "Install antidote and prebuild zsh plugin bundles"
-run = '''
+run = """
+#!/usr/bin/env zsh
 if [ -d "{{ vars.antidote_home }}/.git" ]; then
   echo "antidote present"
 else
@@ -75,7 +76,7 @@ source "{{ vars.antidote_home }}/antidote.zsh"
 mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
 antidote update --bundles
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
-'''
+"""
 
 [tasks."bootstrap:bat_cache"]
 description = "Build bat cache after Homebrew install"
