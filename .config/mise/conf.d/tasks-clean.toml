@@ -1,18 +1,15 @@
-[vars]
-zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote"
-
 [tasks."clean"]
 description = "Clean up old packages and caches"
 run = { tasks = ["clean:brew", "clean:mise", "clean:dfm"] }
 
 [tasks."clean:brew"]
 description = "Cleanup Homebrew cache and old versions"
-run = ["brew cleanup -s"]
+run = "brew cleanup -s"
 
 [tasks."clean:mise"]
 description = "Mise prune"
-run = ["mise prune"]
+run = "mise prune"
 
 [tasks."clean:dfm"]
 description = "Clean dfm created .backup folders"
-run = ["fd -H '^.backup$' --type dir ~ -X rmdir {}"]
+run = "fd -H '^.backup$' --type dir ~ -X rmdir {}"
