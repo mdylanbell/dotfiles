@@ -1,33 +1,19 @@
-[vars]
-zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote"
-
 [tasks."purge:zinit"]
+vars = { data_dir = "{{ xdg_data_home }}/zinit", cache_dir = "{{ xdg_cache_home }}/zinit" }
 description = "Remove obsolete zinit data and cache directories after migrating to antidote"
-run = '''
-data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/zinit"
-cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zinit"
-
-purged=false
-
-if [ -d "$data_dir" ]; then
-  rm -rf "$data_dir"
-  echo "Removed $data_dir"
-  purged=true
+run = """"
+if [ -d "{{ vars.data_dir }}" ]; then
+  rm -rf "{{ vars.data_dir }}"
 fi
 
-if [ -d "$cache_dir" ]; then
-  rm -rf "$cache_dir"
-  echo "Removed $cache_dir"
-  purged=true
+if [ -d "{{ vars.cache_dir }}" ]; then
+  rm -rf "{{ vars.cache_dir }}"
 fi
-
-if [ "$purged" = false ]; then
-  echo "No zinit directories found."
-fi
-'''
+""""
 
 [tasks."purge:antidote"]
 description = "Remove antidote-generated zsh cache so it can be rebuilt explicitly"
+vars = { zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote" }
 run = """
 if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
   rm -rf "{{ vars.zsh_plugin_static_dir }}"

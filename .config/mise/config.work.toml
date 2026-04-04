@@ -12,20 +12,10 @@ run = ["claude update"]
 
 [tasks."install:terminal:for_env"]
 description = "Install the work terminal Brewfile"
-run = '''
-brewfile="$DOTFILES_ROOT/brewfiles/terminal.env.work"
-if [ -f "$brewfile" ]; then
-  echo "Installing Homebrew bundle from $brewfile"
-  brew bundle --file="$brewfile"
-fi
-'''
+extends = "brewfile:bundle_install"
+vars = { brewfile = "terminal.env.work" }
 
 [tasks."install:gui:for_env"]
 description = "Install the work GUI Brewfile"
-run = '''
-brewfile="$DOTFILES_ROOT/brewfiles/gui.env.work"
-if [ -f "$brewfile" ]; then
-  echo "Installing Homebrew bundle from $brewfile"
-  brew bundle --file="$brewfile"
-fi
-'''
+extends = "brewfile:bundle_install"
+vars = { brewfile = "gui.env.work" }

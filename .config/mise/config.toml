@@ -13,11 +13,11 @@ npm.package_manager = "pnpm"
 python.uv_venv_auto = "create|source"
 
 [hooks]
-postinstall = '''
+postinstall = """
 if printf '%s\n' "${MISE_INSTALLED_TOOLS:-}" | grep -q '^python@'; then
   mise run nvim:python:rebuild
 fi
-'''
+"""
 
 [env]
 DOTFILES_ROOT = "{{ config_root }}"
