@@ -10,6 +10,7 @@ assert_contains ".zshenv" 'export XDG_DATA_HOME=${XDG_DATA_HOME:=${HOME}/.local/
 assert_contains ".zshenv" 'export XDG_STATE_HOME=${XDG_STATE_HOME:=${HOME}/.local/state}'
 assert_contains ".zshenv" 'export XDG_CACHE_HOME=${XDG_CACHE_HOME:=${HOME}/.cache}'
 assert_contains ".zshenv" 'export DOTFILES_ROOT=${DOTFILES_ROOT:=${HOME}/.dotfiles}'
+assert_contains ".zshenv" 'export MISE_GLOBAL_CONFIG_ROOT=${MISE_GLOBAL_CONFIG_ROOT:=${DOTFILES_ROOT}}'
 assert_contains ".zshenv" 'export ZDOTDIR=${ZDOTDIR:=${XDG_CONFIG_HOME}/zsh}'
 
 assert_file ".config/zsh/env.zsh"
