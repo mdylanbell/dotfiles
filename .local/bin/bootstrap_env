@@ -20,7 +20,7 @@ die() {
 is_cmd() { command -v "$1" >/dev/null 2>&1; }
 current_shell_name() {
   local current_shell
-  current_shell="$(ps -p "$$" -o comm= 2>/dev/null || true)"
+  current_shell=$(getent passwd "$(id -un)" | awk -F : '{print $NF}' || true)
   printf '%s\n' "${current_shell##*/}"
 }
 
@@ -243,7 +243,7 @@ maybe_set_default_shell() {
 }
 
 maybe_enter_shell() {
-  if (( ! ENTER_SHELL )); then
+  if ((!ENTER_SHELL)); then
     return
   fi
 
@@ -260,7 +260,7 @@ maybe_enter_shell() {
 }
 
 print_completion_message() {
-  if (( SHELL_CHANGED )); then
+  if ((SHELL_CHANGED)); then
     log "Default shell changed to zsh."
     printf "Close this session and start a new terminal/session to pick it up.\n"
     printf "If you want to switch right now instead, run: zsh -l\n"
