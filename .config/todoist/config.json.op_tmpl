@@ -1,3 +1,5 @@
 {
-  "api_token": "{{ op://${DOTFILES_1PASSWORD_VAULT}/todoist/credential }}"
+  "token": "{{ op://${DOTFILES_1PASSWORD_VAULT}/todoist/credential }}",
+  "color": true,
+  "indent": true
 }
