@@ -9,3 +9,6 @@ export GIT_SSH_COMMAND="ssh.exe"
 ssh() {
   command ssh.exe "$@"
 }
+
+# op
+alias op="op.exe"
