@@ -2,6 +2,7 @@
 if OS.mac?
   # Consider deleting this if Apple clang/CLT remains sufficient for your builds.
   brew "gcc"
+  brew "autoconf"
 end
 
 brew "ast-grep"
