@@ -1,20 +1,23 @@
 [vars]
-fzf_tab_home = "{{ xdg_data_home }}/antidote/github.com/Aloxaf/fzf-tab"
 
 [tasks."build:fzf_tab_module"]
 description = "Build or rebuild the optional fzf-tab binary module"
 run = """
-if [ ! -r "{{ vars.fzf_tab_home }}/fzf-tab.plugin.zsh" ]; then
+#!/usr/bin/env zsh
+if [ ! -r "$ANTIDOTE_HOME/antidote.zsh" ]; then
+  echo "antidote not installed; skipping module build."
+  exit 0
+fi
+
+source "$ANTIDOTE_HOME/antidote.zsh"
+fzf_tab_home="$(antidote path Aloxaf/fzf-tab 2>/dev/null)"
+
+if [ -z "$fzf_tab_home" ] || [ ! -r "$fzf_tab_home/fzf-tab.plugin.zsh" ]; then
   echo "fzf-tab not installed; skipping module build."
   exit 0
 fi
 
-if ! command -v zsh >/dev/null 2>&1; then
-  echo "zsh not found; skipping fzf-tab module build."
-  exit 0
-fi
-
-if ! zsh -ic 'source "{{ vars.fzf_tab_home }}/fzf-tab.plugin.zsh" >/dev/null 2>&1 && build-fzf-tab-module' ; then
+if ! source "$fzf_tab_home/fzf-tab.plugin.zsh" >/dev/null 2>&1 || ! build-fzf-tab-module; then
   echo "fzf-tab module build failed; continuing without binary module."
 fi
 """

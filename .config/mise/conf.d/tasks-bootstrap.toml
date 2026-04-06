@@ -1,5 +1,4 @@
 [vars]
-antidote_home = "{{ xdg_data_home }}/antidote"
 zsh_plugin_list_file = "{{ config_root }}/.config/zsh/.zsh_plugins.txt"
 zsh_plugin_static_file = "{{ xdg_cache_home }}/zsh/antidote/.zsh_plugins.zsh"
 
@@ -68,13 +67,13 @@ run = [
 description = "Install antidote and prebuild zsh plugin bundles"
 run = """
 #!/usr/bin/env zsh
-if [ -d "{{ vars.antidote_home }}/.git" ]; then
+if [ -d "$ANTIDOTE_HOME/.git" ]; then
   echo "antidote present"
 else
-  git clone --depth=1 https://github.com/mattmc3/antidote.git "{{ vars.antidote_home }}"
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_HOME"
 fi
 
-source "{{ vars.antidote_home }}/antidote.zsh"
+source "$ANTIDOTE_HOME/antidote.zsh"
 mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
 antidote update --bundles
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"

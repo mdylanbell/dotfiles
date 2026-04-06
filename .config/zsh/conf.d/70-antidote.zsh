@@ -1,4 +1,4 @@
-ANTIDOTE_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/antidote"
+export ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_CACHE_HOME:-${HOME}/.cache}/antidote}"
 [[ -r "${ANTIDOTE_HOME}/antidote.zsh" ]] || return
 source "${ANTIDOTE_HOME}/antidote.zsh"
 
