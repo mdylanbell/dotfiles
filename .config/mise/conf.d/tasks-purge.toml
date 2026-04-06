@@ -1,21 +1,9 @@
 [tasks."purge:zinit"]
-vars = { data_dir = "{{ xdg_data_home }}/zinit", cache_dir = "{{ xdg_cache_home }}/zinit" }
 description = "Remove obsolete zinit data and cache directories after migrating to antidote"
-run = """"
-if [ -d "{{ vars.data_dir }}" ]; then
-  rm -rf "{{ vars.data_dir }}"
-fi
-
-if [ -d "{{ vars.cache_dir }}" ]; then
-  rm -rf "{{ vars.cache_dir }}"
-fi
-""""
+vars = { data_dir = "{{ xdg_data_home }}/zinit", cache_dir = "{{ xdg_cache_home }}/zinit" }
+run = ['rm -rf "{{ vars.data_dir }}"', 'rm -rf "{{ vars.cache_dir }}"']
 
 [tasks."purge:antidote"]
 description = "Remove antidote-generated zsh cache so it can be rebuilt explicitly"
 vars = { zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote" }
-run = """
-if [ -d "{{ vars.zsh_plugin_static_dir }}" ]; then
-  rm -rf "{{ vars.zsh_plugin_static_dir }}"
-fi
-"""
+run = ['rm -rf "{{ vars.zsh_plugin_static_dir }}"']
