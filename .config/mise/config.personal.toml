@@ -5,6 +5,7 @@ cargo-binstall = "latest"
 go = "latest"
 bun = "latest"
 "npm:@github/copilot" = "latest"
+1password-cli = "latest"
 
 [settings]
 npm.package_manager = "bun"
@@ -22,3 +23,6 @@ vars = { brewfile = "terminal.env.personal" }
 description = "Install the personal GUI Brewfile"
 extends = "brewfile:bundle_install"
 vars = { brewfile = "gui.env.personal" }
+
+[env]
+OP_COMMAND = "op"

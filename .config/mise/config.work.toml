@@ -1,10 +1,12 @@
 # Loaded when MISE_ENV=work is set
 [tools]
-terraform = "latest"
-helm = "latest"
-python = "3.11"
-"pipx:poetry" = "latest"
-node = { version = "22" }
+# terraform = "latest"
+# helm = "latest"
+# "pipx:poetry" = "latest"
+# node = { version = "22" }
+
+[settings]
+disable_tools = ["1password-cli"]
 
 [tasks."update:for_env"]
 description = "Update tools for environment: work"
@@ -19,3 +21,8 @@ vars = { brewfile = "terminal.env.work" }
 description = "Install the work GUI Brewfile"
 extends = "brewfile:bundle_install"
 vars = { brewfile = "gui.env.work" }
+
+# secrets:render is currently a no-op for work
+[tasks."secrets:render"]
+description = "Render secrets for environment: work (not currently supported)"
+run = "true"

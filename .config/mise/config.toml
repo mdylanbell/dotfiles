@@ -4,7 +4,6 @@ pipx = "latest"
 pnpm = "latest"
 uv = "latest"
 python = "3.12"
-1password-cli = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 usage = "latest"
 
@@ -22,6 +21,4 @@ fi
 
 [env]
 DOTFILES_ROOT = "{{ config_root }}"
-OP_COMMAND = "op"
-# UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
 nvim_virtualenv = "{{xdg_cache_home}}/venvs/nvim"
