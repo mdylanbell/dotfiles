@@ -8,15 +8,8 @@ if OS.mac?
   mas install 937984704  # Amphetamine (GUI for caffeinate)
 
   cask "ghostty"
-  cask "1password"
-  cask "alfred"
   cask "firefox"
-  cask "google-chrome"
-  cask "google-drive"
   cask "karabiner-elements"
-  cask "obsidian"
   cask "scroll-reverser"
   cask "spotify"
-  cask "todoist"
-  cask "zoom"
 end
