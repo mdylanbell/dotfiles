@@ -127,3 +127,7 @@ else
   echo "gh not authenticated, skipping extension update."
 fi
 """
+
+[tasks."update:for_env"]
+description = "No-op hook for environment-specific updates"
+run = ":"
