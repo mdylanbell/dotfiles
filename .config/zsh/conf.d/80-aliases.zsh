@@ -18,7 +18,7 @@ if diff --color=auto --version >/dev/null 2>&1; then
 fi
 
 # custom nvim review mode
-alias nvimr='nvim -c "ReviewPR"'
+alias nvimr='nvim -c "Pier open"'
 
 # Work around glow not supporting var expansion (https://github.com/charmbracelet/glow/issues/776)
 alias glow='glow -s $HOME/.config/glow/styles/catppuccin-mocha.json'
