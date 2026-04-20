@@ -13,6 +13,7 @@ Usage:
 Keys:
   default_branch
   open.cmd
+  pr.open.cmd
 EOF
 }
 
@@ -24,7 +25,7 @@ verbose=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    show|get|set)
+    show | get | set)
       action="$1"
       shift
       ;;
@@ -51,7 +52,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ -n "$action" ]] || { usage; exit 2; }
+[[ -n "$action" ]] || {
+  usage
+  exit 2
+}
 
 container="$(wt_resolve_container "${container:-$PWD}")"
 config_path="$(wt_config_path "$container")"
@@ -69,6 +73,9 @@ default_branch = "${default_branch}"
 
 [open]
 cmd = ""
+
+[pr.open]
+cmd = ""
 EOF
       exit 0
     fi
@@ -81,7 +88,10 @@ EOF
     fi
     command -v python3 >/dev/null 2>&1 || die "python3 required to read git-wt.toml"
     key="${args[0]:-}"
-    [[ -n "$key" && ${#args[@]} -eq 1 ]] || { usage; exit 2; }
+    [[ -n "$key" && ${#args[@]} -eq 1 ]] || {
+      usage
+      exit 2
+    }
     $verbose && echo "config: $config_path" >&2
     case "$key" in
       default_branch)
@@ -92,6 +102,10 @@ EOF
         value="$(wt_config_get_string "$container" open cmd)"
         [[ -n "$value" ]] && echo "$value"
         ;;
+      pr.open.cmd)
+        value="$(wt_config_get_string "$container" pr open cmd)"
+        [[ -n "$value" ]] && echo "$value"
+        ;;
       *)
         die "unknown config key: $key"
         ;;
@@ -100,7 +114,10 @@ EOF
   set)
     key="${args[0]:-}"
     value="${args[*]:1}"
-    [[ -n "$key" && -n "$value" && ${#args[@]} -ge 2 ]] || { usage; exit 2; }
+    [[ -n "$key" && -n "$value" && ${#args[@]} -ge 2 ]] || {
+      usage
+      exit 2
+    }
 
     if $dry_run; then
       echo "would set $key in $config_path"
@@ -168,6 +185,44 @@ EOF
         else
           cat <<EOF >"$tmp"
 [open]
+cmd = "$value"
+EOF
+        fi
+        ;;
+      pr.open.cmd)
+        if [[ -f "$config_path" ]]; then
+          awk -v val="$value" '
+            BEGIN { in_pr_open=0; updated=0; wrote_section=0 }
+            /^[[]/ {
+              if (in_pr_open && !updated) {
+                print "cmd = \"" val "\""
+                updated=1
+              }
+              in_pr_open=0
+            }
+            /^\[pr\.open\]/ {
+              in_pr_open=1
+              wrote_section=1
+            }
+            in_pr_open && /^cmd[[:space:]]*=/ {
+              print "cmd = \"" val "\""
+              updated=1
+              next
+            }
+            { print }
+            END {
+              if (!wrote_section) {
+                print ""
+                print "[pr.open]"
+                print "cmd = \"" val "\""
+              } else if (in_pr_open && !updated) {
+                print "cmd = \"" val "\""
+              }
+            }
+          ' "$config_path" >"$tmp"
+        else
+          cat <<EOF >"$tmp"
+[pr.open]
 cmd = "$value"
 EOF
         fi

@@ -61,6 +61,8 @@ git-wt migrate [--protect-default=chain|false] [--dry-run] [--verbose] <repo_pat
 
 ```
 git-wt pr checkout [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [slug]
+git-wt pr open [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
+git-wt pr open [--container <path>] [--dry-run] [--verbose] --checkout <PR_NUMBER> [slug]
 git-wt pr update [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
 git-wt pr update [--container <path>] [--dry-run] [--verbose] --all
 git-wt pr reset [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
@@ -91,6 +93,14 @@ pr/<num>
 - Temporary PR remotes are cleaned up by `git-wt remove` once no remaining
   worktrees reference that PR branch.
 - Review mode in Neovim (see related docs) prefers the PR base branch for diffs.
+
+`open` opens a PR worktree using the command configured in `git-wt.toml`
+(`pr.open.cmd`):
+
+- Without `--checkout`, errors if the PR worktree is not already checked out.
+- With `--checkout`, reuses the existing PR worktree if present; otherwise
+  performs the equivalent of `git-wt pr checkout` first and then opens it.
+- Errors if `pr.open.cmd` is not set (use `git-wt config set pr.open.cmd "<command>"`).
 
 `update` fast-forwards the checked-out PR worktree:
 
@@ -240,6 +250,7 @@ git-wt config set [--container <path>] [--dry-run] [--verbose] <key> <value>
 Keys:
 - `default_branch`
 - `open.cmd`
+- `pr.open.cmd`
 
 ### `git-wt sync`
 
@@ -296,6 +307,9 @@ default_branch = "main"
 
 [open]
 cmd = "code ."
+
+[pr.open]
+cmd = "nvim -c \"Pier open\""
 ```
 
 ## Hooks

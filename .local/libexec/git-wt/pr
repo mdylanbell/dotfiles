@@ -2,12 +2,13 @@
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_lib.sh"
 wt_require_git
-wt_require_gh
 
 usage() {
   cat <<'USAGE'
 Usage:
   git-wt pr checkout [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [slug]
+  git-wt pr open [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
+  git-wt pr open [--container <path>] [--dry-run] [--verbose] --checkout <PR_NUMBER> [slug]
   git-wt pr update [--container <path>] [--dry-run] [--verbose] <PR_NUMBER>
   git-wt pr update [--container <path>] [--dry-run] [--verbose] --all
   git-wt pr reset [--container <path>] [--dry-run] [--verbose] <PR_NUMBER> [--force]
@@ -25,6 +26,7 @@ USAGE
 container=""
 args=()
 action=""
+checkout_open=false
 force_reset=false
 fetch_info=false
 dry_run=false
@@ -32,13 +34,17 @@ verbose=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    checkout|update|reset|recreate|info)
+    checkout | open | update | reset | recreate | info)
       action="$1"
       shift
       ;;
     --container)
       container="$(wt_abs_path "$(wt_parse_container_arg "${2:-}")")"
       shift 2
+      ;;
+    --checkout)
+      checkout_open=true
+      shift
       ;;
     --force)
       force_reset=true
@@ -71,8 +77,14 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ -n "$action" ]] || { usage; exit 2; }
+[[ -n "$action" ]] || {
+  usage
+  exit 2
+}
 
+if $checkout_open && [[ "$action" != "open" ]]; then
+  die "--checkout is only valid with pr open"
+fi
 if $force_reset && [[ "$action" != "reset" && "$action" != "recreate" ]]; then
   die "--force is only valid with pr reset or pr recreate"
 fi
@@ -91,6 +103,17 @@ wt_dir="$(wt_wt_for "$container")"
 
 git_main() { git -C "$main_dir" "$@"; }
 
+case "$action" in
+  checkout | update | reset | recreate | info)
+    wt_require_gh
+    ;;
+  open)
+    if $checkout_open; then
+      wt_require_gh
+    fi
+    ;;
+esac
+
 if $dry_run; then
   case "$action" in
     info)
@@ -99,8 +122,29 @@ if $dry_run; then
     checkout)
       pr="${args[0]:-}"
       slug="${args[1]:-}"
-      [[ -z "$pr" || ${#args[@]} -gt 2 ]] && { usage; exit 2; }
+      [[ -z "$pr" || ${#args[@]} -gt 2 ]] && {
+        usage
+        exit 2
+      }
       echo "would checkout PR $pr${slug:+ (slug $slug)}"
+      exit 0
+      ;;
+    open)
+      pr="${args[0]:-}"
+      slug="${args[1]:-}"
+      if $checkout_open; then
+        [[ -z "$pr" || ${#args[@]} -gt 2 ]] && {
+          usage
+          exit 2
+        }
+        echo "would open PR $pr${slug:+ (slug $slug)} via checkout if needed"
+      else
+        [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+          usage
+          exit 2
+        }
+        echo "would open PR $pr"
+      fi
       exit 0
       ;;
     update)
@@ -108,20 +152,29 @@ if $dry_run; then
         echo "would update all PR worktrees"
       else
         pr="${args[0]:-}"
-        [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+        [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+          usage
+          exit 2
+        }
         echo "would update PR $pr"
       fi
       exit 0
       ;;
     reset)
       pr="${args[0]:-}"
-      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+        usage
+        exit 2
+      }
       echo "would reset PR $pr"
       exit 0
       ;;
     recreate)
       pr="${args[0]:-}"
-      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+        usage
+        exit 2
+      }
       echo "would recreate PR $pr"
       exit 0
       ;;
@@ -239,6 +292,45 @@ pr_find_checked_out_path() {
   echo "$checked_out_path"
 }
 
+pr_open_cmd() {
+  if [[ -f "$(wt_config_path "$container")" ]] && ! command -v python3 >/dev/null 2>&1; then
+    die "python3 required to read git-wt.toml"
+  fi
+
+  local cmd
+  cmd="$(wt_config_get_string "$container" pr open cmd)"
+  if [[ -z "$cmd" ]]; then
+    die "pr.open.cmd is not set; configure with: git-wt config set pr.open.cmd \"<command>\""
+  fi
+
+  echo "$cmd"
+}
+
+pr_open_one() {
+  local pr_num="${1:?}"
+  local slug="${2:-}"
+  local local_branch="pr/${pr_num}"
+  local wt_path=""
+
+  wt_path="$(pr_find_checked_out_path "$local_branch")"
+  if [[ -z "$wt_path" ]]; then
+    if ! $checkout_open; then
+      die "no checked-out worktree found for PR $pr_num"
+    fi
+    wt_path="$(pr_checkout_impl "$pr_num" "$slug")"
+  fi
+
+  local cmd
+  cmd="$(pr_open_cmd)"
+
+  if $verbose; then
+    echo "worktree: $wt_path"
+    echo "running: (cd \"$wt_path\" && $cmd)"
+  fi
+
+  (cd "$wt_path" && eval "$cmd")
+}
+
 pr_relative_path() {
   local path="${1:-}"
   if [[ -z "$path" ]]; then
@@ -307,7 +399,7 @@ pr_confirm_action() {
   local reply
   read -r reply </dev/tty || die "aborted"
   case "${reply:-}" in
-    y|Y|yes|YES) ;;
+    y | Y | yes | YES) ;;
     *) die "aborted" ;;
   esac
 }
@@ -426,7 +518,7 @@ pr_checkout_impl() {
   fi
 
   if [[ "$head_full" == "$base_full" ]]; then
-    git_main fetch origin "$head_ref:refs/heads/$local_branch"
+    git_main fetch --quiet origin "$head_ref:refs/heads/$local_branch"
   else
     local remote_name="pr-$pr_num"
     local remote_url="$head_ssh"
@@ -443,14 +535,14 @@ pr_checkout_impl() {
       git_main remote add "$remote_name" "$remote_url"
     fi
 
-    git_main fetch "$remote_name" "$head_ref:refs/heads/$local_branch"
+    git_main fetch --quiet "$remote_name" "$head_ref:refs/heads/$local_branch"
   fi
 
   $verbose && echo "creating PR worktree: $dest (branch $local_branch)"
 
   # TODO: Replace this implementation with gh-worktree once
   # https://github.com/eikster-dk/gh-worktree/pull/11 is released.
-  git_main worktree add "$dest" "$local_branch"
+  git_main worktree add "$dest" "$local_branch" >/dev/null
   set +e
   wt_run_pr_checkout_hooks "$dest" "$container"
   hook_rc=$?
@@ -630,8 +722,28 @@ case "$action" in
   checkout)
     pr="${args[0]:-}"
     slug="${args[1]:-}"
-    [[ -z "$pr" || ${#args[@]} -gt 2 ]] && { usage; exit 2; }
+    [[ -z "$pr" || ${#args[@]} -gt 2 ]] && {
+      usage
+      exit 2
+    }
     pr_checkout_impl "$pr" "$slug"
+    ;;
+  open)
+    pr="${args[0]:-}"
+    slug="${args[1]:-}"
+    if $checkout_open; then
+      [[ -z "$pr" || ${#args[@]} -gt 2 ]] && {
+        usage
+        exit 2
+      }
+      pr_open_one "$pr" "$slug"
+    else
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+        usage
+        exit 2
+      }
+      pr_open_one "$pr"
+    fi
     ;;
   update)
     if [[ "${args[0]:-}" == "--all" ]]; then
@@ -662,18 +774,27 @@ case "$action" in
       done
     else
       pr="${args[0]:-}"
-      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+        usage
+        exit 2
+      }
       pr_update_one "$pr"
     fi
     ;;
   reset)
     pr="${args[0]:-}"
-    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+      usage
+      exit 2
+    }
     pr_reset_one "$pr"
     ;;
   recreate)
     pr="${args[0]:-}"
-    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+    [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+      usage
+      exit 2
+    }
     pr_recreate_one "$pr"
     ;;
   info)
@@ -705,7 +826,10 @@ case "$action" in
       done
     else
       pr="${args[0]:-}"
-      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && { usage; exit 2; }
+      [[ -z "$pr" || ${#args[@]} -gt 1 ]] && {
+        usage
+        exit 2
+      }
       pr_info_one "$pr"
     fi
     ;;

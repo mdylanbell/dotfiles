@@ -56,7 +56,7 @@ _git_wt_complete_pr_numbers() {
 
 _git_wt_complete_config_keys() {
   local -a keys
-  keys=(default_branch open.cmd)
+  keys=(default_branch open.cmd pr.open.cmd)
   _describe -t config-keys 'config key' keys
 }
 
@@ -202,6 +202,7 @@ _git_wt_cmd_pr() {
 
   _arguments -C -s -S \
     '--container=[container path]:container path:_files -/' \
+    '--checkout[create the PR worktree first if needed]' \
     '--force[force reset/recreate even if dirty]' \
     '--fetch[fetch metadata before showing info]' \
     '--dry-run[show planned actions without changing anything]' \
@@ -209,7 +210,7 @@ _git_wt_cmd_pr() {
     '--all[apply action to all tracked PR worktrees]' \
     '-h[show help]' \
     '--help[show help]' \
-    '1:action:(checkout update reset recreate info)' \
+    '1:action:(checkout open update reset recreate info)' \
     '*::args:->pr_args'
 
   case "$state" in
@@ -219,6 +220,13 @@ _git_wt_cmd_pr() {
           if (( CURRENT == 3 )); then
             _message 'PR number'
           elif (( CURRENT == 4 )); then
+            _message 'optional slug'
+          fi
+          ;;
+        open)
+          if (( CURRENT == 3 )); then
+            _git_wt_complete_pr_numbers || _message 'PR number'
+          elif (( CURRENT == 4 )) && [[ -n "${opt_args[--checkout]:-}" ]]; then
             _message 'optional slug'
           fi
           ;;
@@ -248,7 +256,7 @@ _git_wt() {
 
   # Fast path: ensure action completion works at `git-wt pr <TAB>`.
   if [[ "${words[2]:-}" == "pr" && CURRENT -eq 3 ]]; then
-    _values 'action' checkout update reset recreate info
+    _values 'action' checkout open update reset recreate info
     return
   fi
 

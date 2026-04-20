@@ -1,7 +1,7 @@
 # Git Worktree PR Review Workflow
 
 This document describes the standard PR review flow using `git-wt`, `gh-dash`,
-and Neovim review mode.
+and the local `Pier` Neovim plugin.
 
 For git-wt command details, see `doc/git-wt.md`.
 
@@ -46,6 +46,12 @@ This prints the created worktree path, for example:
 wt/pr-1234-search
 ```
 
+For a one-step entrypoint, you can instead run:
+
+```bash
+git-wt pr open --checkout 1234 search
+```
+
 ### 3) Open Neovim in review mode
 
 From inside the PR worktree:
@@ -55,11 +61,14 @@ cd wt/pr-1234-search
 nvimr
 ```
 
+If `pr.open.cmd` is configured to your review launcher, `git-wt pr open 1234`
+can be used to reopen an existing PR worktree directly.
+
 What happens automatically:
 
-- `:ReviewPR` runs at startup
+- `:Pier open` runs at startup
 - Diffview opens against the PR base branch (`<base>...HEAD`)
-- Octo PR view opens in a separate tab
+- Octo is available on demand via `:Pier octo`
 
 ### 4) Review the code
 
@@ -83,10 +92,10 @@ From the container root, open Neovim and use the dashboard shortcut:
 You can also run:
 
 ```
-:ReviewPR
+:Pier open
 ```
 
-If you run `:ReviewPR` outside a git-wt container, it will warn and exit.
+If you run `:Pier open` outside a git-wt container, it will warn and exit.
 
 ### Leader key review group
 
