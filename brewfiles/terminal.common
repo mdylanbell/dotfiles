@@ -6,12 +6,13 @@ if OS.mac?
 end
 
 brew "ast-grep"
-brew "lua"
-brew "luarocks"
 brew "bat-extras"
 brew "btop"
 brew "imagemagick"
+brew "lua"
+brew "luarocks"
 brew "lynx"
+brew "rtk"  # token optimizer
 brew "shellcheck"
 brew "shfmt"
 brew "tree"

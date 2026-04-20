@@ -3,12 +3,11 @@ if OS.mac?
   tap "FelixKratz/formulae"
 
   brew "mas"  # Mac App Store CLI
-  brew "borders"
+  cask "borders"
 
-  mas install 937984704  # Amphetamine (GUI for caffeinate)
+  # mas install 937984704  # Amphetamine (GUI for caffeinate)
 
   cask "ghostty"
-  cask "firefox"
   cask "karabiner-elements"
   cask "scroll-reverser"
   cask "spotify"
