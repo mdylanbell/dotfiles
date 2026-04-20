@@ -47,14 +47,17 @@ function M.open(repo_dir, base)
     return false
   end
 
-  local resolved_base = base or Git.default_branch(repo_dir)
-  local range = M.resolve_range(repo_dir, resolved_base)
+  local resolved_repo_dir = repo_dir or vim.fn.getcwd()
+  local resolved_base = base or Git.default_branch(resolved_repo_dir)
+  local range = M.resolve_range(resolved_repo_dir, resolved_base)
   if not range then
     vim.notify(("Pier: could not resolve diff base for %s"):format(resolved_base), vim.log.levels.WARN)
     return false
   end
 
-  local ok = pcall(vim.cmd, "DiffviewOpen " .. range)
+  local ok = pcall(function()
+    vim.cmd("DiffviewOpen " .. range)
+  end)
   if ok then
     return true
   end
@@ -64,7 +67,9 @@ function M.open(repo_dir, base)
 end
 
 function M.close()
-  pcall(vim.cmd, "DiffviewClose")
+  pcall(function()
+    vim.cmd("DiffviewClose")
+  end)
 end
 
 return M

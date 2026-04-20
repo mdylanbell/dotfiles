@@ -16,7 +16,7 @@ local function is_enabled(buf)
   return vim.api.nvim_buf_is_valid(buf) and vim.b[buf].minidiff_summary ~= nil
 end
 
----@param state ReviewSessionState
+---@param state PierSessionState
 ---@return { buf: integer|nil, enabled: boolean, global_disable: boolean }
 function M.capture(state)
   local buf = state.review_buf
@@ -27,7 +27,7 @@ function M.capture(state)
   }
 end
 
----@param state ReviewSessionState
+---@param state PierSessionState
 ---@param snapshot { buf: integer|nil, enabled: boolean, global_disable: boolean }|nil
 function M.apply(state, snapshot)
   local diff = load_minidiff()
@@ -39,7 +39,7 @@ function M.apply(state, snapshot)
   diff.enable(buf)
 end
 
----@param state ReviewSessionState
+---@param state PierSessionState
 ---@param snapshot { buf: integer|nil, enabled: boolean, global_disable: boolean }|nil
 function M.restore(state, snapshot)
   local diff = load_minidiff()
@@ -57,7 +57,9 @@ function M.restore(state, snapshot)
     return
   end
   if snapshot.buf ~= session_buf and not snapshot.enabled then
-    diff.disable(snapshot.buf)
+    if diff and diff.disable then
+      diff.disable(snapshot.buf)
+    end
   end
 end
 

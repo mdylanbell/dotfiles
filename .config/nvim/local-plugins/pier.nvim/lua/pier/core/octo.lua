@@ -68,7 +68,9 @@ function M.open_pr(container, pr_num)
   end
 
   vim.cmd("tabnew")
-  local ok = pcall(vim.cmd, "edit " .. vim.fn.fnameescape(uri))
+  local ok = pcall(function()
+    vim.cmd("edit " .. vim.fn.fnameescape(uri))
+  end)
   if ok then
     return {
       opened = true,
@@ -77,7 +79,9 @@ function M.open_pr(container, pr_num)
     }
   end
 
-  pcall(vim.cmd, "tabclose")
+  pcall(function()
+    vim.cmd("tabclose")
+  end)
   return { opened = false, tab = nil, created = false }
 end
 
@@ -94,7 +98,9 @@ function M.close_tab(tab, created)
   if current ~= tab then
     vim.api.nvim_set_current_tabpage(tab)
   end
-  pcall(vim.cmd, "tabclose")
+  pcall(function()
+    vim.cmd("tabclose")
+  end)
 end
 
 return M

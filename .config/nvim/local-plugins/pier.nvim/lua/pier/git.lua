@@ -204,7 +204,7 @@ function M.default_branch(path)
   local ref_result = git_cmd(root, { "symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD" }, 4000)
   local ref = first_line(ref_result.stdout)
   if ref:match("^origin/") then
-    return ref:gsub("^origin/", "")
+    return (ref:gsub("^origin/", ""))
   end
   return "main"
 end

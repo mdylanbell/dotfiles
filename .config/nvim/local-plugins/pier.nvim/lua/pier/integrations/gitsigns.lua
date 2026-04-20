@@ -12,17 +12,14 @@ local function current_signs_enabled()
   return nil
 end
 
----@param _ ReviewSessionState
 ---@return { signcolumn: boolean|nil }
-function M.capture(_)
+function M.capture()
   return {
     signcolumn = current_signs_enabled(),
   }
 end
 
----@param _ ReviewSessionState
----@param _ { signcolumn: boolean|nil }|nil
-function M.apply(_, _)
+function M.apply()
   local ok, gitsigns = pcall(require, "gitsigns")
   if ok and gitsigns.toggle_signs then
     gitsigns.toggle_signs(false)
@@ -32,7 +29,6 @@ function M.apply(_, _)
   end
 end
 
----@param _ ReviewSessionState
 ---@param snapshot { signcolumn: boolean|nil }|nil
 function M.restore(_, snapshot)
   if not snapshot or snapshot.signcolumn == nil then

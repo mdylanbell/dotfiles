@@ -15,9 +15,14 @@ local integrations = {
 
 local setup_done = false
 
+---@class PierIntegrationModule
+---@field capture fun(state: PierSessionState): any
+---@field apply fun(state: PierSessionState, snapshot: any)
+---@field restore fun(state: PierSessionState, snapshot: any)
+
 ---@class PierIntegration
 ---@field name string
----@field mod { capture: fun(state: PierSessionState): any, apply: fun(state: PierSessionState, snapshot: any), restore: fun(state: PierSessionState, snapshot: any) }
+---@field mod PierIntegrationModule
 
 ---@class PierTarget
 ---@field container string
@@ -88,7 +93,11 @@ end
 ---@param path string|nil
 ---@return boolean
 local function is_path_in_repo(path)
-  return has_text(path) and vim.fn.filereadable(path) == 1
+  if not has_text(path) then
+    return false
+  end
+  ---@cast path string
+  return vim.fn.filereadable(path) == 1
 end
 
 ---@param buf integer|nil
@@ -98,6 +107,7 @@ local function is_review_buffer(buf, repo_dir)
   if type(buf) ~= "number" or not vim.api.nvim_buf_is_valid(buf) or not has_text(repo_dir) then
     return false
   end
+  ---@cast repo_dir string
   if vim.bo[buf].buftype ~= "" then
     return false
   end
@@ -150,7 +160,8 @@ local function set_review_buffer(buf)
   end
 
   if type(buf) == "number" and vim.api.nvim_buf_is_valid(buf) then
-    local ok = pcall(mini_diff.mod.apply, state, state.integration_state[mini_diff.name])
+    local apply = mini_diff.mod.apply
+    local ok = pcall(apply, state, state.integration_state[mini_diff.name])
     if not ok then
       notify_warn("Pier: failed to apply mini.diff integration")
     end
@@ -163,6 +174,7 @@ local function target_from_pr_path(path)
   if not has_text(path) or not Context.is_pr_worktree(path) then
     return nil
   end
+  ---@cast path string
   local container = container_for_review(path)
   if not container then
     return nil
@@ -251,8 +263,9 @@ local function current_context_file(target)
   local ok_diffview, diffview_lib = pcall(require, "diffview.lib")
   if ok_diffview then
     local view = diffview_lib.get_current_view()
-    if view and type(view.infer_cur_file) == "function" then
-      local file = view:infer_cur_file(false)
+    local infer_cur_file = view and view["infer_cur_file"] or nil
+    if type(infer_cur_file) == "function" then
+      local file = infer_cur_file(view, false)
       if file and has_text(file.path) then
         return normalize_relative_path(file.path)
       end
@@ -280,36 +293,41 @@ local function focus_octo_review_file(target, path)
   local normalized_path = normalize_relative_path(path)
   local attempts = 0
   local max_attempts = 20
+  local focused = false
 
   local function try_focus()
     attempts = attempts + 1
 
     local review = reviews.get_current_review()
-    local files = review and review.layout and review.layout.files or nil
+    local layout = review and review.layout or nil
+    local files = layout and layout.files or nil
     if not files then
-      if attempts == 1 then
-        reviews.start_or_resume_review()
-      end
-      if attempts < max_attempts then
-        vim.defer_fn(try_focus, 100)
-      else
-        notify_warn(("Pier: failed to open Octo review for PR #%s"):format(target.pr_num))
-      end
-      return
+      return false
     end
 
     for _, file in ipairs(files) do
       if normalize_relative_path(file.path) == normalized_path then
-        review.layout:set_current_file(file, "right")
-        return
+        if layout and layout.set_current_file then
+          layout:set_current_file(file, "right")
+          focused = true
+        end
+        return true
       end
     end
 
     notify_warn(("Pier: file is unchanged or not part of current PR review: %s"):format(normalized_path))
+    return true
   end
 
-  try_focus()
-  return true
+  reviews.start_or_resume_review()
+
+  local completed = vim.wait(max_attempts * 100, try_focus, 100)
+  if not completed then
+    notify_warn(("Pier: failed to open Octo review for PR #%s"):format(target.pr_num))
+    return false
+  end
+
+  return focused
 end
 
 local function capture_integrations()
@@ -424,11 +442,18 @@ function M.open_octo_file(path)
     return false
   end
 
-  local relative_path = has_text(path) and normalize_relative_path(path) or current_context_file(target)
+  local relative_path
+  if has_text(path) then
+    ---@cast path string
+    relative_path = normalize_relative_path(path)
+  else
+    relative_path = current_context_file(target)
+  end
   if not has_text(relative_path) then
     notify_warn("Pier: could not determine review file from current context")
     return false
   end
+  ---@cast relative_path string
 
   if not M.open_octo() then
     return false
@@ -438,19 +463,27 @@ function M.open_octo_file(path)
     vim.api.nvim_set_current_tabpage(state.octo_tab)
   end
 
-  return focus_octo_review_file(target, relative_path)
+  if focus_octo_review_file(target, relative_path) then
+    return true
+  end
+
+  CoreOcto.close_tab(state.octo_tab, state.octo_tab_created)
+  state.octo_opened = false
+  state.octo_tab = nil
+  state.octo_tab_created = false
+  return false
 end
 
 ---@param target PierTarget
 ---@return boolean
 local function open_panels(target)
+  local base_ref = GitHub.pr_base_branch(target.container, target.pr_num)
+  if not CoreDiffview.open(target.repo_dir, base_ref) then
+    return false
+  end
+
   start_session(target)
-  state.base_ref = GitHub.pr_base_branch(target.container, target.pr_num)
-
-  vim.defer_fn(function()
-    M.open_diffview()
-  end, 150)
-
+  state.base_ref = base_ref
   return true
 end
 
@@ -501,24 +534,29 @@ local function pick_pr()
       })
     end
 
-    require("snacks").picker.pick({
-      title = "PR worktrees",
-      items = items,
-      format = "text",
-      preview = "preview",
-      confirm = function(picker, item)
-        picker:close()
-        if not item or not item.path then
-          return
-        end
-        vim.cmd("cd " .. vim.fn.fnameescape(item.path))
-        local target = target_from_pr_path(item.path)
-        if target then
-          open_panels(target)
-        end
-      end,
-    })
-    return true
+    local ok_snacks, snacks = pcall(require, "snacks")
+    if ok_snacks and snacks.picker and snacks.picker.pick then
+      snacks.picker.pick({
+        title = "PR worktrees",
+        items = items,
+        format = "text",
+        preview = "preview",
+        confirm = function(picker, item)
+          picker:close()
+          if not item or not item.path then
+            return
+          end
+          vim.cmd("cd " .. vim.fn.fnameescape(item.path))
+          local target = target_from_pr_path(item.path)
+          if target then
+            open_panels(target)
+          end
+        end,
+      })
+      return true
+    end
+
+    notify_warn("Pier: snacks picker unavailable; falling back to vim.ui.select")
   end
 
   vim.ui.select(entries, {
@@ -541,8 +579,7 @@ end
 
 function M.open()
   if state.active then
-    session_or_path_target(vim.fn.getcwd())
-    return true
+    return session_or_path_target(vim.fn.getcwd()) ~= nil
   end
   return pick_pr()
 end

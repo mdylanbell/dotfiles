@@ -1,20 +1,16 @@
 local M = {}
 
----@param _ ReviewSessionState
 ---@return { showtabline: integer }
-function M.capture(_)
+function M.capture()
   return {
     showtabline = vim.o.showtabline,
   }
 end
 
----@param _ ReviewSessionState
----@param _ { showtabline: integer }|nil
-function M.apply(_, _)
+function M.apply()
   vim.o.showtabline = 2
 end
 
----@param _ ReviewSessionState
 ---@param snapshot { showtabline: integer }|nil
 function M.restore(_, snapshot)
   if snapshot and type(snapshot.showtabline) == "number" then

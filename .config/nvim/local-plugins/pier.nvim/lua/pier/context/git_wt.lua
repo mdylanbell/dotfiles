@@ -24,7 +24,7 @@ end
 ---@return { path: string, label: string, pr: string|nil }[]
 function M.pr_worktree_entries(container)
   local entries = {}
-  for _, path in ipairs(vim.fn.glob(container .. "/wt/pr-*", 1, 1)) do
+  for _, path in ipairs(vim.fn.glob(container .. "/wt/pr-*", true, true)) do
     if vim.fn.isdirectory(path) == 1 then
       table.insert(entries, {
         path = path,
