@@ -20,3 +20,16 @@ vim.g.lazyvim_python_lsp = "basedpyright"
 
 -- Prefer ruff over black
 -- vim.g.lazyvim_python_ruff = "ruff"
+
+-- Improve listchars
+-- vim.opt.showbreak = "↳"
+-- vim.opt.listchars = {
+--   eol = "⏎",
+--   tab = "› ",
+--   trail = "·",
+--   lead = "·",
+--   nbsp = "␣",
+--   extends = "…",
+--   precedes = "…",
+-- }
+-- vim.opt.list = false
