@@ -19,10 +19,4 @@ vim.g.loaded_ruby_provider = 0
 vim.g.lazyvim_python_lsp = "basedpyright"
 
 -- Prefer ruff over black
-vim.g.lazyvim_python_ruff = "ruff"
-
----- Add custom ReviewPR command
-
-vim.api.nvim_create_user_command("ReviewPR", function()
-  require("config.review").review_pr_command()
-end, {})
+-- vim.g.lazyvim_python_ruff = "ruff"
