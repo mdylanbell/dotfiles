@@ -1,10 +1,6 @@
 [user]
 	name = Matthew Bell
 	email = m.dylan.bell@gmail.com
-[includeIf "gitdir:~/code/work/**"]
-	path = ~/code/work/.gitconfig
-[include]
-  path = delta/themes/catppuccin.gitconfig
 [init]
 	defaultBranch = main
 [color]
@@ -26,7 +22,6 @@
 	w = whatchanged
 	vimdiff = difftool --tool=vimdiff -y
 	vd = difftool --tool=vimdiff -y
-	od = difftool --tool=opendiff -y
 	unstage = reset HEAD
 	lol = log --oneline --graph --decorate
 	lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
@@ -41,7 +36,8 @@
 	db = delete-branch
 	hide = update-index --assume-unchanged
 	unhide = update-index --no-assume-unchanged
-	hidden = !git ls-files -v | grep \"^[a-z]\"
+	; hidden = !git ls-files -v | grep \"^[a-z]\"
+	hidden = !git ls-files -v | grep '[[:lower:]]'
 [merge]
 	tool = vimdiff
 	conflictStyle = zdiff3
@@ -58,10 +54,6 @@
 	pager = delta
 [github]
 	user = mdylanbell
-[gitlab]
-	user = sa-mbell
-[include]
-	path = config.local
 [credential "https://github.com"]
 	username = mdylanbell
 [credential]
@@ -81,9 +73,15 @@
 	ignoreRevsFile = .git-blame-ignore-revs
 [interactive]
 	diffFilter = delta --color-only
+[include]
+	path = delta/themes/catppuccin.gitconfig
 [delta]
-  navigate = true
-  side-by-side = true
-  features = catppuccin-mocha
-  ; syntax-theme = mdb-custom-solarized
-  ; syntax-theme = Visual Studio Dark+
+	navigate = true
+	side-by-side = true
+	features = catppuccin-mocha
+	; syntax-theme = mdb-custom-solarized
+	; syntax-theme = Visual Studio Dark+
+[include]
+	path = config.local
+; [includeIf "gitdir:~/code/work/**"]
+; 	path = ~/code/work/.gitconfig
