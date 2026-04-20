@@ -4,13 +4,14 @@
 # helm = "latest"
 # "pipx:poetry" = "latest"
 # node = { version = "22" }
+golang = "latest"
 
 [settings]
 disable_tools = ["1password-cli"]
 
 [tasks."update:for_env"]
 description = "Update tools for environment: work"
-run = ["claude update"]
+run = ["agent update"]
 
 [tasks."install:terminal:for_env"]
 description = "Install the work terminal Brewfile"
