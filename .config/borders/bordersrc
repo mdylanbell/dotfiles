@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# https://github.com/FelixKratz/JankyBorders/wiki/Man-Page
+# https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md
+# https://github.com/catppuccin/catppuccin/tree/main
+
+options=(
+  style=round
+  width=6.0
+  hidpi=on
+  active_color=0xffb4befe
+  inactive_color=0xff6c7086
+)
+
+borders "${options[@]}"
