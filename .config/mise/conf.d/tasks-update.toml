@@ -11,7 +11,7 @@ run = [
   ] },
   { tasks = [
     "update:submodules",
-    "update:package_managers",
+    # "update:package_managers",
   ] },
   { tasks = [
     "update:antidote",
@@ -25,7 +25,7 @@ run = [
 
 [tasks."update:brew"]
 description = "Update Homebrew and all installed formulae/casks"
-run = ["brew update", "brew upgrade"]
+run = ["brew update", "brew upgrade --no-ask"]
 
 [tasks."update:antidote"]
 description = "Update antidote and bundles"
@@ -89,9 +89,9 @@ run = "bat cache --build"
 description = "Update git submodules in dotfiles repo"
 run = ["git -C $DOTFILES_ROOT submodule update --remote"]
 
-[tasks."update:package_managers"]
-description = "Update package managers (pip, npm, etc.)"
-run = ["npm i -g npm"]
+# [tasks."update:package_managers"]
+# description = "Update package managers (pip, npm, etc.)"
+# run = []
 
 [tasks."nvim:python:ensure"]
 description = "Ensure the Neovim Python virtual environment exists"
@@ -111,7 +111,10 @@ uv pip install -p "${nvim_virtualenv}/bin/python" pynvim
 
 [tasks."update:nvim"]
 description = "Update Neovim and plugins"
-depends = ["update:package_managers", "nvim:python:ensure"]
+depends = [
+  # "update:package_managers",
+  "nvim:python:ensure",
+]
 run = [
   "nvim --headless \"+Lazy! sync\" +qa",
   "nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'",

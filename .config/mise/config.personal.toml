@@ -1,18 +1,18 @@
 [tools]
-node = { version = "lts" }
 rust = "stable"
 cargo-binstall = "latest"
 go = "latest"
 bun = "latest"
-"npm:@github/copilot" = "latest"
 1password-cli = "latest"
+"npm:@github/copilot" = "latest"
+"npm:@openai/codex" = "latest"
 
 [settings]
 npm.package_manager = "bun"
 
-[tasks."update:for_env"]
-description = "Update tools for environment: personal"
-run = ["npm i -g @openai/codex"]
+# [tasks."update:for_env"]
+# description = "Update tools for environment: personal"
+# run = []
 
 [tasks."install:terminal:for_env"]
 description = "Install the personal terminal Brewfile"
