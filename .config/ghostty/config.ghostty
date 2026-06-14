@@ -4,7 +4,7 @@ font-thicken = true
 copy-on-select = clipboard
 
 # font-family = Maple Mono
-font-family = Maple Mono Normal
+font-family = Maple Mono Normal NF
 # font-feature = cv32
 # Maple features - https://font.subf.dev/en/playground/
 
