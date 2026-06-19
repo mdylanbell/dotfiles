@@ -15,6 +15,7 @@ return {
         end,
         desc = "Diffview Toggle",
       },
+      { "<leader>gC", "<cmd>DiffviewOpen HEAD^<CR>", desc = "Diffview Review Commit" },
       { "<leader>gH", "<cmd>DiffviewFileHistory %<CR>", desc = "Diffview File History" },
       { "<leader>gR", "<cmd>DiffviewFileHistory<CR>", desc = "Diffview Repo History" },
       { "<leader>gV", "<cmd>DiffviewRefresh<CR>", desc = "Diffview Refresh" },
