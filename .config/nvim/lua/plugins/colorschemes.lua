@@ -25,7 +25,14 @@ return {
       --   window_splits = { enabled = true },
       -- },
       custom_highlights = function(colors)
+        local U = require("catppuccin.utils.colors")
         return {
+          -- Sidekick CLI pane: surface0 (runner-up: tint_mantle_mauve #2b273c)
+          SidekickTerminal = { bg = colors.surface0, fg = colors.text },
+          SidekickTerminalNC = {
+            bg = U.darken(colors.surface0, 0.15, colors.mantle),
+            fg = colors.subtext0,
+          },
           -- make split borders more visible
           WinSeparator = { fg = colors.surface1, bg = colors.base },
           -- make completions look a little different from other floats

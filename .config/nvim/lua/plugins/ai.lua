@@ -28,7 +28,7 @@ return {
       cli = {
         win = {
           wo = {
-            winhighlight = "Normal:Normal,NormalNC:NormalNC,EndOfBuffer:EndOfBuffer,SignColumn:SignColumn",
+            winhighlight = "Normal:SidekickTerminal,NormalNC:SidekickTerminalNC,EndOfBuffer:SidekickTerminal,SignColumn:SidekickTerminal",
           },
         },
         mux = {
