@@ -35,19 +35,23 @@ gcb() {
 }
 
 pyclean() {
-  find . \( \
-    -name '*.pyc' -o \
-    -name '*.pyo' -o \
-    -name '__pycache__' -o \
-    -name '.ruff_cache' -o \
-    -name '.pytest_cache' -o \
-    -name '.mypy_cache' -o \
-    -name '.hypothesis' -o \
-    -name '.tox' -o \
-    -name '.nox' -o \
-    -name '.eggs' -o \
-    -name 'pip-wheel-metadata' -o \
-    -name 'build' -o \
-    -name 'dist' \
-    \) -exec rm -rf {} +
+  fd --hidden --no-ignore --exclude .git \
+    --glob \
+'{'\
+'.venv,'\
+'*.pyc,'\
+'*.pyo,'\
+'__pycache__,'\
+'.ruff_cache,'\
+'.pytest_cache,'\
+'.mypy_cache,'\
+'.hypothesis,'\
+'.tox,'\
+'.nox,'\
+'.eggs,'\
+'pip-wheel-metadata,'\
+'build,'\
+'dist'\
+'}' \
+    --exec-batch rm -rf
 }
