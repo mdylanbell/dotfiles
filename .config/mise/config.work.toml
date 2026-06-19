@@ -1,10 +1,9 @@
 # Loaded when MISE_ENV=work is set
 [tools]
-# terraform = "latest"
-# helm = "latest"
-# "pipx:poetry" = "latest"
-# node = { version = "22" }
 golang = "latest"
+golangci-lint = "latest"
+terraform = "latest"
+"npm:prettier-plugin-groovy" = "latest"
 
 [settings]
 disable_tools = ["1password-cli"]

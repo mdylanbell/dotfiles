@@ -1,8 +1,8 @@
 [tools]
 node = "lts"
 npm = "latest"
+bun = "latest"
 pipx = "latest"
-pnpm = "latest"
 uv = "latest"
 python = "3.12"
 "npm:@mermaid-js/mermaid-cli" = "latest"
@@ -10,7 +10,7 @@ usage = "latest"
 
 [settings]
 experimental = true
-npm.package_manager = "pnpm"
+npm.package_manager = "bun"
 python.uv_venv_auto = "create|source"
 
 [hooks]

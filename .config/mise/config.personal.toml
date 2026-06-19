@@ -2,7 +2,6 @@
 rust = "stable"
 cargo-binstall = "latest"
 go = "latest"
-bun = "latest"
 1password-cli = "latest"
 "npm:@github/copilot" = "latest"
 "npm:@openai/codex" = "latest"
