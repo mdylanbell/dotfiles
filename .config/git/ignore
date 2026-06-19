@@ -18,7 +18,6 @@ __pycache__/
 .nox/
 .coverage
 .venv/
-.python-version
 
 # local env / direnv
 .envrc
@@ -35,7 +34,7 @@ __pycache__/
 .next/
 .turbo/
 node_modules/
-dist/
+# dist/
 build/
 
 # editor project files
