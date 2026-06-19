@@ -4,6 +4,13 @@ return {
   priority = 1000,
   lazy = false,
   opts = {
+    image = {
+      enabled = true,
+      doc = {
+        enabled = true, -- auto-render images in markdown/html
+        inline = false, -- render float instead of inline
+      },
+    },
     picker = {
       sources = {
         explorer = {
