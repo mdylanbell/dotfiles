@@ -24,3 +24,7 @@
 #   Example 2: Use ".gitignore"-style highlighting for ".ignore" files
 #--map-syntax "*.ino:C++"
 #--map-syntax ".ignore:Git Ignore"
+#
+# Tmux splits config across many *.conf files; the bundled syntax only matches
+# tmux.conf / .tmux.conf by default.
+--map-syntax "**/.config/tmux/**/*.conf:Tmux conf"

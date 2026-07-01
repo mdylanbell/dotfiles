@@ -6,3 +6,6 @@
   path = .local/share/tmux/plugins/tpm
   url = https://github.com/tmux-plugins/tpm
   branch = master
+[submodule ".config/bat/syntaxes/tmux-sublime"]
+  path = .config/bat/syntaxes/tmux-sublime
+  url = https://github.com/Edditoria/tmux-sublime.git
