@@ -5,10 +5,15 @@ if OS.mac?
   brew "autoconf"
 end
 
+tap "dlvhdr/formulae", trusted: true
 brew "ast-grep"
 brew "bat-extras"
 brew "btop"
+brew "git-delta"
+brew "glow"
+brew "dlvhdr/formulae/diffnav"
 brew "imagemagick"
+brew "lazygit"
 brew "lua"
 brew "luarocks"
 brew "lynx"

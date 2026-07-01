@@ -1,6 +1,6 @@
 # Shared GUI apps and desktop integrations; currently macOS-only via OS guard.
 if OS.mac?
-  tap "FelixKratz/formulae"
+  tap "FelixKratz/formulae", trusted: true
 
   brew "mas"  # Mac App Store CLI
   cask "borders"
