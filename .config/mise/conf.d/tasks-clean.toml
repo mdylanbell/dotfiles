@@ -8,7 +8,7 @@ run = "brew cleanup -s"
 
 [tasks."clean:mise"]
 description = "Mise prune"
-run = "mise prune"
+run = "mise prune -y"
 
 [tasks."clean:dfm"]
 description = "Clean dfm created .backup folders"
