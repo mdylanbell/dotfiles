@@ -1,12 +1,19 @@
 session_name: dotfiles
+start_directory: ~/.dotfiles
 windows:
-  - window_name: home
-    start_directory: "~"
   - window_name: nvim
-    start_directory: "~/.dotfiles/.config/nvim"
+    start_directory: .config/nvim
+    panes:
+      - shell_command: nvim .
   - window_name: mise
-    start_directory: "~/.dotfiles/.config/mise"
+    start_directory: .config/mise
+    panes:
+      - shell_command: nvim -O config.toml config.work.toml config.personal.toml
   - window_name: zsh
-    start_directory: "~/.dotfiles/.config/zsh"
+    start_directory: .config/zsh
+    panes:
+      - shell_command: nvim conf.d
   - window_name: tmux
-    start_directory: "~/.dotfiles/.config/tmux"
+    start_directory: .config/tmux
+    panes:
+      - shell_command: nvim -O local.conf conf.d/keys.conf conf.d/options.conf

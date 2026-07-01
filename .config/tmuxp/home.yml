@@ -1,0 +1,13 @@
+session_name: home
+start_directory: "~"
+layout: main-vertical
+windows:
+  - window name: main
+    layout: main-vertical
+    options:
+      main-pane-width: 67%
+    panes:
+      -
+      - shell_command: btop
+      - start_directory: "~/.config"
+        shell_command: nvim .
