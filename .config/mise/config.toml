@@ -2,11 +2,10 @@
 node = "lts"
 npm = "latest"
 bun = "latest"
-pipx = "latest"
-uv = "latest"
 python = "3.12"
-"npm:@mermaid-js/mermaid-cli" = "latest"
+uv = "latest"
 usage = "latest"
+"npm:@mermaid-js/mermaid-cli" = "latest"
 
 [settings]
 experimental = true
@@ -22,4 +21,4 @@ fi
 
 [env]
 DOTFILES_ROOT = "{{ config_root }}"
-nvim_virtualenv = "{{xdg_cache_home}}/venvs/nvim"
+nvim_virtualenv = "{{ xdg_cache_home }}/venvs/nvim"
