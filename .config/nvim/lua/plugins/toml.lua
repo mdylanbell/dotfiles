@@ -8,9 +8,7 @@ return {
   opts = {
     servers = {
       tombi = {},
-      taplo = {
-        enabled = false,
-      },
+      taplo = false,
       -- taplo = {
       --   root_markers = markers,
       --   root_dir = function(bufnr, on_dir)
