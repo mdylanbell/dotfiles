@@ -8,6 +8,7 @@ description = "Update all tools and global CLIs"
 run = [
   { tasks = [
     "update:brew",
+    "update:mise",
   ] },
   { tasks = [
     "update:submodules",
@@ -26,6 +27,10 @@ run = [
 [tasks."update:brew"]
 description = "Update Homebrew and all installed formulae/casks"
 run = ["brew update", "brew upgrade --no-ask"]
+
+[tasks."update:mise"]
+description = "Update mise and plugins"
+run = ["mise self-update --yes"]
 
 [tasks."update:antidote"]
 description = "Update antidote and bundles"
