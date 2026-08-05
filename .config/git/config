@@ -84,5 +84,5 @@
 	; syntax-theme = Visual Studio Dark+
 [include]
 	path = config.local
-; [includeIf "gitdir:~/code/work/**"]
-; 	path = ~/code/work/.gitconfig
+[includeIf "gitdir:~/code/work/**"]
+	path = ~/code/work/.gitconfig
