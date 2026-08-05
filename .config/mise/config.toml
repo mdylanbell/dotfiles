@@ -5,10 +5,13 @@ bun = "latest"
 python = "3.12"
 uv = "latest"
 usage = "latest"
+go = "latest"
+golangci-lint = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 
 [settings]
 experimental = true
+minimum_release_age = "7d"
 npm.package_manager = "bun"
 python.uv_venv_auto = "create|source"
 
