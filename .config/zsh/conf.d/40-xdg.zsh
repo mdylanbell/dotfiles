@@ -21,8 +21,11 @@ export PSQL_HISTORY="$XDG_DATA_HOME"/psql_history
 export GEM_HOME="$XDG_DATA_HOME"/gem
 export GEM_SPECT_CACHE="$XDG_CACHE_HOME"/gem
 
-export TERMINFO="$XDG_DATA_HOME"/terminfo
-export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
+# Set TERMINFO_DIRS such that we try to use XDG but also ghostty works
+for p in "$XDG_DATA_HOME"/terminfo /usr/share/terminfo; do
+  [[ ":$TERMINFO_DIRS:" != *":$p:"* ]] && TERMINFO_DIRS="$p${TERMINFO_DIRS:+:$TERMINFO_DIRS}"
+done
+export TERMINFO_DIRS
 
 # go
 export GOPATH="$XDG_DATA_HOME"/go
