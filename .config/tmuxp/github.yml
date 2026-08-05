@@ -1,4 +1,4 @@
-session_name: git
+session_name: github
 start_directory: "~/code/work/"
 windows:
   - window_name: overview
