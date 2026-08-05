@@ -3,7 +3,7 @@ if OS.mac?
   tap "FelixKratz/formulae", trusted: true
 
   brew "mas"  # Mac App Store CLI
-  cask "borders"
+  brew "borders"
 
   # mas install 937984704  # Amphetamine (GUI for caffeinate)
 
@@ -11,4 +11,7 @@ if OS.mac?
   cask "karabiner-elements"
   cask "scroll-reverser"
   cask "spotify"
+  cask "visual-studio-code"
+  cask "firefox"
+  cask "google-chrome"
 end
