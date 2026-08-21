@@ -65,3 +65,6 @@ alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
 if [ -n "${ZSH_VERSION-}" ]; then
   export ZSH_COMPDUMP="$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
 fi
+
+# tealdeer
+export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME"/tealdeer
