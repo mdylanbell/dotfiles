@@ -235,6 +235,15 @@
       "installedAt": "2026-07-30T23:29:36.816Z",
       "updatedAt": "2026-07-30T23:29:36.816Z"
     },
+    "lsp-setup": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/lsp-setup/SKILL.md",
+      "skillFolderHash": "a07bf32140543c8e0d2e26ed6849b8ce48b8ca1c",
+      "installedAt": "2026-08-12T17:11:48Z",
+      "updatedAt": "2026-08-12T17:11:48Z"
+    },
     "microsoft-foundry": {
       "source": "microsoft/azure-skills",
       "sourceType": "github",
@@ -253,6 +262,5 @@
       "installedAt": "2026-07-30T23:29:36.901Z",
       "updatedAt": "2026-07-30T23:29:36.901Z"
     }
-  },
-  "dismissed": {}
+  }
 }
