@@ -20,6 +20,7 @@ brew "lynx"
 brew "rtk"  # token optimizer
 brew "shellcheck"
 brew "shfmt"
+brew "tealdeer"
 brew "tombi"
 brew "tree"
 brew "yq"
