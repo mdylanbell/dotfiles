@@ -46,6 +46,10 @@ antidote update --self --bundles
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
 """
 
+[tasks."update:copilot"]
+description = "Update GitHub Copilot CLI"
+run = ["copilot update"]
+
 [tasks."update:wezterm_shell_integration"]
 description = "Refresh the cached WezTerm shell integration script when upstream changes"
 run = """
