@@ -1,0 +1,26 @@
+[tasks."bootstrap:install-homebrew"]
+description = "Install Homebrew for native Brew lifecycle tasks when unavailable"
+hide = true
+run = '''
+{% if vars.dotfiles_homebrew_enabled == "true" %}
+if command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is already installed; skipped."
+  exit 0
+fi
+
+NONINTERACTIVE=1 /bin/bash -c \
+  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+{% else %}
+:
+{% endif %}
+'''
+
+[tasks."homebrew:install"]
+description = "Converge native Homebrew Brewfile packages"
+run = '''
+{% if vars.dotfiles_homebrew_enabled == "true" %}
+brew bundle install --file="{{ config_root }}/Brewfile"
+{% else %}
+:
+{% endif %}
+'''

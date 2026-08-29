@@ -3,55 +3,25 @@ zsh_plugin_list_file = "{{ config_root }}/.config/zsh/.zsh_plugins.txt"
 zsh_plugin_static_file = "{{ xdg_cache_home }}/zsh/antidote/.zsh_plugins.zsh"
 
 [tasks."bootstrap"]
-description = "Perform first-time environment bootstrap"
-env = { MISE_TASK_RUN_AUTO_INSTALL = "0", MISE_AUTO_INSTALL = "0" }
-run = ["mise run bootstrap:install", "mise run bootstrap:configure"]
-
-[tasks."bootstrap:install"]
-description = "Install bootstrap dependencies via Homebrew and mise"
-run = [
-  { tasks = [
-    "bootstrap:brew:install",
-    "bootstrap:mise:install",
-    "bootstrap:antidote",
-  ] },
-]
-# NOTE:
-# `bootstrap:prereqs` is intentionally not active here. `mise run bootstrap`
-# resolves npm-backed tool metadata before task execution, so installing node as
-# a task dependency is too late to suppress the npm resolution warnings.
-# `gpg` is also needed before the main `mise install` if we want signature
-# verification available. Both prereqs therefore live in `.local/bin/bootstrap_env`.
-#
-# [tasks."bootstrap:prereqs"]
-# description = "Install prereqs required before the main bootstrap install fanout"
-# run = [
-#   "brew install gpg",
-#   "mise install node",
-# ]
-
-[tasks."bootstrap:brew:install"]
-description = "Install Homebrew packages from brewfiles/terminal.required"
-run = '''
-if [ -f "$DOTFILES_ROOT/brewfiles/terminal.required" ]; then
-  brew bundle --file="$DOTFILES_ROOT/brewfiles/terminal.required"
-else
-  echo "No Brewfile found at $DOTFILES_ROOT/brewfiles/terminal.required."
-fi
-'''
-
-[tasks."bootstrap:mise:install"]
-description = "Install all configured mise tools"
-run = ["mise install", "mise reshim"]
+description = "Configure the environment after mise converges packages and tools"
+run = [{ tasks = ["bootstrap:configure"] }]
 
 [tasks."bootstrap:configure"]
 description = "Configure the environment after bootstrap installs complete"
 run = [
   { tasks = [
-    "bootstrap:brew:zsh_permissions",
+    "bootstrap:antidote",
+    "bootstrap:packages:zsh_permissions",
   ] },
   { tasks = [
     "bootstrap:for_env",
+    "bootstrap:workstation",
+  ] },
+  { task = "bootstrap:install-homebrew" },
+  { task = "homebrew:install" },
+  { tasks = [
+    "bootstrap:work-workstation",
+    "bootstrap:personal-gui",
   ] },
   { tasks = [
     "bootstrap:bat_cache",
@@ -64,33 +34,30 @@ run = [
 ]
 
 [tasks."bootstrap:antidote"]
-description = "Install antidote and prebuild zsh plugin bundles"
+description = "Converge the live Antidote source and build zsh plugin bundles"
 run = """
 #!/usr/bin/env zsh
-if [ -d "$ANTIDOTE_HOME/.git" ]; then
-  echo "antidote present"
-else
-  git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_HOME"
+antidote_source_dir="${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}/.antidote"
+if [[ ! -d "$antidote_source_dir/.git" ]]; then
+  mkdir -p "$(dirname "$antidote_source_dir")"
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "$antidote_source_dir"
 fi
 
-source "$ANTIDOTE_HOME/antidote.zsh"
+source "$antidote_source_dir/antidote.zsh"
 mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
-antidote update --bundles
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
 """
 
 [tasks."bootstrap:bat_cache"]
-description = "Build bat cache after Homebrew install"
+description = "Build the bat cache after package installation"
 run = [{ tasks = ["update:bat_cache"] }]
 
-[tasks."bootstrap:brew:zsh_permissions"]
-description = "Fix Homebrew zsh completion permissions for compinit on Linux/WSL"
+[tasks."bootstrap:packages:zsh_permissions"]
+description = "Fix direct-Brew zsh completion permissions for compinit on Linux/WSL"
 run = '''
-if [ "$(uname -s)" = "Linux" ]; then
-  site_functions="$(brew --prefix)/share/zsh/site-functions"
-  if [ -d "$site_functions" ]; then
-    chmod -R go-w "$site_functions"
-  fi
+site_functions="/home/linuxbrew/.linuxbrew/share/zsh/site-functions"
+if [ -d "$site_functions" ]; then
+  chmod -R go-w "$site_functions"
 fi
 '''
 
@@ -120,13 +87,31 @@ fi
 [tasks."bootstrap:checks"]
 description = "Print quick bootstrap sanity checks"
 run = '''
-printf "  brew: %s\n" "$(brew --version | head -n1 || echo 'missing')"
-printf "  mise: %s\n" "$(mise --version || echo 'missing')"
-printf "  nvim: %s\n" "$(nvim --version | head -n1 || echo 'missing')"
+for command_name in git curl zsh nvim; do
+  if command -v "$command_name" >/dev/null 2>&1; then
+    printf "  %s: %s\n" "$command_name" "$(command -v "$command_name")"
+  else
+    printf "  %s: missing\n" "$command_name"
+  fi
+done
+mise --version
+mise bootstrap status
 '''
 
 [tasks."bootstrap:for_env"]
 description = "No-op hook for environment-specific bootstrap additions"
+run = ":"
+
+[tasks."bootstrap:workstation"]
+description = "No-op workstation bootstrap hook"
+run = ":"
+
+[tasks."bootstrap:work-workstation"]
+description = "No-op work workstation bootstrap hook"
+run = ":"
+
+[tasks."bootstrap:personal-gui"]
+description = "No-op personal GUI bootstrap hook"
 run = ":"
 
 [tasks."gh:auth"]

@@ -1,10 +1,20 @@
 [tasks."clean"]
 description = "Clean up old packages and caches"
-run = { tasks = ["clean:brew", "clean:mise", "clean:dfm"] }
+run = { tasks = ["clean:packages", "clean:mise", "clean:dfm"] }
 
-[tasks."clean:brew"]
-description = "Cleanup Homebrew cache and old versions"
-run = "brew cleanup -s"
+[tasks."clean:packages"]
+description = "Prune mise-owned direct-manager packages without removing native packages"
+run = [{ task = "clean:packages:mise" }]
+
+[tasks."clean:packages:mise"]
+description = "Prune mise-owned direct-manager packages without removing native packages"
+run = '''
+{% if vars.dotfiles_homebrew_enabled == "true" %}
+mise bootstrap packages prune --manager brew-cask --yes
+{% else %}
+:
+{% endif %}
+'''
 
 [tasks."clean:mise"]
 description = "Mise prune"

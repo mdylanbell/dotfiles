@@ -4,12 +4,13 @@
 description = "Build or rebuild the optional fzf-tab binary module"
 run = """
 #!/usr/bin/env zsh
-if [ ! -r "$ANTIDOTE_HOME/antidote.zsh" ]; then
+antidote_source_dir="${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}/.antidote"
+if [ ! -r "$antidote_source_dir/antidote.zsh" ]; then
   echo "antidote not installed; skipping module build."
   exit 0
 fi
 
-source "$ANTIDOTE_HOME/antidote.zsh"
+source "$antidote_source_dir/antidote.zsh"
 fzf_tab_home="$(antidote path Aloxaf/fzf-tab 2>/dev/null)"
 
 if [ -z "$fzf_tab_home" ] || [ ! -r "$fzf_tab_home/fzf-tab.plugin.zsh" ]; then

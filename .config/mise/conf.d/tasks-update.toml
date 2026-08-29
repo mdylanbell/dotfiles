@@ -4,45 +4,65 @@ zsh_plugin_static_file = "{{ xdg_cache_home }}/zsh/antidote/.zsh_plugins.zsh"
 wezterm_shell_integration_file = "{{ xdg_data_home }}/wezterm/wezterm.sh"
 
 [tasks."update"]
-description = "Update all tools and global CLIs"
+description = "Update host-owned packages, mise tools, and managed content"
 run = [
-  { tasks = [
-    "update:brew",
-    "update:mise",
-  ] },
-  { tasks = [
-    "update:submodules",
-    # "update:package_managers",
-  ] },
-  { tasks = [
-    "update:antidote",
-    "update:wezterm_shell_integration",
-    "update:nvim",
-    "update:gh",
-    "update:for_env",
-  ] },
-  "echo Updates completed at $(date)",
+  { task = "update:host" },
+  { task = "update:mise:self" },
+  { task = "update:packages" },
+  { task = "update:mise:tools" },
+  { task = "update:managed-content" },
 ]
 
-[tasks."update:brew"]
-description = "Update Homebrew and all installed formulae/casks"
-run = ["brew update", "brew upgrade --no-ask"]
+[tasks."update:mise:self"]
+description = "Update mise itself"
+run = "mise self-update --yes"
 
-[tasks."update:mise"]
-description = "Update mise and plugins"
-run = ["mise self-update --yes"]
+[tasks."update:host"]
+description = "Update packages through the host operating system manager"
+run = ":"
+
+[tasks."update:packages"]
+description = "Update configured direct-manager packages without crossing host ownership"
+run = [{ task = "update:packages:mise" }, { task = "homebrew:install" }]
+
+[tasks."update:packages:mise"]
+description = "Update configured mise bootstrap packages on Brew-enabled hosts"
+run = '''
+{% if vars.dotfiles_homebrew_enabled == "true" %}
+mise bootstrap packages upgrade --yes
+{% else %}
+:
+{% endif %}
+'''
+
+[tasks."update:mise:tools"]
+description = "Update mise-managed tools and refresh platform lock metadata"
+run = [
+  "mise lock --global --bump --platform macos-arm64,linux-x64",
+  "mise upgrade",
+]
+
+[tasks."update:managed-content"]
+description = "Update managed editor, shell, repository, and CLI content"
+run = [
+  { tasks = [
+    "update:antidote",
+    "update:submodules",
+    "update:nvim",
+    "update:gh",
+    "update:wezterm_shell_integration",
+  ] },
+  { task = "update:for_env" },
+]
 
 [tasks."update:antidote"]
 description = "Update antidote and bundles"
 run = """
 #!/usr/bin/env zsh
-if [ ! -d "$ANTIDOTE_HOME/.git" ]; then
-  git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_HOME"
-fi
-
-source "$ANTIDOTE_HOME/antidote.zsh"
+antidote_source_dir="${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}/.antidote"
+source "$antidote_source_dir/antidote.zsh"
 mkdir -p "$(dirname "{{ vars.zsh_plugin_static_file }}")"
-antidote update --self --bundles
+antidote update
 antidote bundle <"{{ vars.zsh_plugin_list_file }}" >|"{{ vars.zsh_plugin_static_file }}"
 """
 
@@ -55,11 +75,6 @@ description = "Refresh the cached WezTerm shell integration script when upstream
 run = """
 dest="{{ vars.wezterm_shell_integration_file }}"
 mkdir -p "$(dirname "$dest")"
-
-if ! command -v curl >/dev/null 2>&1; then
-  echo "curl not found; skipping WezTerm shell integration refresh."
-  exit 0
-fi
 
 tmp="${dest}.tmp"
 url="https://raw.githubusercontent.com/wezterm/wezterm/main/assets/shell-integration/wezterm.sh"
@@ -75,15 +90,23 @@ if [ -f "$dest" ]; then
     fi
   else
     rm -f "$tmp"
-    echo "Failed to refresh WezTerm shell integration; continuing."
+    echo "Failed to refresh WezTerm shell integration." >&2
+    exit 1
   fi
 else
   if curl -fsSL -o "$tmp" "$url"; then
-    mv "$tmp" "$dest"
-    echo "Downloaded WezTerm shell integration."
+    if [ -s "$tmp" ]; then
+      mv "$tmp" "$dest"
+      echo "Downloaded WezTerm shell integration."
+    else
+      rm -f "$tmp"
+      echo "Downloaded empty WezTerm shell integration." >&2
+      exit 1
+    fi
   else
     rm -f "$tmp"
-    echo "Failed to download WezTerm shell integration; continuing."
+    echo "Failed to download WezTerm shell integration." >&2
+    exit 1
   fi
 fi
 """
@@ -131,14 +154,7 @@ run = [
 
 [tasks."update:gh"]
 description = "Update gh extensions if gh installed and auth'd"
-run = """
-if gh auth status >/dev/null 2>&1; then
-  echo "Updating gh extensions..."
-  gh extension upgrade --all
-else
-  echo "gh not authenticated, skipping extension update."
-fi
-"""
+run = "gh extension upgrade --all"
 
 [tasks."update:for_env"]
 description = "No-op hook for environment-specific updates"

@@ -7,3 +7,46 @@ run = ['rm -rf "{{ vars.data_dir }}"', 'rm -rf "{{ vars.cache_dir }}"']
 description = "Remove antidote-generated zsh cache so it can be rebuilt explicitly"
 vars = { zsh_plugin_static_dir = "{{ xdg_cache_home }}/zsh/antidote" }
 run = ['rm -rf "{{ vars.zsh_plugin_static_dir }}"']
+
+[tasks."purge:antidote:legacy-source"]
+description = "Remove the pre-migration Antidote clone from ANTIDOTE_HOME without touching plugins"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+antidote_home="${ANTIDOTE_HOME:-${XDG_CACHE_HOME:-$HOME/.cache}/antidote}"
+antidote_source_dir="${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}/.antidote"
+
+if [ "$antidote_home" = "$antidote_source_dir" ]; then
+  echo "ANTIDOTE_HOME is the active Antidote source; nothing to purge."
+  exit 0
+fi
+
+if [ ! -d "$antidote_home/.git" ]; then
+  echo "No pre-migration Antidote clone at $antidote_home; nothing to purge."
+  exit 0
+fi
+
+origin="$(git -C "$antidote_home" remote get-url origin 2>/dev/null || true)"
+case "$origin" in
+  *mattmc3/antidote*) ;;
+  *)
+    echo "Refusing to purge $antidote_home: unexpected origin '${origin:-none}'." >&2
+    exit 1
+    ;;
+esac
+
+# Only files the clone itself tracks are removed, so plugin clones that
+# antidote stores alongside it under $ANTIDOTE_HOME survive.
+tracked_dirs="$(git -C "$antidote_home" ls-files | awk -F/ 'NF > 1 { print $1 }' | sort -u)"
+git -C "$antidote_home" ls-files -z | (cd "$antidote_home" && xargs -0 rm -f --)
+rm -rf "$antidote_home/.git"
+
+printf '%s\n' "$tracked_dirs" | while IFS= read -r tracked_dir; do
+  [ -n "$tracked_dir" ] || continue
+  [ -d "$antidote_home/$tracked_dir" ] || continue
+  find "$antidote_home/$tracked_dir" -type d -empty -delete
+done
+
+echo "Removed the pre-migration Antidote clone from $antidote_home."
+'''
