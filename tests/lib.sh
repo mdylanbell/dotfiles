@@ -10,6 +10,11 @@ assert_file() {
   [[ -f "$path" ]] || fail "expected file $path"
 }
 
+assert_not_file() {
+  local path="$1"
+  [[ ! -e "$path" ]] || fail "expected $path to not exist"
+}
+
 assert_contains() {
   local path="$1"
   local pattern="$2"
@@ -21,6 +26,20 @@ assert_not_contains() {
   local pattern="$2"
   if grep -Fq -- "$pattern" "$path"; then
     fail "expected $path to not contain: $pattern"
+  fi
+}
+
+assert_line() {
+  local path="$1"
+  local line="$2"
+  grep -Fxq -- "$line" "$path" || fail "expected $path to contain line: $line"
+}
+
+assert_not_line() {
+  local path="$1"
+  local line="$2"
+  if grep -Fxq -- "$line" "$path"; then
+    fail "expected $path to not contain line: $line"
   fi
 }
 

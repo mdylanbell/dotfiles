@@ -24,7 +24,9 @@ assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:clean"]'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render:todoist_cli"]'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:clean:todoist_cli"]'
-assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'chmod 0600 "${XDG_CONFIG_HOME}/todoist/config.json"'
+assert_contains ".config/mise/conf.d/tasks-secrets.toml" \
+  'config_json = "{{ xdg_config_home }}/todoist/config.json"'
+assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'chmod 0600 "{{ vars.config_json }}"'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" 'config.json.op_tmpl'
 assert_contains ".config/mise/conf.d/tasks-secrets.toml" '[tasks."secrets:render"]'
 
