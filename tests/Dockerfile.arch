@@ -1,0 +1,25 @@
+FROM archlinux:base
+
+ENV PATH="/home/tester/.local/bin:${PATH}"
+ENV MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=120s
+ENV MISE_HTTP_TIMEOUT=120s
+
+# Pacman's seccomp sandbox is incompatible with Docker Desktop amd64 emulation.
+# PAM permits the unpassworded test user to exercise mise's chsh convergence.
+RUN sed -i 's/^#DisableSandboxSyscalls/DisableSandboxSyscalls/' /etc/pacman.conf \
+  && pacman -Syu --noconfirm sudo \
+  && sed -i 's/^auth[[:space:]]*required[[:space:]]*pam_unix.so/auth sufficient pam_permit.so/' /etc/pam.d/chsh
+
+RUN useradd -m -s /bin/bash tester \
+  && usermod -aG wheel tester \
+  && echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-tester-sudo \
+  && echo "Defaults:tester !authenticate" > /etc/sudoers.d/91-tester-nopasswd \
+  && chmod 0440 /etc/sudoers.d/90-tester-sudo /etc/sudoers.d/91-tester-nopasswd
+
+COPY . /home/tester/.dotfiles
+RUN chown -R tester:tester /home/tester/.dotfiles
+
+WORKDIR /home/tester/.dotfiles
+USER tester
+
+CMD ["/bin/bash", "-lc", "/home/tester/.dotfiles/.local/bin/bootstrap_env --dotfiles-root=/home/tester/.dotfiles --skip-git --profile=personal --features=none && bash tests/run_all.sh && mise bootstrap status --missing && test \"$(getent passwd tester | cut -d: -f7)\" = /bin/zsh && test \"$(readlink -f /bin/zsh)\" = /usr/bin/zsh && zsh -lic 'command -v bat nvim fzf rg' && ! command -v brew && test ! -e /home/linuxbrew/.linuxbrew && grep -Fq 'system_packages.managers = [\"pacman\"]' /home/tester/.config/mise/config.linux.local.toml && grep -Fq 'dotfiles_homebrew_enabled = \"false\"' /home/tester/.config/mise/config.linux.local.toml"]

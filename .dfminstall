@@ -2,14 +2,13 @@
 .claude recurse
 .codex recurse
 .config recurse
+.dockerignore skip
 .git-blame-ignore-revs skip
-.gitignore skip
 .gitmodules skip
 .lazy.lua skip
 .local recurse
 .ssh recurse
 AGENTS.md skip
-Dockerfile.test.local skip
 Brewfile skip
 README.md skip
 doc skip

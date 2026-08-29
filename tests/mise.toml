@@ -1,0 +1,30 @@
+[tasks.portable]
+description = "Run portable dotfiles contract tests"
+dir = "{{ config_root }}/.."
+run = "bash tests/run_all.sh"
+
+[tasks.config]
+description = "Validate mise tasks and profile/feature configuration"
+dir = "{{ config_root }}/.."
+run = """
+mise tasks validate
+MISE_ENV=work,workstation,work-workstation mise config ls --no-header
+MISE_ENV=personal,gui,personal-gui mise config ls --no-header
+mise bootstrap --dry-run
+"""
+
+[tasks.ubuntu]
+description = "Build and run the Ubuntu bootstrap harness"
+run = "./run-docker-bootstrap.sh ubuntu"
+
+[tasks.arch]
+description = "Build and run the Arch bootstrap harness"
+run = "./run-docker-bootstrap.sh arch"
+
+[tasks.linux]
+description = "Run all Linux bootstrap harnesses"
+run = [{ task = "ubuntu" }, { task = "arch" }]
+
+[tasks.all]
+description = "Run portable, configuration, and Linux tests"
+run = [{ tasks = ["portable", "config"] }, { task = "linux" }]

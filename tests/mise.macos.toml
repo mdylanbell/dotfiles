@@ -1,0 +1,19 @@
+[tasks.macos]
+description = "Run macOS portable and configuration tests"
+run = [{ tasks = ["portable", "config"] }]
+
+[tasks."macos:integration"]
+description = "Run macOS bootstrap integration status checks"
+dir = "{{ config_root }}/.."
+run = """
+mise bootstrap status --missing
+brew bundle check --file="{{ config_root }}/../Brewfile"
+"""
+
+[tasks.all]
+description = "Run portable, configuration, Linux, and macOS integration tests"
+run = [
+  { tasks = ["portable", "config"] },
+  { task = "linux" },
+  { task = "macos:integration" },
+]

@@ -1,0 +1,27 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+ENV PATH="/home/tester/.local/bin:${PATH}"
+ENV MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=120s
+ENV MISE_HTTP_TIMEOUT=120s
+
+# Let the unpassworded test user exercise mise's chsh convergence.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends sudo \
+  && sed -i 's/^@include common-auth/auth sufficient pam_permit.so/' /etc/pam.d/chsh \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -s /bin/bash tester \
+  && usermod -aG sudo tester \
+  && echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-tester-sudo \
+  && echo "Defaults:tester !authenticate" > /etc/sudoers.d/91-tester-nopasswd \
+  && chmod 0440 /etc/sudoers.d/90-tester-sudo /etc/sudoers.d/91-tester-nopasswd
+
+COPY . /home/tester/.dotfiles
+RUN chown -R tester:tester /home/tester/.dotfiles
+
+WORKDIR /home/tester/.dotfiles
+USER tester
+
+CMD ["/bin/bash", "-lc", "/home/tester/.dotfiles/.local/bin/bootstrap_env --dotfiles-root=/home/tester/.dotfiles --skip-git --profile=personal --features=none && bash tests/run_all.sh && mise bootstrap status --missing && test \"$(getent passwd tester | cut -d: -f7)\" = /bin/zsh && test \"$(command -v git)\" = /usr/bin/git && test \"$(command -v curl)\" = /usr/bin/curl && zsh -lic 'command -v bat nvim fzf rg' && zsh -lic 'command -v brew' && zsh -lic 'brew bundle check --file=/home/tester/.dotfiles/Brewfile'"]

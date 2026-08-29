@@ -1,0 +1,39 @@
+# Version control and session artifacts
+.git
+.copilot/
+.superpowers/
+tests/.scratch/
+
+# Host-local npm configuration
+.npmrc
+**/.npmrc
+npmrc
+**/npmrc
+.config/npm/*
+!.config/npm/*.op_tmpl
+
+# Generated secrets and local overrides
+.config/todoist/config.json
+.config/mise/config.local.toml
+.config/mise/config.*.local.toml
+.config/mise/mise.local.toml
+.config/mise/mise.*.local.toml
+.config/mise/mise.local.lock
+.config/mise/mise.*.local.lock
+.config/zsh/env.local.zsh
+.config/zsh/local.zsh
+.config/zsh/.zsh_plugins.zsh
+.config/tmux/local.conf
+.config/git/config.local
+.ssh/*
+!.ssh/.dfminstall
+
+# Other generated or machine-local files
+.cache/*
+.cache/zsh/*
+!.cache/.dfminstall
+!.cache/zsh/.dfminstall
+!.cache/zsh/.save
+.direnv/
+.envrc
+PowerShellEditorServices.json
