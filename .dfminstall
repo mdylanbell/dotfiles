@@ -10,7 +10,7 @@
 .ssh recurse
 AGENTS.md skip
 Dockerfile.test.local skip
+Brewfile skip
 README.md skip
-brewfiles skip
 doc skip
 tests skip

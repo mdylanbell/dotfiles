@@ -1,0 +1,5 @@
+[vars]
+dotfiles_homebrew_enabled = "true"
+
+[env]
+_.path = ["/opt/homebrew/bin", "/opt/homebrew/sbin"]

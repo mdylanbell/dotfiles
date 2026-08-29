@@ -1,3 +1,5 @@
+min_version = "2026.8.10"
+
 [tools]
 node = "lts"
 bun = "latest"
@@ -6,14 +8,76 @@ uv = "latest"
 usage = "latest"
 go = "latest"
 golangci-lint = "latest"
+ruff = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 terraform = "latest"
 
+[bootstrap.packages]
+"apt:build-essential" = "latest"
+"apt:ca-certificates" = "latest"
+"apt:curl" = "latest"
+"apt:file" = "latest"
+"apt:git" = "latest"
+"apt:libc6-dev" = "latest"
+"apt:libncurses-dev" = "latest"
+"apt:zsh" = "latest"
+"pacman:base-devel" = "latest"
+"pacman:ca-certificates" = "latest"
+"pacman:curl" = "latest"
+"pacman:file" = "latest"
+"pacman:git" = "latest"
+"pacman:ncurses" = "latest"
+"pacman:zsh" = "latest"
+"brew:bash" = { os = "macos" }
+"brew:coreutils" = { os = "macos" }
+"brew:curl" = { os = "macos" }
+"brew:git" = { os = "macos" }
+"brew:gnu-tar" = { os = "macos" }
+"brew:openssl@3" = { os = "macos" }
+"brew:bat" = { os = ["linux", "macos"] }
+"brew:eza" = { os = ["linux", "macos"] }
+"brew:fd" = { os = ["linux", "macos"] }
+"brew:fzf" = { os = ["linux", "macos"] }
+"brew:gh" = { os = ["linux", "macos"] }
+"brew:gnupg" = { os = ["linux", "macos"] }
+"brew:jq" = { os = ["linux", "macos"] }
+"brew:less" = { os = ["linux", "macos"] }
+"brew:neovim" = { os = ["linux", "macos"] }
+"brew:ripgrep" = { os = ["linux", "macos"] }
+"brew:starship" = { os = ["linux", "macos"] }
+"brew:tmux" = { os = ["linux", "macos"] }
+"brew:urlview" = { os = ["linux", "macos"] }
+"brew:wget" = { os = ["linux", "macos"] }
+"pacman:bat" = "latest"
+"pacman:eza" = "latest"
+"pacman:fd" = "latest"
+"pacman:fzf" = "latest"
+"pacman:github-cli" = "latest"
+"pacman:gnupg" = "latest"
+"pacman:jq" = "latest"
+"pacman:less" = "latest"
+"pacman:neovim" = "latest"
+"pacman:ripgrep" = "latest"
+"pacman:starship" = "latest"
+"pacman:tmux" = "latest"
+"pacman:urlscan" = "latest"
+"pacman:wget" = "latest"
+
+[bootstrap.user]
+login_shell = "/bin/zsh"
+
 [settings]
 experimental = true
+lockfile = true
 minimum_release_age = "7d"
 npm.package_manager = "bun"
 python.uv_venv_auto = "create|source"
+
+[tool_config]
+locked = true
+
+[vars]
+dotfiles_homebrew_enabled = "false"
 
 [hooks]
 postinstall = """

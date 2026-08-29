@@ -1,0 +1,20 @@
+[vars]
+dotfiles_homebrew_enabled = "true"
+
+[env]
+_.path = ["/home/linuxbrew/.linuxbrew/bin", "/home/linuxbrew/.linuxbrew/sbin"]
+
+[tasks."update:host"]
+description = "Update packages through the host operating system manager"
+run = '''
+if command -v pacman >/dev/null 2>&1; then
+  sudo pacman -Syu --noconfirm
+elif command -v apt-get >/dev/null 2>&1; then
+  sudo apt-get update && sudo apt-get full-upgrade -y
+elif command -v dnf >/dev/null 2>&1; then
+  sudo dnf upgrade -y --refresh
+else
+  echo "No supported Linux package manager found." >&2
+  exit 1
+fi
+'''
