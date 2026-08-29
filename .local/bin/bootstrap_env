@@ -2,27 +2,27 @@
 set -euo pipefail
 
 REPO_SLUG="mdylanbell/dotfiles"
-# Args override env defaults.
 DOTDIR="${DOTFILES_ROOT:-${HOME}/.dotfiles}"
 DFM=""
 SKIP_GIT="${DOTFILES_SKIP_GIT:-}"
 REPO_BRANCH="${DOTFILES_BRANCH:-main}"
-ZSH_DEFAULT_ANSWER=""
 ENTER_SHELL=0
-SHELL_CHANGED=0
+PROFILE_FLAG_SET=0
+PROFILE_FLAG=""
+FEATURES_FLAG_SET=0
+FEATURES_FLAG=""
+
+ENV_BLOCK_BEGIN="# BEGIN dotfiles bootstrap environment"
+ENV_BLOCK_END="# END dotfiles bootstrap environment"
+REQUIRED_COMMANDS=(git curl zsh)
+OS_PACKAGES=(git curl ca-certificates zsh)
 
 log() { printf "\033[1;32m==>\033[0m %s\n" "$*"; }
-warn() { printf "\033[1;33m!!\033[0m %s\n" "$*"; }
 die() {
-  printf "\033[1;31mXX\033[0m %s\n" "$*\n"
+  printf "\033[1;31mXX\033[0m %s\n" "$*" >&2
   exit 1
 }
 is_cmd() { command -v "$1" >/dev/null 2>&1; }
-current_shell_name() {
-  local current_shell
-  current_shell=$(getent passwd "$(id -un)" | awk -F : '{print $NF}' || true)
-  printf '%s\n' "${current_shell##*/}"
-}
 
 print_help() {
   cat <<EOF
@@ -35,9 +35,60 @@ Options:
   --dotfiles-root=PATH   Dotfiles checkout to bootstrap
   --branch=NAME          Dotfiles branch to clone/update (default: main)
   --skip-git             Skip git clone/fetch/pull operations
-  --zsh-default=y|n      Pre-answer the default-shell prompt
   --enter-shell          Enter zsh after bootstrap completes
+  --profile=personal|work
+                          Select and persist the dotfiles profile
+  --features=none|workstation|gui|workstation,gui
+                          Select and persist dotfiles features
 EOF
+}
+
+validate_profile() {
+  case "$1" in
+    personal | work) ;;
+    *) die "unsupported dotfiles profile: $1" ;;
+  esac
+}
+
+normalize_features() {
+  local raw="$1"
+  local workstation=0
+  local gui=0
+  local feature
+  local -a feature_list
+
+  if [[ "$raw" == "none" ]]; then
+    raw=""
+  fi
+  if [[ "$raw" == *, ]]; then
+    die "dotfiles features contain an empty token: $raw"
+  fi
+
+  if [[ -n "$raw" ]]; then
+    IFS=',' read -r -a feature_list <<<"$raw"
+    for feature in "${feature_list[@]}"; do
+      case "$feature" in
+        workstation)
+          ((workstation == 0)) || die "duplicate dotfiles feature: workstation"
+          workstation=1
+          ;;
+        gui)
+          ((gui == 0)) || die "duplicate dotfiles feature: gui"
+          gui=1
+          ;;
+        "") die "dotfiles features contain an empty token: $raw" ;;
+        *) die "unsupported dotfiles feature: $feature" ;;
+      esac
+    done
+  fi
+
+  NORMALIZED_FEATURES=""
+  if ((workstation == 1)); then
+    NORMALIZED_FEATURES="workstation"
+  fi
+  if ((gui == 1)); then
+    NORMALIZED_FEATURES="${NORMALIZED_FEATURES:+${NORMALIZED_FEATURES},}gui"
+  fi
 }
 
 parse_args() {
@@ -57,15 +108,18 @@ parse_args() {
       --skip-git)
         SKIP_GIT=1
         ;;
-      --zsh-default=*)
-        ZSH_DEFAULT_ANSWER="${1#*=}"
-        case "$ZSH_DEFAULT_ANSWER" in
-          y | Y | n | N) ;;
-          *) die "invalid value for --zsh-default: $ZSH_DEFAULT_ANSWER (expected y or n)" ;;
-        esac
-        ;;
       --enter-shell)
         ENTER_SHELL=1
+        ;;
+      --profile=*)
+        PROFILE_FLAG="${1#*=}"
+        validate_profile "$PROFILE_FLAG"
+        PROFILE_FLAG_SET=1
+        ;;
+      --features=*)
+        normalize_features "${1#*=}"
+        FEATURES_FLAG="$NORMALIZED_FEATURES"
+        FEATURES_FLAG_SET=1
         ;;
       *)
         die "unknown argument: $1"
@@ -77,104 +131,235 @@ parse_args() {
   DFM="${DOTDIR}/.local/bin/dfm"
 }
 
-load_bootstrap_env() {
+is_graphical_linux() {
+  if [[ -n "${WAYLAND_DISPLAY:-}" || -n "${DISPLAY:-}" ]]; then
+    return 0
+  fi
+  [[ "${XDG_SESSION_TYPE:-}" == "wayland" || "${XDG_SESSION_TYPE:-}" == "x11" ]]
+}
+
+default_features() {
+  if [[ "$(uname -s)" == "Darwin" ]] || is_graphical_linux; then
+    printf "workstation,gui"
+  else
+    printf "workstation"
+  fi
+}
+
+# Read from the controlling terminal so piped installers remain interactive.
+prompt_choice() {
+  local default_choice="$1"
+  shift
+  local -a labels values
+  local reply index
+
+  while (($#)); do
+    labels+=("$1")
+    values+=("$2")
+    shift 2
+  done
+
+  for ((index = 0; index < ${#labels[@]}; index++)); do
+    printf "  %d) %s\n" "$((index + 1))" "${labels[$index]}" >/dev/tty
+  done
+
+  while true; do
+    printf "Choice [%s]: " "$default_choice" >/dev/tty
+    IFS= read -r reply </dev/tty || true
+    reply="${reply:-$default_choice}"
+    if [[ "$reply" =~ ^[0-9]+$ ]] \
+      && ((10#$reply >= 1 && 10#$reply <= ${#values[@]})); then
+      printf "%s" "${values[$((reply - 1))]}"
+      return
+    fi
+    printf "Please enter a number from 1 to %d.\n" "${#values[@]}" >/dev/tty
+  done
+}
+
+have_tty() {
+  { : </dev/tty; } 2>/dev/null
+}
+
+write_env_block_body() {
+  local profile="$1"
+  local feature_value="$2"
+
+  printf "%s\n" "$ENV_BLOCK_BEGIN"
+  # shellcheck disable=SC2016
+  printf 'export DOTFILES_ENV="${DOTFILES_ENV:-%s}"\n' "$profile"
+  # shellcheck disable=SC2016
+  printf 'export DOTFILES_FEATURES="${DOTFILES_FEATURES-%s}"\n' "$feature_value"
+  printf "%s\n" "$ENV_BLOCK_END"
+}
+
+write_env_block() {
+  local file="$1"
+  local profile="$2"
+  local feature_value="$3"
+  local output block_file
+
+  mkdir -p "$(dirname "$file")"
+
+  if [[ ! -f "$file" ]] || ! grep -Fxq "$ENV_BLOCK_BEGIN" "$file"; then
+    if [[ -s "$file" && -n "$(tail -c 1 "$file")" ]]; then
+      printf "\n" >>"$file"
+    fi
+    write_env_block_body "$profile" "$feature_value" >>"$file"
+    return
+  fi
+
+  if ! grep -Fxq "$ENV_BLOCK_END" "$file"; then
+    die "malformed managed environment block in $file: missing END marker"
+  fi
+
+  output="$(mktemp "${file}.XXXXXX")"
+  block_file="$(mktemp "${file}.XXXXXX")"
+  write_env_block_body "$profile" "$feature_value" >"$block_file"
+
+  if ! awk -v begin="$ENV_BLOCK_BEGIN" -v end="$ENV_BLOCK_END" -v block_file="$block_file" '
+      $0 == begin {
+        while ((getline line < block_file) > 0) print line
+        close(block_file)
+        replacing = 1
+        next
+      }
+      replacing && $0 == end { replacing = 0; next }
+      !replacing { print }
+    ' "$file" >"$output"; then
+    rm -f "$block_file" "$output"
+    die "unable to update the managed environment block in $file"
+  fi
+
+  rm -f "$block_file"
+  mv "$output" "$file"
+}
+
+select_dotfiles_environment() {
+  local env_file="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/env.local.zsh"
+
+  # Conditional assignments in the live file fill only missing caller values.
+  if [[ -f "$env_file" ]]; then
+    # shellcheck disable=SC1090
+    source "$env_file"
+  fi
+
+  if ((PROFILE_FLAG_SET)); then
+    DOTFILES_ENV="$PROFILE_FLAG"
+  fi
+  if ((FEATURES_FLAG_SET)); then
+    DOTFILES_FEATURES="$FEATURES_FLAG"
+  fi
+
+  if [[ -z "${DOTFILES_ENV+x}" || -z "${DOTFILES_FEATURES+x}" ]]; then
+    if have_tty; then
+      log "Select the dotfiles environment (press Enter for the default)."
+      if [[ -z "${DOTFILES_ENV+x}" ]]; then
+        DOTFILES_ENV="$(prompt_choice 1 personal personal work work)"
+      fi
+      if [[ -z "${DOTFILES_FEATURES+x}" ]]; then
+        local feature_default=1
+        if [[ "$(default_features)" == "workstation,gui" ]]; then
+          feature_default=2
+        fi
+        DOTFILES_FEATURES="$(prompt_choice "$feature_default" \
+          workstation workstation \
+          "workstation + gui" "workstation,gui" \
+          gui gui \
+          none "")"
+      fi
+    else
+      DOTFILES_ENV="${DOTFILES_ENV-personal}"
+      DOTFILES_FEATURES="${DOTFILES_FEATURES-$(default_features)}"
+    fi
+  fi
+
+  validate_profile "$DOTFILES_ENV"
+  normalize_features "$DOTFILES_FEATURES"
+  DOTFILES_FEATURES="$NORMALIZED_FEATURES"
+  export DOTFILES_ENV DOTFILES_FEATURES
+  unset MISE_ENV
+
+  write_env_block "$env_file" "$DOTFILES_ENV" "$DOTFILES_FEATURES"
+}
+
+load_repo_env() {
+  export DOTFILES_ROOT="$DOTDIR"
+  export MISE_GLOBAL_CONFIG_ROOT="$DOTDIR"
+
   if [[ -f "$DOTDIR/.zshenv" ]]; then
     # shellcheck source=~/.dotfiles/.zshenv disable=SC1090
     source "$DOTDIR/.zshenv"
   fi
 
-  local xdg_conf="$DOTDIR/.config/zsh/conf.d/50-xdg.zsh"
-  if [[ -f "$xdg_conf" ]]; then
-    # shellcheck disable=SC1090
-    source "$xdg_conf"
-  fi
-
-  local zsh_env="$DOTDIR/.config/zsh/env.zsh"
-  if [[ -f "$zsh_env" ]]; then
-    # shellcheck disable=SC1090
-    source "$zsh_env"
+  if [[ -f "$DOTDIR/.config/zsh/env.zsh" ]]; then
+    # shellcheck disable=SC1090,SC1091
+    source "$DOTDIR/.config/zsh/env.zsh"
   fi
 }
 
-choose_remote() {
-  if ssh -o BatchMode=yes -o ConnectTimeout=2 -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
-    echo "git@github.com:${REPO_SLUG}.git"
-  else
-    echo "https://github.com/${REPO_SLUG}.git"
-  fi
+have_required_commands() {
+  local command
+  for command in "${REQUIRED_COMMANDS[@]}"; do
+    if ! is_cmd "$command"; then
+      return 1
+    fi
+  done
 }
 
-ensure_linux_deps() {
-  warn "Installing system packages (Linux only)…"
+ensure_stage0_capabilities() {
   case "$(uname -s)" in
-    Darwin) die "Please run 'xcode-select --install' once, then re-run." ;;
-    Linux)
-      if is_cmd apt-get; then
-        sudo apt-get update && sudo apt-get install -y \
-          git \
-          curl \
-          ca-certificates \
-          zsh \
-          build-essential \
-          libc6-dev \
-          libncurses-dev \
-          file
-      elif is_cmd dnf; then
-        sudo dnf install -y git curl ca-certificates
-      elif is_cmd pacman; then
-        sudo pacman -Sy --noconfirm git curl ca-certificates
-      else die "No supported package manager for git/curl. Install manually."; fi
+    Darwin)
+      if ! is_cmd git || ! is_cmd curl; then
+        die "git and curl are required. Run 'xcode-select --install' once, then re-run."
+      fi
       ;;
-    *) die "Unknown OS." ;;
+    Linux)
+      if have_required_commands; then
+        return
+      fi
+      log "Installing OS tools: ${OS_PACKAGES[*]}"
+      if is_cmd apt-get; then
+        sudo apt-get update
+        sudo apt-get install -y "${OS_PACKAGES[@]}"
+      elif is_cmd dnf; then
+        sudo dnf install -y "${OS_PACKAGES[@]}"
+      elif is_cmd pacman; then
+        sudo pacman -Syu --needed --noconfirm "${OS_PACKAGES[@]}"
+      else
+        die "No supported package manager for ${OS_PACKAGES[*]}."
+      fi
+      if ! have_required_commands; then
+        die "required OS tools are unavailable after installation"
+      fi
+      ;;
+    *) die "unsupported operating system" ;;
   esac
-}
-
-ensure_brew() {
-  if is_cmd brew; then
-    log "Homebrew: $(brew --prefix)"
-    return
-  fi
-  log "Installing Homebrew/Linuxbrew…"
-  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    if [[ -x /opt/homebrew/bin/brew ]]; then
-      eval "$(/opt/homebrew/bin/brew shellenv)"
-    else eval "$(/usr/local/bin/brew shellenv)"; fi
-  else
-    if [[ -x "$HOME/.linuxbrew/bin/brew" ]]; then
-      eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-    else eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; fi
-  fi
 }
 
 ensure_mise() {
   export PATH="$HOME/.local/bin:$PATH"
-
   if is_cmd mise; then
     log "mise: $(mise --version)"
     return
   fi
 
-  log "Installing mise…"
+  log "Installing mise"
   curl https://mise.run | sh
-  export PATH="$HOME/.local/bin:$PATH"
-  is_cmd mise || die "mise install completed but mise is still not on PATH"
+  is_cmd mise || die "mise install completed but mise is not on PATH"
 }
 
-install_bootstrap_prereqs() {
-  # These prereqs must exist before `mise run bootstrap`, not inside bootstrap
-  # tasks, because mise currently resolves npm-backed tool metadata during
-  # `mise run` startup before task execution. Without node/npm in place, that
-  # produces a large amount of warning spam. We also want gpg available before
-  # the main `mise install` for verification.
-  log "bootstrap prereqs"
-  brew install gpg
-  mise install node
+choose_remote() {
+  if ssh -o BatchMode=yes -o ConnectTimeout=2 -T git@github.com 2>&1 \
+    | grep -q "successfully authenticated"; then
+    printf "git@github.com:%s.git\n" "$REPO_SLUG"
+  else
+    printf "https://github.com/%s.git\n" "$REPO_SLUG"
+  fi
 }
 
 sync_dotfiles() {
-  if [[ -n "${SKIP_GIT}" ]]; then
-    echo "dotfiles bootstrap: skipping git fetch/clone of dotfiles repository"
+  if [[ -n "$SKIP_GIT" ]]; then
+    log "Skipping dotfiles Git synchronization"
     return
   fi
 
@@ -189,109 +374,55 @@ sync_dotfiles() {
     log "Cloning dotfiles into $DOTDIR"
     git clone --branch "$REPO_BRANCH" "$remote" "$DOTDIR"
   fi
-  log "Init submodules"
   git -C "$DOTDIR" submodule update --init --recursive
 }
 
 run_dfm_install() {
   [[ -x "$DFM" ]] || die "dfm not found at $DFM"
   log "dfm install"
-  "$DFM" install
+  DFM_REPO="$DOTDIR" "$DFM" install
 }
 
-trust_mise_config() {
-  log "mise trust"
-  mise trust -a -y -C "$DOTDIR" || true
-}
-
-run_bootstrap() {
-  log "mise run bootstrap"
-  MISE_TASK_RUN_AUTO_INSTALL=0 MISE_AUTO_INSTALL=0 mise run bootstrap
-}
-
-maybe_set_default_shell() {
-  local current_shell
-  current_shell="$(current_shell_name)"
-  if [[ "$current_shell" == "zsh" ]]; then
+configure_arch_policy() {
+  if ! is_cmd pacman; then
     return
   fi
 
-  local zsh_path
-  zsh_path="$(command -v zsh || true)"
-  [[ -n "$zsh_path" ]] || die "zsh not found on PATH"
+  local policy_file="$XDG_CONFIG_HOME/mise/config.linux.local.toml"
+  [[ -e "$policy_file" ]] && return 0
 
-  local target_user
-  target_user="${USER-$(id -un)}"
-
-  local shell_switch_reply
-  echo "zsh is not the current shell (detected: ${current_shell:-unknown})."
-  printf "Switch default shell to zsh? [Y/n] "
-  if [[ -n "$ZSH_DEFAULT_ANSWER" ]]; then
-    shell_switch_reply="$ZSH_DEFAULT_ANSWER"
-    printf "%s (auto-answered via --zsh-default)\n" "$shell_switch_reply"
-  else
-    read -r shell_switch_reply
-  fi
-
-  case "${shell_switch_reply:-Y}" in
-    Y | y | YES | Yes | yes)
-      sudo chsh -s "$zsh_path" "$target_user"
-      SHELL_CHANGED=1
-      ;;
-    *) ;;
-  esac
-}
-
-maybe_enter_shell() {
-  if ((!ENTER_SHELL)); then
-    return
-  fi
-
-  local current_shell
-  current_shell="$(current_shell_name)"
-  if [[ "$current_shell" == "zsh" ]]; then
-    return
-  fi
-
-  local zsh_path
-  zsh_path="$(command -v zsh || true)"
-  [[ -n "$zsh_path" ]] || die "zsh not found on PATH"
-  exec "$zsh_path" -l
-}
-
-print_completion_message() {
-  if ((SHELL_CHANGED)); then
-    log "Default shell changed to zsh."
-    printf "Close this session and start a new terminal/session to pick it up.\n"
-    printf "If you want to switch right now instead, run: zsh -l\n"
-  else
-    log "Done. Open a new shell or run: zsh -l"
-  fi
+  mkdir -p "$(dirname "$policy_file")"
+  (
+    umask 077
+    printf '%s\n' \
+      '[settings]' \
+      'system_packages.managers = ["pacman"]' \
+      '' \
+      '[vars]' \
+      'dotfiles_homebrew_enabled = "false"' \
+      >"$policy_file"
+  )
 }
 
 main() {
-  # Phase 1: Resolve CLI/env inputs and load bootstrap-time environment.
   parse_args "$@"
-  load_bootstrap_env
-
-  # Phase 2: Ensure machine-level prerequisites exist.
-  ensure_linux_deps
-  ensure_brew
-
-  # Phase 3: Ensure the dotfiles checkout is present and linked.
+  ensure_stage0_capabilities
+  ensure_mise
   sync_dotfiles
   run_dfm_install
+  select_dotfiles_environment
+  load_repo_env
+  configure_arch_policy
 
-  # Phase 4: Prepare mise/bootstrap prerequisites and run bootstrap.
-  ensure_mise
-  trust_mise_config
-  install_bootstrap_prereqs
-  run_bootstrap
+  log "mise trust"
+  mise trust -a -y -C "$DOTDIR"
+  log "mise bootstrap"
+  mise bootstrap --yes -C "$DOTDIR"
 
-  # Phase 5: Optional shell follow-up and completion messaging.
-  maybe_set_default_shell
-  print_completion_message
-  maybe_enter_shell
+  log "Done. Open a new shell or run: zsh -l"
+  if ((ENTER_SHELL)); then
+    exec /bin/zsh -l
+  fi
 }
 
 main "$@"
