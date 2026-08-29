@@ -1,5 +1,5 @@
 [tools]
-npm = "latest"
+"npm:npm" = "latest"
 rust = "stable"
 cargo-binstall = "latest"
 1password-cli = "latest"
@@ -11,16 +11,6 @@ npm.package_manager = "bun"
 # [tasks."update:for_env"]
 # description = "Update tools for environment: personal"
 # run = []
-
-[tasks."install:terminal:for_env"]
-description = "Install the personal terminal Brewfile"
-extends = "brewfile:bundle_install"
-vars = { brewfile = "terminal.env.personal" }
-
-[tasks."install:gui:for_env"]
-description = "Install the personal GUI Brewfile"
-extends = "brewfile:bundle_install"
-vars = { brewfile = "gui.env.personal" }
 
 [env]
 OP_COMMAND = "op"

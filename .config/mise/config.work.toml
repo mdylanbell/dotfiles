@@ -13,16 +13,6 @@ disable_tools = ["1password-cli"]
 description = "Update tools for environment: work"
 run = []
 
-[tasks."install:terminal:for_env"]
-description = "Install the work terminal Brewfile"
-extends = "brewfile:bundle_install"
-vars = { brewfile = "terminal.env.work" }
-
-[tasks."install:gui:for_env"]
-description = "Install the work GUI Brewfile"
-extends = "brewfile:bundle_install"
-vars = { brewfile = "gui.env.work" }
-
 # secrets:render is currently a no-op for work
 [tasks."secrets:render"]
 description = "Render secrets for environment: work (not currently supported)"

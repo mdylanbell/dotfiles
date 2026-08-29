@@ -1,0 +1,13 @@
+# Loaded when MISE_ENV includes the gui feature.
+[bootstrap.brew]
+adopt = true
+
+[bootstrap.packages]
+"brew:mas" = { os = "macos" }
+"brew-cask:firefox" = { os = "macos" }
+"brew-cask:ghostty" = { os = "macos" }
+"brew-cask:google-chrome" = { os = "macos" }
+"brew-cask:karabiner-elements" = { os = "macos" }
+"brew-cask:scroll-reverser" = { os = "macos" }
+"brew-cask:spotify" = { os = "macos" }
+"brew-cask:visual-studio-code" = { os = "macos" }

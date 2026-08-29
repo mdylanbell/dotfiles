@@ -1,12 +1,16 @@
 # mac
 .DS_Store
 
+# claude
+**/.claude/settings.local.json
+
 # mise local
 mise.local.toml
 mise.*.local.toml
-
-# claude
-**/.claude/settings.local.json
+mise.local.lock
+mise.*.local.lock
+**/mise/config.local.toml
+**/mise/config.*.local.toml
 
 # python
 __pycache__/

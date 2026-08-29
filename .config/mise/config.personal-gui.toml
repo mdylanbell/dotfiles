@@ -1,0 +1,15 @@
+# Packages that apply to the personal profile with the gui feature.
+[bootstrap.packages]
+"brew-cask:1password" = { os = "macos" }
+"brew-cask:alfred" = { os = "macos" }
+"brew-cask:chatgpt" = { os = "macos" }
+"brew-cask:claude" = { os = "macos" }
+"brew-cask:codex-app" = { os = "macos" }
+"brew-cask:discord" = { os = "macos" }
+"brew-cask:google-drive" = { os = "macos" }
+"brew-cask:obsidian" = { os = "macos" }
+"brew-cask:orbstack" = { os = "macos" }
+"brew-cask:raindropio" = { os = "macos" }
+"brew-cask:steam" = { os = "macos" }
+"brew-cask:todoist-app" = { os = "macos" }
+"brew-cask:zoom" = { os = "macos" }

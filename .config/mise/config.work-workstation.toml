@@ -1,0 +1,27 @@
+# Tools and packages for the work profile with the workstation feature.
+[tools]
+actionlint = "latest"
+azure = "latest"
+coursier = "latest"
+k9s = "latest"
+powershell = "latest"
+task = "latest"
+"pipx:sqlfluff" = "latest"
+"ubi:git-ecosystem/git-credential-manager" = "latest"
+zizmor = "latest"
+
+[bootstrap.packages]
+"brew:docker" = { os = ["linux", "macos"] }
+"brew:docker-compose" = { os = ["linux", "macos"] }
+"brew:docker-credential-helper" = { os = ["linux", "macos"] }
+"brew:libpq" = { os = ["linux", "macos"] }
+"brew:postgresql@18" = { os = ["linux", "macos"] }
+"pacman:docker" = "latest"
+"pacman:docker-compose" = "latest"
+"pacman:docker-credential-pass" = "latest"
+"pacman:postgresql" = "latest"
+"pacman:postgresql-libs" = "latest"
+
+[tasks."bootstrap:work-workstation"]
+description = "Install the Azure Bicep CLI for a work workstation"
+run = "az bicep install"

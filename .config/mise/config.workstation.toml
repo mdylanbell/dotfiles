@@ -1,0 +1,42 @@
+# Loaded when MISE_ENV includes the workstation feature.
+[tools]
+copilot = "latest"
+rtk = "latest"
+
+[bootstrap.packages]
+"brew:autoconf" = { os = "macos" }
+"brew:gcc" = { os = "macos" }
+"brew:ast-grep" = { os = ["linux", "macos"] }
+"brew:bat-extras" = { os = ["linux", "macos"] }
+"brew:btop" = { os = ["linux", "macos"] }
+"brew:diffnav" = { os = ["linux", "macos"] }
+"brew:git-delta" = { os = ["linux", "macos"] }
+"brew:glow" = { os = ["linux", "macos"] }
+"brew:imagemagick" = { os = ["linux", "macos"] }
+"brew:lazygit" = { os = ["linux", "macos"] }
+"brew:lua" = { os = ["linux", "macos"] }
+"brew:luarocks" = { os = ["linux", "macos"] }
+"brew:lynx" = { os = ["linux", "macos"] }
+"brew:shellcheck" = { os = ["linux", "macos"] }
+"brew:shfmt" = { os = ["linux", "macos"] }
+"brew:tealdeer" = { os = ["linux", "macos"] }
+"brew:tombi" = { os = ["linux", "macos"] }
+"brew:tree" = { os = ["linux", "macos"] }
+"brew:yq" = { os = ["linux", "macos"] }
+"pacman:ast-grep" = "latest"
+"pacman:bat-extras" = "latest"
+"pacman:btop" = "latest"
+"pacman:diffnav" = "latest"
+"pacman:git-delta" = "latest"
+"pacman:glow" = "latest"
+"pacman:imagemagick" = "latest"
+"pacman:lazygit" = "latest"
+"pacman:lua" = "latest"
+"pacman:luarocks" = "latest"
+"pacman:lynx" = "latest"
+"pacman:shellcheck" = "latest"
+"pacman:shfmt" = "latest"
+"pacman:tealdeer" = "latest"
+"pacman:tombi" = "latest"
+"pacman:tree" = "latest"
+"pacman:yq" = "latest"
