@@ -7,7 +7,7 @@
 "brew-cask:codex-app" = { os = "macos" }
 "brew-cask:discord" = { os = "macos" }
 "brew-cask:google-drive" = { os = "macos" }
-"brew-cask:obsidian" = { os = "macos" }
+# "brew-cask:obsidian" = { os = "macos" }
 "brew-cask:orbstack" = { os = "macos" }
 "brew-cask:raindropio" = { os = "macos" }
 "brew-cask:steam" = { os = "macos" }

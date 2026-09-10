@@ -68,13 +68,9 @@ login_shell = "/bin/zsh"
 
 [settings]
 experimental = true
-lockfile = true
 minimum_release_age = "7d"
 npm.package_manager = "bun"
 python.uv_venv_auto = "create|source"
-
-[tool_config]
-locked = true
 
 [vars]
 dotfiles_homebrew_enabled = "false"

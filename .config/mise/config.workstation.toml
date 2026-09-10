@@ -2,6 +2,7 @@
 [tools]
 copilot = "latest"
 rtk = "latest"
+"pipx:basic-memory" = "latest"
 
 [bootstrap.packages]
 "brew:autoconf" = { os = "macos" }

@@ -36,9 +36,8 @@ mise bootstrap packages upgrade --yes
 '''
 
 [tasks."update:mise:tools"]
-description = "Update mise-managed tools and refresh platform lock metadata"
+description = "Update mise-managed tools"
 run = [
-  "mise lock --global --bump --platform macos-arm64,linux-x64",
   "mise upgrade",
 ]
 
