@@ -285,9 +285,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/microsoft/azure-skills.git",
       "skillPath": "skills/azure-compliance/SKILL.md",
-      "skillFolderHash": "a7682304958acbb697ce5c375e306b95cae2b655",
+      "skillFolderHash": "843820187be92dc9246dc80916270a05c8c38918",
       "installedAt": "2026-07-31T01:44:29.283Z",
-      "updatedAt": "2026-07-31T01:44:29.283Z"
+      "updatedAt": "2026-09-10T05:47:05.568Z"
     },
     "azure-compute": {
       "source": "microsoft/azure-skills",
@@ -330,9 +330,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/microsoft/azure-skills.git",
       "skillPath": "skills/azure-enterprise-infra-planner/SKILL.md",
-      "skillFolderHash": "f2528afd2b528f15a2f92d8ad48855213c17510f",
+      "skillFolderHash": "01855069f81012840bdc1d2e738e3452143f1939",
       "installedAt": "2026-07-31T01:44:29.287Z",
-      "updatedAt": "2026-07-31T01:44:29.287Z"
+      "updatedAt": "2026-09-10T05:47:07.236Z"
     },
     "azure-kubernetes": {
       "source": "microsoft/azure-skills",
@@ -366,9 +366,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/microsoft/azure-skills.git",
       "skillPath": "skills/azure-prepare/SKILL.md",
-      "skillFolderHash": "c04be435467c96786a2b39f93a6dab7f95dafaae",
+      "skillFolderHash": "a484332e1eb4725bf2a89c2aaf85a5030f34fdbe",
       "installedAt": "2026-07-31T01:44:29.289Z",
-      "updatedAt": "2026-08-21T05:16:31.475Z"
+      "updatedAt": "2026-09-10T05:47:09.395Z"
     },
     "azure-quotas": {
       "source": "microsoft/azure-skills",
@@ -456,9 +456,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/microsoft/azure-skills.git",
       "skillPath": "skills/microsoft-foundry/SKILL.md",
-      "skillFolderHash": "3be788a7ea2c7229492943502e6fe499f50fa984",
+      "skillFolderHash": "03cd3a96642b9985688835b2eb6f8681dbf8456c",
       "installedAt": "2026-07-31T01:44:29.292Z",
-      "updatedAt": "2026-08-21T05:16:34.901Z"
+      "updatedAt": "2026-09-10T23:28:54.015Z"
     },
     "python-appservice-deploy": {
       "source": "microsoft/azure-skills",
