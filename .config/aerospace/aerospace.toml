@@ -9,10 +9,10 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 
 gaps.inner.horizontal = 8
 gaps.inner.vertical = 8
-gaps.outer.left = 12
-gaps.outer.bottom = 12
-gaps.outer.top = 12
-gaps.outer.right = 12
+gaps.outer.left = 6
+gaps.outer.bottom = 6
+gaps.outer.top = 6
+gaps.outer.right = 6
 
 after-startup-command = [
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
@@ -24,27 +24,42 @@ after-startup-command = [
 # Hyper is emitted by physical Left Control via Karabiner:
 # cmd + ctrl + alt + shift.
 [mode.main.binding]
-alt-space = [
+cmd-ctrl-alt-shift-space = [
   "mode leader",
   "exec-and-forget borders active_color=0xfff9e2af inactive_color=0xff494d64 width=7.0",
 ]
 
+cmd-ctrl-alt-shift-a = [
+  "mode adjust",
+  "exec-and-forget borders active_color=0xffff5f57 inactive_color=0xff494d64 width=8.0",
+]
+
+ctrl-left = "workspace --no-stdin prev"
+ctrl-right = "workspace --no-stdin next"
+alt-tab = "workspace-back-and-forth"
+alt-shift-tab = "move-workspace-to-monitor --wrap-around next"
+alt-slash = "layout tiles horizontal vertical"
+alt-comma = "layout accordion horizontal vertical"
+
 # Hyper navigation: fast, always available, no modal state.
-"cmd-ctrl-alt-shift-h" = "focus left"
-"cmd-ctrl-alt-shift-j" = "focus down"
-"cmd-ctrl-alt-shift-k" = "focus up"
-"cmd-ctrl-alt-shift-l" = "focus right"
+cmd-ctrl-alt-shift-h = "focus left"
+cmd-ctrl-alt-shift-j = "focus down"
+cmd-ctrl-alt-shift-k = "focus up"
+cmd-ctrl-alt-shift-l = "focus right"
 
-"cmd-ctrl-alt-shift-leftSquareBracket" = "focus dfs-prev"
-"cmd-ctrl-alt-shift-rightSquareBracket" = "focus dfs-next"
-"cmd-ctrl-alt-shift-tab" = "focus-back-and-forth"
+cmd-ctrl-alt-shift-leftSquareBracket = "focus dfs-prev"
+cmd-ctrl-alt-shift-rightSquareBracket = "focus dfs-next"
+cmd-ctrl-alt-shift-tab = "focus-back-and-forth"
 
-"cmd-ctrl-alt-shift-1" = "workspace 1"
-"cmd-ctrl-alt-shift-2" = "workspace 2"
-"cmd-ctrl-alt-shift-3" = "workspace 3"
-"cmd-ctrl-alt-shift-4" = "workspace 4"
-"cmd-ctrl-alt-shift-5" = "workspace 5"
-"cmd-ctrl-alt-shift-6" = "workspace 6"
+cmd-ctrl-alt-shift-left = "focus-monitor prev"
+cmd-ctrl-alt-shift-right = "focus-monitor next"
+
+cmd-ctrl-alt-shift-1 = "workspace 1"
+cmd-ctrl-alt-shift-2 = "workspace 2"
+cmd-ctrl-alt-shift-3 = "workspace 3"
+cmd-ctrl-alt-shift-4 = "workspace 4"
+cmd-ctrl-alt-shift-5 = "workspace 5"
+cmd-ctrl-alt-shift-6 = "workspace 6"
 
 # =============================================================================
 # LEADER MODE
@@ -52,6 +67,23 @@ alt-space = [
 # One-shot command palette. Commands return to main unless they explicitly enter
 # another mode.
 [mode.leader.binding]
+# Hyper navigation remains available while the leader is active.
+cmd-ctrl-alt-shift-h = "focus left"
+cmd-ctrl-alt-shift-j = "focus down"
+cmd-ctrl-alt-shift-k = "focus up"
+cmd-ctrl-alt-shift-l = "focus right"
+
+cmd-ctrl-alt-shift-leftSquareBracket = "focus dfs-prev"
+cmd-ctrl-alt-shift-rightSquareBracket = "focus dfs-next"
+cmd-ctrl-alt-shift-tab = "focus-back-and-forth"
+
+cmd-ctrl-alt-shift-1 = "workspace 1"
+cmd-ctrl-alt-shift-2 = "workspace 2"
+cmd-ctrl-alt-shift-3 = "workspace 3"
+cmd-ctrl-alt-shift-4 = "workspace 4"
+cmd-ctrl-alt-shift-5 = "workspace 5"
+cmd-ctrl-alt-shift-6 = "workspace 6"
+
 esc = [
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
@@ -62,11 +94,11 @@ enter = [
 ]
 
 # Swallow common macOS app/window shortcuts while AeroSpace owns the leader.
-"cmd-h" = "true"
-"cmd-m" = "true"
-"cmd-w" = "true"
+cmd-h = "true"
+cmd-m = "true"
+cmd-w = "true"
 
-"shift-slash" = [
+shift-slash = [
   "exec-and-forget /bin/zsh -lc '~/.config/aerospace/show-leader-help.sh'",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
@@ -134,63 +166,63 @@ equal = [
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
 
-"shift-1" = [
+shift-1 = [
   "move-node-to-workspace 1",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"shift-2" = [
+shift-2 = [
   "move-node-to-workspace 2",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"shift-3" = [
+shift-3 = [
   "move-node-to-workspace 3",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"shift-4" = [
+shift-4 = [
   "move-node-to-workspace 4",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"shift-5" = [
+shift-5 = [
   "move-node-to-workspace 5",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"shift-6" = [
+shift-6 = [
   "move-node-to-workspace 6",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
 
-"alt-shift-1" = [
+alt-shift-1 = [
   "move-node-to-workspace --focus-follows-window 1",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"alt-shift-2" = [
+alt-shift-2 = [
   "move-node-to-workspace --focus-follows-window 2",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"alt-shift-3" = [
+alt-shift-3 = [
   "move-node-to-workspace --focus-follows-window 3",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"alt-shift-4" = [
+alt-shift-4 = [
   "move-node-to-workspace --focus-follows-window 4",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"alt-shift-5" = [
+alt-shift-5 = [
   "move-node-to-workspace --focus-follows-window 5",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
-"alt-shift-6" = [
+alt-shift-6 = [
   "move-node-to-workspace --focus-follows-window 6",
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
@@ -201,6 +233,23 @@ equal = [
 # =============================================================================
 # Sticky layout surgery mode. Escape or Enter returns to main.
 [mode.adjust.binding]
+# Hyper navigation remains available while adjust mode is active.
+cmd-ctrl-alt-shift-h = "focus left"
+cmd-ctrl-alt-shift-j = "focus down"
+cmd-ctrl-alt-shift-k = "focus up"
+cmd-ctrl-alt-shift-l = "focus right"
+
+cmd-ctrl-alt-shift-leftSquareBracket = "focus dfs-prev"
+cmd-ctrl-alt-shift-rightSquareBracket = "focus dfs-next"
+cmd-ctrl-alt-shift-tab = "focus-back-and-forth"
+
+cmd-ctrl-alt-shift-1 = "workspace 1"
+cmd-ctrl-alt-shift-2 = "workspace 2"
+cmd-ctrl-alt-shift-3 = "workspace 3"
+cmd-ctrl-alt-shift-4 = "workspace 4"
+cmd-ctrl-alt-shift-5 = "workspace 5"
+cmd-ctrl-alt-shift-6 = "workspace 6"
+
 esc = [
   "mode main",
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
@@ -210,11 +259,11 @@ enter = [
   "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0",
 ]
 
-"cmd-h" = "true"
-"cmd-m" = "true"
-"cmd-w" = "true"
+cmd-h = "true"
+cmd-m = "true"
+cmd-w = "true"
 
-"shift-slash" = 'exec-and-forget /bin/zsh -lc "~/.config/aerospace/show-adjust-help.sh"'
+shift-slash = 'exec-and-forget /bin/zsh -lc "~/.config/aerospace/show-adjust-help.sh"'
 d = 'exec-and-forget /bin/zsh -lc "~/.config/aerospace/show-diagnostics.sh"'
 
 h = "move left"
@@ -222,10 +271,10 @@ j = "move down"
 k = "move up"
 l = "move right"
 
-"shift-h" = "join-with left"
-"shift-j" = "join-with down"
-"shift-k" = "join-with up"
-"shift-l" = "join-with right"
+shift-h = "join-with left"
+shift-j = "join-with down"
+shift-k = "join-with up"
+shift-l = "join-with right"
 
 1 = "move-node-to-workspace 1"
 2 = "move-node-to-workspace 2"
@@ -236,16 +285,16 @@ l = "move right"
 
 s = "layout v_tiles"
 v = "layout h_tiles"
-"shift-s" = "layout --root v_tiles"
-"shift-v" = "layout --root h_tiles"
+shift-s = "layout --root v_tiles"
+shift-v = "layout --root h_tiles"
 
 c = "layout v_accordion"
 r = "layout h_accordion"
-"shift-c" = "layout --root v_accordion"
-"shift-r" = "layout --root h_accordion"
+shift-c = "layout --root v_accordion"
+shift-r = "layout --root h_accordion"
 
 minus = "resize smart -50"
-"shift-equal" = "resize smart +50"
+shift-equal = "resize smart +50"
 equal = "balance-sizes"
 
 backspace = "flatten-workspace-tree"
