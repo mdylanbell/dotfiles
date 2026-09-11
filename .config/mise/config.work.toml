@@ -1,13 +1,14 @@
 # Loaded when MISE_ENV=work is set
 [tools]
-# terraform = "latest"
-# "npm:prettier-plugin-groovy" = "latest"
-"npm:npm" = "latest"
 dotnet = "latest"
+# terraform = "latest"
 java = "zulu-21"
 
 [settings]
 disable_tools = ["1password-cli"]
+
+[settings.pipx]
+registry_url = "https://packagefeedproxy.microsoft.io/pypi/simple/{}/"
 
 [tasks."update:for_env"]
 description = "Update tools for environment: work"
@@ -16,4 +17,4 @@ run = []
 # secrets:render is currently a no-op for work
 [tasks."secrets:render"]
 description = "Render secrets for environment: work (not currently supported)"
-run = "true"
+run = []

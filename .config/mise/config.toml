@@ -1,6 +1,7 @@
 min_version = "2026.8.10"
 
 [tools]
+"npm:npm" = "latest"
 node = "lts"
 bun = "latest"
 python = "3.12"
@@ -10,7 +11,6 @@ go = "latest"
 golangci-lint = "latest"
 ruff = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
-terraform = "latest"
 
 [bootstrap.packages]
 "apt:build-essential" = "latest"

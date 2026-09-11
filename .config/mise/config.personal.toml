@@ -1,5 +1,4 @@
 [tools]
-"npm:npm" = "latest"
 rust = "stable"
 cargo-binstall = "latest"
 1password-cli = "latest"

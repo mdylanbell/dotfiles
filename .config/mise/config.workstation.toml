@@ -1,11 +1,12 @@
 # Loaded when MISE_ENV includes the workstation feature.
 [tools]
-copilot = "latest"
 rtk = "latest"
 "pipx:basic-memory" = "latest"
+"npm:@azure/mcp" = "latest"
 
 [bootstrap.packages]
 "brew:autoconf" = { os = "macos" }
+"brew-cask:copilot-cli" = "latest"
 "brew:gcc" = { os = "macos" }
 "brew:ast-grep" = { os = ["linux", "macos"] }
 "brew:bat-extras" = { os = ["linux", "macos"] }
@@ -41,3 +42,4 @@ rtk = "latest"
 "pacman:tombi" = "latest"
 "pacman:tree" = "latest"
 "pacman:yq" = "latest"
+"pacman:github-copilot-cli" = "latest"
