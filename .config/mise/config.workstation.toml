@@ -43,3 +43,6 @@ rtk = "latest"
 "pacman:tree" = "latest"
 "pacman:yq" = "latest"
 "pacman:github-copilot-cli" = "latest"
+
+[settings]
+minimum_release_age_excludes = ["pipx:basic-memory"]
