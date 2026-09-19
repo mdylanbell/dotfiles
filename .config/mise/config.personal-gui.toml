@@ -1,3 +1,6 @@
+[bootstrap.brew]
+adopt = true
+
 # Packages that apply to the personal profile with the gui feature.
 [bootstrap.packages]
 "brew-cask:1password" = { os = "macos" }
